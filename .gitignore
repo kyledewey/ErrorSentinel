@@ -1,0 +1,6 @@
+# emacs temp files
+*~
+\#*\#
+
+# JVM class files
+*.class

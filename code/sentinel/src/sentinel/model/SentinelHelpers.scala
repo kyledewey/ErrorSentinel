@@ -132,12 +132,10 @@ object SentinelHelpers {
    * @return A table of the given width and height initialized for
    * each cell with the given initializer
    */
-  def makeTable[ T ]( numRows: Int, numColumns: Int, initializer: ( Int, Int ) => T ) = {
-    val retval: Array[ Array[ T ] ] = new Array( numRows, numColumns )
-    0.until( numRows ).foreach( row =>
-      0.until( numColumns ).foreach( column =>
-	retval( row )( column ) = initializer( row, column ) ) )
-    retval
+  def makeTable[T]( numRows: Int, numColumns: Int, initializer: ( Int, Int ) => T ) = {
+    0.until(numRows).map(row =>
+      0.until(numColumns).map(column =>
+        initializer(row, column)).toIndexedSeq).toIndexedSeq
   }
 
   /**

@@ -1,0 +1,1352 @@
+head	1.11;
+access;
+symbols;
+locks
+	kyledewey:1.11; strict;
+comment	@# @;
+
+
+1.11
+date	2011.06.03.04.13.25;	author kyledewey;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.06.01.03.59.30;	author kyledewey;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2011.04.10.04.05.04;	author kyledewey;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2011.03.14.11.59.55;	author kyledewey;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.07.11.05.49.13;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.07.10.21.46.28;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.06.25.03.18.31;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.06.20.17.30.05;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.06.18.19.37.06;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.06.18.03.09.30;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.06.15.17.56.41;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Contains code common to all class parsers.
+@
+
+
+1.11
+log
+@Refactored so that dependencies between files are
+now resolved properly.
+@
+text
+@/*
+ * Parser.scala
+ *
+ * Version:
+ *     $Id: Parser.scala,v 1.10 2011/06/01 03:59:30 kyledewey Exp $
+ *
+ * Revisions:
+ *      $Log: Parser.scala,v $
+ *      Revision 1.10  2011/06/01 03:59:30  kyledewey
+ *      Refactored so that dependencies can now be resolved
+ *      between files.
+ *
+ *      Revision 1.9  2011/04/10 04:05:04  kyledewey
+ *      Now uses FactoryManager's regiserFactory method.
+ *
+ *      Revision 1.8  2011/03/14 11:59:55  kyledewey
+ *      Allowed for duplicate classes to overwrite new ones.
+ *
+ *      Revision 1.7  2010/07/11 05:49:13  kyledewey
+ *      Changed implementation of ParseAndRegisterClasses().
+ *
+ *      Revision 1.6  2010/07/10 21:46:28  kyledewey
+ *      Now uses a dependency graph as a guide for parsing, instead
+ *      of merely parsing classes in in the order in which they
+ *      appear in the file.
+ *
+ *      Revision 1.5  2010/06/25 03:18:31  kyledewey
+ *      Refactored so that variables have types.
+ *
+ *      Revision 1.4  2010/06/20 17:30:05  kyledewey
+ *      Made everything use the more generic
+ *      InstanceFactory[ _ ] type instead of the less
+ *      flexible and bulkier
+ *      Either[ MatcherFactory, ReplacerFactory ].
+ *
+ *      Revision 1.3  2010/06/18 19:37:06  kyledewey
+ *      Made factories take a name and description.
+ *
+ *      Revision 1.2  2010/06/18 03:09:30  kyledewey
+ *      Moved some code to its rightful place in ParamType.
+ *
+ *      Revision 1.1  2010/06/15 17:56:41  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.model.parser
+
+import sentinel.model._
+import sentinel.model.matcher._
+import sentinel.model.replacer._
+import java.io._
+
+/**
+ * Exception thrown by the class parser when there is an error in the
+ * underlying format.
+ * @@param message A message describing the error
+ * @@author Kyle Dewey
+ */
+case class ClassParseException( message: String ) 
+     extends Exception( message ) {}
+
+/**
+ * Exception thrown when an attempt is made to register a class that
+ * appears to already have been registered
+ * @@param message A message describing the error
+ * @@author Kyle Dewey
+ */
+case class ClassAlreadyRegisteredException( override val message: String )
+     extends ClassParseException( message ) {}
+
+/**
+ * Contains routines common to parsers.
+ * @@author Kyle Dewey
+ */
+object ClassParser {
+  import sentinel.model.ParamType._
+
+  /**
+   * Validates that the given class name is that of a matcher
+   * @@param name The name of the potential matcher
+   * @@throws ClassParseException If the given class name does not
+   *         correlate to that of a matcher
+   */
+  def validateMatcher( name: String ): Boolean = {
+    if ( MatcherFactoryManager.isRegistered( name ) ) true
+    else {
+      throw new ClassParseException( "Unknown matcher: \"" + name + "\"" )
+    }
+  }
+
+  /**
+   * Validates that the given class name is that of a replacer
+   * @@param name The name of the potential replacer
+   * @@return True if it is
+   * @@throws ClassParseException If the given class name does not
+   *         correlate to that of a replacer
+   */
+  def validateReplacer( name: String ): Boolean = {
+    if ( ReplacerFactoryManager.isRegistered( name ) ) true
+    else {
+      throw new ClassParseException( "Unknown replacer: \"" + name + "\"" )
+    }
+  }
+
+  /**
+   * Given the text of an integer, it will return the corresponding
+   * integer.
+   * @@param text The text of the integer
+   * @@return The integer
+   * @@throws ClassParseException If the text couldn't be parsed to an integer
+   */
+  def textToInteger( text: String ): Int = {
+    try {
+      Integer.parseInt( text )
+    } catch {
+      case e: NumberFormatException =>
+	throw new ClassParseException( e.getMessage )
+    }
+  }
+
+  /**
+   * Given the text of a spreadsheet, it will return the corresponding
+   * spreadsheet.
+   * @@param text The text of the spreadsheet name
+   * @@return The spreadsheet name, or NONE if it's a reference to
+   * the current spreadsheet
+   */
+  def textToSpreadsheet( text: String ): Option[ String ] = {
+    if ( text == Spreadsheet.ANY_SHEET ) None
+    else Some( text )
+  }
+
+  /**
+   * Given the text of a row, it will return the corresponding row
+   * @@param text The text of the row
+   * @@return The row, or None if it's a reference to the current row
+   * @@throws ClassParseException If an actual row was passed, but it
+   * wasn't an integer
+   */
+  def textToRow( text: String ): Option[ Int ] = {
+    if ( text == Spreadsheet.ANY_ROW ) None
+    else Some( textToInteger( text ) )
+  }
+
+  /**
+   * Given the text of a column, it will return the corresponding
+   * column.
+   * @@param text The text of the column
+   * @@return The column, or None if it's a reference to the current column
+   * @@throws ClassParseException If an actual column was passed, but it
+   * wasn't an integer
+   */
+  def textToColumn( text: String ): Option[ Int ] = {
+    if ( text == Spreadsheet.ANY_COLUMN ) None
+    else Some( textToInteger( text ) )
+  }
+
+  /**
+   * Given the text of a boolean, it will return the
+   * corresponding boolean.  Note that the test is case
+   * insensitive.
+   * @@param text The textual type
+   * @@return the boolean
+   * @@throws ClassParseException If the text wasn't either
+   *         "true" or "false
+   */
+  def textToBoolean( text: String ): Boolean = 
+    text.toLowerCase match {
+      case "true" => true
+      case "false" => false
+      case _ =>
+	throw new ClassParseException( "Cannot convert \"" +
+				       text +
+				       "\" to a boolean value." )
+    }
+  
+  /**
+   * Given the textual type of a parameter, it will return
+   * a ParamType that correlates to it.  Note that the test is case
+   * insensitive.
+   * @@param text The textual type
+   * @@return The ParamType
+   * @@throws ClassParseException If the text didn't match
+   *         any known parameter
+   */
+  def textToParamType( text: String ): ParamType =
+    stringToParam.getOrElse( text, 
+			     throw new ClassParseException( "Unknown param " +
+							    "type: \"" + 
+							    text  + "\"" ) )
+  /**
+   * Given the textual type of a parameter, it will return a param type
+   * that correlates to it.  The type must be that of an instance
+   * @@param text The textual type
+   * @@return The corresponding type
+   * @@throws ClassParseException If the text didn't match a known parameter,
+   * or if the parameter it matched was not that of an instance type
+   */
+  def textToInstanceType( text: String ) = {
+    val retval = textToParamType( text )
+    if ( !isInstanceType( retval ) ) {
+      throw new ClassParseException( "Non-instance type parameter: " + text )
+    } else retval
+  }
+
+  /**
+   * Given a bunch of pre-classes, it will return a map where the key
+   * is the pre-class and the value is the position in the original
+   * sequence.
+   * @@param classes The pre-classes
+   * @@return A mapping of the pre-class to the pre-classes position
+   */
+  def classMap( classes: Seq[ PreClass ] ) = {
+    val asArray = classes.toArray
+    Map() ++ 0.until( classes.length ).map( id =>
+      Pair( classes( id ), id ) )
+  }
+
+  /**
+   * Given a bunch of pre-classes, it will return a dependency graph
+   * representing the pre-classes.
+   * @@param classes The pre-classes
+   * @@return A dependency graph for the classes
+   * @@throws ClassParseException If a given pre class wasn't parsed in already
+   */
+  def dependencyGraph( classes: Set[ PreClass ] ) = {
+    val newClasses = classes.filter( !_.parsedIn ).toSeq
+    val id = classMap( newClasses )
+    val retval = new DependencyGraph[ PreClass, Object ]( newClasses.length )
+
+    // adds the given class to the graph
+    def addClass( theClass: PreClass ) {
+      val thisID = id( theClass )
+      retval.setNodeData( thisID,
+			  new DependencyNode( theClass ) )
+      theClass.dependenciesAsPreClasses.foreach( ( current: PreClass ) => {
+	if ( !current.parsedIn ) {
+	  retval.addEdge( id( current ), thisID ) 
+	} 
+      } )
+    }
+
+    newClasses.foreach( addClass( _ ) )
+    retval
+  }
+  
+  /**
+   * Given a bunch of pre-classes, it will return them in the order in
+   * which they should be parsed.  This will make sure that the classes
+   * can be parsed in in a way that resolves dependencies.
+   * @@param classes The pre-classes
+   * @@return The pre-classes in the proper parsing order
+   */
+  def toParseOrder( classes: Set[ PreClass ] ) = 
+    dependencyGraph( classes ).topologicalSort.map( _.info )
+
+    /**
+   * Like <code>registerClass</code>, but if a repeat is found, it will
+   * throw a ClassAlreadyRegistered exception.
+   * @@param theClass The class to register
+   * @@throws ClassAlreadyRegisteredException If the class was already registered
+   * @@throws ClassParseException If a factory type isn't recognized
+   */
+  def registerClassNoRepeat( theClass: InstanceFactory[ _ ] ) {
+    assertClassNotRegistered( theClass )
+    registerClass( theClass )
+  }
+
+  /**
+   * Registers the given class.  If the name is a repeat, then it
+   * will be overridden
+   * @@return true if it was a repeat, else false
+   * @@throws ClassParseException If a factory type isn't recognized
+   */
+  def registerClass( theClass: InstanceFactory[ _ ] ): Boolean = {
+    val retval = classRegistered( theClass )
+    try {
+      FactoryManager.registerFactory( theClass )
+    } catch {
+      case UnknownFactoryTypeException( message ) =>
+	throw new ClassParseException( message )
+    }
+    retval
+  }
+
+  /**
+   * Asserts that the given class hasn't already been registered
+   * @@param theClass the class to check
+   * @@throws ClassAlreadyRegisteredException If the class was already registered
+   */
+  def assertClassNotRegistered( theClass: InstanceFactory[ _ ] ) {
+    if ( classRegistered( theClass ) ) {
+      throw new ClassAlreadyRegisteredException( "Class with name \"" +
+						 theClass.name + 
+						 "\" of type " +
+						 ParamType.toString( theClass.instanceType ) + 
+						 " is already registered." )
+    }
+  }
+
+  /**
+   * Determines if the given class is already registered
+   * @@param theClass the class to check
+   * @@return true if it is already registered, else false
+   * @@throws ClassParseException If a factory type isn't recognized
+   */
+  def classRegistered( theClass: InstanceFactory[ _ ] ) =
+    theClass match {
+      case matcher: MatcherFactory => 
+	MatcherFactoryManager.isRegistered( matcher.name )
+      case replacer: ReplacerFactory =>
+	ReplacerFactoryManager.isRegistered( replacer.name )
+      case _ =>
+	throw new ClassParseException( "Unknown factory type: " +
+				       ParamType.toString( theClass.instanceType ) )
+    }
+}
+
+import sentinel.model.ParamType._
+
+/**
+ * Holds constants relevant to PreClass
+ * @@author Kyle Dewey
+ */
+object PreClassConstants {
+  val OVERWRITE_DEFAULT = true
+}
+
+/**
+ * Holds PreClass objects as singletons.
+ * Note that the names and types of pre classes are used to differentiate
+ * them, not the parser or dependencies.
+ * @@author Kyle Dewey
+ */
+object PreClass {
+  private var _registered: Map[ Pair[ String, ParamType ], PreClass ] = Map()
+
+  /**
+   * Gets the registered pre classes.
+   * @@return The registered pre classes
+   */
+  def registered() =
+    Set() ++ _registered.values
+  
+  /**
+   * Given a pair holding the name and type of a pre class, this will
+   * return whether or not a pre class has already been made with this
+   * information
+   * @@param pair The name, type pair
+   * @@return The pre class registered with this pair, or None if no such
+   * preclass exists.
+   */
+  def apply( pair: Pair[ String, ParamType ] ): Option[ PreClass ] =
+    _registered.get( pair )
+
+  /**
+   * Given a name and a type, returns a PreClass if this given name
+   * and type is already registered.  If not, this returns None.
+   * @@param name The name of the pre class.
+   * @@param theType The type of the pre class.
+   * @@return A pre class with the given name and type, or None if it doesn't
+   * exist.
+   */
+  def apply( name: String, theType: ParamType ): Option[ PreClass ] =
+    apply( Pair( name, theType ) )
+
+  /**
+   * Creates and registers a pre class with the given name, type, and parser.
+   * Note that this will overwrite any previously written pre class objects.
+   * @@param pair The name, type pair describing the pre class
+   * @@param parser The parser that parsed in the pre class
+   * @@param dependencies The dependencies for this pre class
+   * @@return The created PreClass
+   */
+  def apply( pair: Pair[ String, ParamType ], 
+	     parser: ClassParser,
+	     dependencies: Seq[ Pair[ String, ParamType ] ] ): PreClass = {
+    val retval = new PreClass( pair._1, 
+			       pair._2, 
+			       parser, 
+			       dependencies )
+    _registered += pair -> retval
+    retval
+  }
+
+  /**
+   * Like <code>apply</code>, only the pair is split between two parameters.
+   * @@param name The name of the pre class
+   * @@param theType the type of the pre class
+   * @@param parser The parser that parsed in the pre class
+   * @@param dependencies The dependencies for this pre class
+   * @@return The created PreClass
+   */
+  def apply( name: String, 
+	     theType: ParamType, 
+	     parser: ClassParser,
+	     dependencies: Seq[ Pair[ String, ParamType ] ] ): PreClass =
+    apply( Pair( name, 
+		 theType ), 
+	   parser, 
+	   dependencies )
+}
+
+/**
+ * Container for a class that has yet to be parsed in.
+ * Note that it is intended that dependencies be filled in
+ * before forming the dependency graph.  If they are not,
+ * the resulting graph is worthless.
+ * @@param name The name of the class
+ * @@param theType The type of the class
+ * @@param parser The parser that parsed in the class
+ * @@param dependencies The dependencies of this pre class, as pairs
+ * @@author Kyle Dewey
+ */
+class PreClass private ( val name: String,
+			 val theType: ParamType,
+			 val parser: ClassParser,
+			 val dependencies: Seq[ Pair[ String, ParamType ] ] ) {
+  lazy val dependenciesAsPreClasses =
+    getDependenciesAsPreClasses
+
+  /**
+   * Determines if the class corresponding to this pre class has
+   * been parsed in.
+   * @@return true if it has been parsed in, else false
+   * @@throws ClassParseException If the given type isn't recognized
+   * as an instance type
+   */
+  def parsedIn() =
+    theType match {
+      case MatcherType => 
+	MatcherFactoryManager.isRegistered( name )
+      case ReplacerType => 
+	ReplacerFactoryManager.isRegistered( name )
+      case _ => throw new ClassParseException( "Unknown instance type: " +
+					       ParamType.toString( theType ) )
+    }
+  
+  /**
+   * Determines if this pre class is equal to another.
+   * This is based upon the name and type.
+   * @@param other The other object to compare to
+   * @@return true if they are equal, else false
+   */
+  override def equals( other: Any ) = 
+    other.isInstanceOf[ PreClass ] && 
+    toPair == other.asInstanceOf[ PreClass ].toPair
+
+  /**
+   * Gets the hash code of this pre class.
+   * The code is based on the name and the type
+   * @@return a hash code based on the name and the type
+   */
+  override def hashCode() =
+    toPair.hashCode
+
+  /**
+   * Gets this pre class as a name, type pair
+   * @@return This pre class as a name, type pair
+   */
+  def toPair() =
+    Pair( name, theType )
+
+  /**
+   * Gets the dependencies for this pre class, as pre class objects.
+   * Note that this is intended to be called only after all pre class
+   * objects have been generated.
+   * @@return The dependencies as pre class objects
+   * @@throws ClassParseException If one of the given pairs could
+   * not be mapped to a pre class object.
+   */
+  protected def getDependenciesAsPreClasses() = 
+    dependencies.map( pair => {
+      val retval = PreClass( pair )
+      if ( retval.isEmpty ) {
+	throw new ClassParseException( "Unknown pre class: " + pair )
+      }
+      retval.get
+    } )
+  
+  /**
+   * Parses in the class corresponding to this pre class
+   * @@return The parsed in class
+   * @@throws ClassParseException If there was a format-level error
+   * in the class
+   * @@throws IOException If an error occurred on reading
+   */
+  def parseClass() =
+    parser.parseClass( this )
+
+  /**
+   * Parses in and registers the class corresponding
+   * to this pre class.
+   * @@param overwrite If we should overwrite any previous definitions
+   * of this class
+   * @@return true if a previous definition was overwritten, else false
+   * @@throws ClassParseException if there was a format-level in a class, or
+   * if the given pre class doesn't correspond to this parser
+   * @@throws ClassAlreadyRegisteredException If overwrite is false and
+   * the class was already registered
+   * @@throws IOException If an error occurred on reading
+   */
+  def parseAndRegisterClass( overwrite: Boolean ): Boolean =
+    parser.parseAndRegisterClass( this, overwrite )
+
+  /**
+   * Like <code>parseAndRegiserClass</code>, but overwrite is
+   * set to <code>OVERWRITE_DEFAULT</code>.
+   * @@return true if a previous definition was overwritten, else false
+   * @@throws ClassParseException if there was a format-level in a class, or
+   * if the given pre class doesn't correspond to this parser
+   * @@throws ClassAlreadyRegisteredException If overwrite is false and
+   * the class was already registered
+   * @@throws IOException If an error occurred on reading
+   */
+  def parseAndRegisterClass(): Boolean =
+    parseAndRegisterClass( PreClassConstants.OVERWRITE_DEFAULT )
+}
+
+/**
+ * Parses in classes.  Note that this also handles dependencies between
+ * classes, etc.
+ * @@param fileName The name of the file to read in
+ * @@throws FileNotFoundException If the file could not be opened
+ * @@throws IOException If an error occurred on read
+ * @@author Kyle Dewey
+ */
+abstract class ClassParser( fileName: String ) {
+  /**
+   * Gets information about all classes within.
+   * @@return PreClass information about all classes within
+   * @@throws ClassParseException If there is a format-level error
+   * @@throws IOException If an error occurred on read
+   */
+  def classesInformation(): Seq[ PreClass ]
+
+  /**
+   * Parses in the given class.
+   * It is guarenteed that <code>theClass</code> came from this parser
+   * @@param theClass The class to parse in
+   * @@return The parsed in class
+   * @@throws ClassParseException If there was a format-level error in the class
+   * @@throws IOException If an error occurred on reading
+   */
+  protected def internalParseClass( theClass: PreClass ): InstanceFactory[ _ ]
+
+  /**
+   * Parses in the given class.
+   * @@param theClass The class to parse in
+   * @@return The parsed in class
+   * @@throws ClassParseException If there was a format-level error in the class,
+   * or if this class didn't come from this parser
+   * @@throws IOException If an error occurred on reading
+   */
+  def parseClass( theClass: PreClass ) = {
+    assertParsedIn( theClass )
+    internalParseClass( theClass )
+  }
+
+  /**
+   * Asserts that the given pre class belongs to this parser
+   * @@param preClass The pre class to test
+   * @@throws ClassParseException If the pre class wasn't parsed
+   * in by this parser
+   */
+  def assertParsedIn( preClass: PreClass ) {
+    if ( preClass.parser ne this ) {
+      throw new ClassParseException( "Attempt to parse in pre class that " +
+				     "wasn't parsed in by the given parser. " +
+				     "Pre class: " + preClass )
+    }
+  }
+
+  /**
+   * Parses in the given class and registers it
+   * @@param preClass The pre class corresponding to the given class. 
+   * @@param overwrite If true, then overwrite when a class that
+   * has been encountered is found.  Otherwise throw an exception
+   * @@return true if a class was overwritten, else false
+   * @@throws ClassParseException if there was a format-level in a class, or
+   * if the given pre class doesn't correspond to this parser
+   * @@throws ClassAlreadyRegisteredException If overwrite is false and
+   * the class was already registered
+   * @@throws IOException If an error occurred on reading
+   */
+  def parseAndRegisterClass( preClass: PreClass, overwrite: Boolean ) = {
+    val parsed = parseClass( preClass )
+    if ( overwrite ) {
+      ClassParser.registerClass( parsed )
+    } else {
+      ClassParser.registerClassNoRepeat( parsed )
+      false 
+    }
+  }
+
+  /**
+   * Parses in and registers all classes.
+   * Note that this should be called with the utmost discretion!
+   * If there are dependencies that are in other files that are queued
+   * to be parsed in, this will fail.
+   * @@param overwrite If true, then overwrite when a class that
+   * has been encountered is found.  Otherwise throw an exception
+   * @@throws ClassParseException if there was a format-level in a class, or
+   * if the given pre class doesn't correspond to this parser
+   * @@throws ClassAlreadyRegisteredException If overwrite is false and
+   * the class was already registered
+   * @@throws IOException If an error occurred on reading
+   */
+  def parseAndRegisterClasses( overwrite: Boolean ) {
+    classesInformation.foreach( _.parseAndRegisterClass( overwrite ) )
+  }
+
+  /**
+   * Like <code>parseAndRegisterClasses</code>, but it uses
+   * <code>PreClassConstants.OVERWRITE_DEFAULT</code> for
+   * <code>overwrite</code>
+   * @@throws ClassParseException if there was a format-level in a class, or
+   * if the given pre class doesn't correspond to this parser
+   * @@throws ClassAlreadyRegisteredException If overwrite is false and
+   * the class was already registered
+   * @@throws IOException If an error occurred on reading
+   */
+  def parseAndRegisterClasses() {
+    parseAndRegisterClasses( PreClassConstants.OVERWRITE_DEFAULT )
+  }
+}
+@
+
+
+1.10
+log
+@Refactored so that dependencies can now be resolved
+between files.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parser.scala,v 1.9 2011/04/10 04:05:04 kyledewey Exp $
+d9 4
+d216 3
+a218 25
+    var nodeID = -1
+    Map() ++ classes.map( current => {
+      nodeID += 1
+      current -> nodeID 
+    } )
+  }
+
+  /**
+   * Given a bunch of pre-classes, it will remove those pre-classes
+   * which can be accounted for.  That is, if a given symbol has already
+   * been loaded in, then it will not attempt to load it in again.
+   * @@param classes The pre-classes
+   * @@returns Those pre-classes which have symbols which have yet to
+   * be accounted for
+   */
+  def removeExistantClasses( classes: Seq[ PreClass ] ) = {
+    import sentinel.model.ParamType._
+    classes.filter( current =>
+      current.theType match {
+	case MatcherType => 
+	  !MatcherFactoryManager.isRegistered( current.name )
+	case ReplacerType => 
+	  !ReplacerFactoryManager.isRegistered( current.name )
+	case _ => false
+      } )
+a224 2
+   * @@param classMap A mapping from the pre-classes to unique IDs.  Assumes
+   * that IDs are from 0 to n - 1, where n is the number of classes.
+d226 1
+d228 3
+a230 3
+  def dependencyGraph( classes: Seq[ PreClass ],
+		       classMap: Map[ PreClass, Int ] ) = {
+    val newClasses = removeExistantClasses( classes )
+d235 1
+a235 1
+      val thisID = classMap( theClass )
+d238 5
+a242 2
+      theClass.dependencies.foreach( ( current: PreClass ) =>
+	retval.addEdge( classMap( current ), thisID ) )
+d256 2
+a257 5
+  def toParseOrder( classes: Seq[ PreClass ] ) = {
+    val graph = dependencyGraph( classes, 
+				 classMap( classes ) )
+    graph.topologicalSort.map( _.info )
+  }
+d332 75
+d414 1
+d417 66
+a482 4
+case class PreClass( val name: String,
+		     val theType: ParamType,
+		     val parser: ClassParser ) {
+  var dependencies: Seq[ PreClass ] = Seq()
+@
+
+
+1.9
+log
+@Now uses FactoryManager's regiserFactory method.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parser.scala,v 1.8 2011/03/14 11:59:55 kyledewey Exp kyledewey $
+d9 3
+d277 61
+d343 12
+a354 1
+ * Container for a class that has yet to be parsed in
+d357 1
+d361 2
+a362 1
+		     val theType: ParamType ) {
+d364 9
+d375 10
+a384 5
+   * Will simply convert the given string to a param type.
+   * @@param name The name of the class
+   * @@param stringType The type, as a string
+   * @@throws ClassParseException If the given type could not be converted,
+   * or if it is not an instance type
+d386 15
+a400 2
+  def this( name: String, theType: String ) =
+    this( name, ClassParser.textToInstanceType( theType ) )
+d422 1
+d425 1
+a425 2
+   * @@throws ClassParseException If there was a format-level error in the class,
+   * or if the given class doesn't exist
+d428 1
+a428 1
+  def parseClass( theClass: PreClass ): InstanceFactory[ _ ]
+d431 5
+a435 3
+   * Like <code>parseAndRegisterClasses</code>, only overwrite is set to false
+   * @@throws ClassParseException if there was a format-level in a class
+   * @@throws ClassAlreadyRegisteredException If the class was already registered
+d438 3
+a440 2
+  def parseAndRegisterClasses() {
+    parseAndRegisterClasses( false )
+d444 13
+a456 9
+   * Like <code>parseAndRegisterClasses</code>, but overwrite is set to true.
+   * @@return The names of the overwritten classes
+   * @@throws ClassParseException if there was a format-level in a class
+   * @@throws ClassAlreadyRegisteredException If the class was already registered
+   * @@throws IOException If an error occurred on reading
+   */
+  def parseAndRegisterClassesOverwrite() =
+    parseAndRegisterClasses( true )
+   
+d458 2
+a459 1
+   * Parses in all classes.
+d461 4
+a464 4
+   * has been encountered is found.  Otherwise 
+   * @@return The names of all classes that were overridden.  This will
+   * be an empty list if overwrite is false.
+   * @@throws ClassParseException if there was a format-level in a class
+d469 8
+a476 26
+  def parseAndRegisterClasses( overwrite: Boolean ) = {
+    val info = classesInformation()
+    var retval: List[ String ] = List()
+    ClassParser.toParseOrder( info ).foreach( ( preClass: PreClass ) => {
+      val parsed = parseClass( preClass )
+      if ( overwrite ) {
+	if ( registerClass( parsed ) ) {
+	  retval = parsed.name :: retval
+	}
+      } else {
+	registerClassNoRepeat( parsed )
+      }
+    })
+    retval.reverse.toSeq
+  }
+    
+  /**
+   * Like <code>registerClass</code>, but if a repeat is found, it will
+   * throw a ClassAlreadyRegistered exception.
+   * @@param theClass The class to register
+   * @@throws ClassAlreadyRegisteredException If the class was already registered
+   * @@throws ClassParseException If a factory type isn't recognized
+   */
+  def registerClassNoRepeat( theClass: InstanceFactory[ _ ] ) {
+    assertClassNotRegistered( theClass )
+    registerClass( theClass )
+d480 11
+a490 3
+   * Registers the given class.  If the name is a repeat, then it will be overridden
+   * @@return true if it was a repeat, else false
+   * @@throws ClassParseException If a factory type isn't recognized
+d492 2
+a493 9
+  def registerClass( theClass: InstanceFactory[ _ ] ): Boolean = {
+    val retval = classRegistered( theClass )
+    try {
+      FactoryManager.registerFactory( theClass )
+    } catch {
+      case UnknownFactoryTypeException( message ) =>
+	throw new ClassParseException( message )
+    }
+    retval
+d497 8
+a504 3
+   * Asserts that the given class hasn't already been registered
+   * @@param theClass the class to check
+   * @@throws ClassAlreadyRegisteredException If the class was already registered
+d506 2
+a507 8
+  def assertClassNotRegistered( theClass: InstanceFactory[ _ ] ) {
+    if ( classRegistered( theClass ) ) {
+      throw new ClassAlreadyRegisteredException( "Class with name \"" +
+						 theClass.name + 
+						 "\" of type " +
+						 ParamType.toString( theClass.instanceType ) + 
+						 " is already registered." )
+    }
+a508 17
+
+  /**
+   * Determines if the given class is already registered
+   * @@param theClass the class to check
+   * @@return true if it is already registered, else false
+   * @@throws ClassParseException If a factory type isn't recognized
+   */
+  def classRegistered( theClass: InstanceFactory[ _ ] ) =
+    theClass match {
+      case matcher: MatcherFactory => 
+	MatcherFactoryManager.isRegistered( matcher.name )
+      case replacer: ReplacerFactory =>
+	ReplacerFactoryManager.isRegistered( replacer.name )
+      case _ =>
+	throw new ClassParseException( "Unknown factory type: " +
+				       ParamType.toString( theClass.instanceType ) )
+    }
+@
+
+
+1.8
+log
+@Allowed for duplicate classes to overwrite new ones.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parser.scala,v 1.7 2010/07/11 05:49:13 kyledewey Exp $
+d9 3
+d392 5
+a396 8
+    theClass match {
+      case matcher: MatcherFactory => 
+	MatcherFactoryManager.registerFactory( matcher )
+      case replacer: ReplacerFactory => 
+	ReplacerFactoryManager.registerFactory( replacer )
+      case _ =>
+	throw new ClassParseException( "Unknown factory type: " +
+				       ParamType.toString( theClass.instanceType ) )
+@
+
+
+1.7
+log
+@Changed implementation of ParseAndRegisterClasses().
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parser.scala,v 1.6 2010/07/10 21:46:28 kyledewey Exp kyledewey $
+d9 3
+d55 9
+d324 20
+d345 7
+a351 1
+   * @@throws ClassParseException if there was a format-level in the class
+d354 1
+a354 1
+  def parseAndRegisterClasses() {
+d356 24
+a379 2
+    ClassParser.toParseOrder( info ).map( ( preClass: PreClass ) =>
+      registerClass( parseClass( preClass ) ) )
+d383 3
+a385 4
+   * Registers the given class.
+   * @@param theClass the class to register
+   * @@throws ClassParseException If a class with the given name
+   *         already exists
+d387 2
+a388 1
+  def registerClass( theClass: InstanceFactory[ _ ] ) =
+d390 38
+a427 16
+      case matcher: MatcherFactory => {
+	if ( !MatcherFactoryManager.isRegistered( matcher.name ) ) {
+	  MatcherFactoryManager.registerFactory( matcher )
+	} else {
+	  throw new ClassParseException( "Matcher with the name: \"" +
+					 matcher.name + "\" already exists." )
+	}
+      }
+      case replacer: ReplacerFactory => {
+	if ( !ReplacerFactoryManager.isRegistered( replacer.name ) ) {
+	  ReplacerFactoryManager.registerFactory( replacer )
+	} else {
+	  throw new ClassParseException( "Replacer with the name: \"" +
+					 replacer.name + "\" already exists." )
+	}
+      }
+@
+
+
+1.6
+log
+@Now uses a dependency graph as a guide for parsing, instead
+of merely parsing classes in in the order in which they
+appear in the file.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parser.scala,v 1.5 2010/06/25 03:18:31 kyledewey Exp $
+d9 5
+a314 1
+   * @@return The classes which were parsed in
+d316 1
+a316 1
+  def parseClasses(): Seq[ InstanceFactory[ _ ] ] = {
+d318 2
+a319 1
+    ClassParser.toParseOrder( info ).map( parseClass( _ ) )
+a322 25
+   * Parses in all classes, then registers them.
+   * @@param classes The classes.  Each element is a tuple with the name,
+   *        description, and class itself.
+   * @@throws ClassParseException If there was an error while parsing
+   * @@throws IOException If there was an error on reading
+   */
+  def parseAndRegisterClasses(): Unit = {
+    try {
+      registerClasses( parseClasses() )
+    } catch {
+      case e: Exception =>
+	throw new ClassParseException( "File: " + fileName +
+				       ": " + e.getMessage )
+    }
+  }
+
+  /**
+   * Registers all of the given classes.
+   * @@param classes The classes to register
+   * @@throws ClassParseException If any individual class already existed
+   */
+  def registerClasses( classes: Seq[ InstanceFactory[ _ ] ] ) =
+    classes.foreach( registerClass( _ ) )
+
+  /**
+@
+
+
+1.5
+log
+@Refactored so that variables have types.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parser.scala,v 1.4 2010/06/20 17:30:05 kyledewey Exp kyledewey $
+d9 3
+d81 53
+d166 88
+d256 2
+d259 3
+a261 6
+ * Abstract class from which a parser for a given file format
+ * must inherit.  The parser parses in classes, which are factories
+ * which can create objects.
+ * @@param fileName The name of the file to parse
+ * @@throws FileNotFoundException If the given file could not be opened
+ * @@throws IOException If a read was unsuccessful
+d264 4
+a267 1
+abstract class ClassParser( val fileName: String ) {
+d269 42
+a310 4
+   * Reads in all the classes.
+   * @@return A sequence of all classes that have been parsed in
+   * @@throws ClassParseException If there was an error in the underlying format
+   * @@throws IOException If there was an error on reading
+d312 4
+a315 1
+  def parseClasses(): Seq[ InstanceFactory[ _ ] ]
+@
+
+
+1.4
+log
+@Made everything use the more generic
+InstanceFactory[ _ ] type instead of the less
+flexible and bulkier
+Either[ MatcherFactory, ReplacerFactory ].
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parser.scala,v 1.3 2010/06/18 19:37:06 kyledewey Exp kyledewey $
+d9 6
+a77 29
+   * Validates that the given string correlates to a class type.
+   * I.e. it must be either "Matcher" or "Replacer".  If not, then
+   * it throws an exception
+   * @@param typeName The name of the type
+   * @@throws ClassParseException If the given type is not that of
+   *         a matcher or replacer
+   */
+  def validateInstanceType( typeName: String ) = {
+    if ( !isInstanceType( typeName ) ) {
+      throw new ClassParseException( "Class type must be either a " +
+				    "\"Matcher\" or \"Replacer\"; got \"" +
+				    typeName + "\"" )
+    }
+  }
+  
+  /**
+   * Validates that the given type is a constant type.
+   * @@param typeName The name of the type
+   * @@throws ClassParseException If the given type is not that
+   *         of a constant
+   */
+  def validateConstantType( typeName: String ) = {
+    if ( !isConstantType( typeName ) ) {
+      throw new ClassParseException( "Unknown constant type: " +
+				     typeName )
+    }
+  }
+
+  /**
+@
+
+
+1.3
+log
+@Made factories take a name and description.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parser.scala,v 1.2 2010/06/18 03:09:30 kyledewey Exp kyledewey $
+d9 3
+a75 1
+   * @@return True if it is
+d79 5
+a83 6
+  def validateClassType( typeName: String ): Boolean = {
+    val retval = isClassType( typeName )
+    if ( !retval ) {
+	throw new ClassParseException( "Class type must be either a " +
+				       "\"Matcher\" or \"Replacer\"; got \"" +
+				       typeName + "\"" )
+a84 1
+    retval
+d88 13
+d151 1
+a151 1
+  def parseClasses(): Seq[ Either[ MatcherFactory, ReplacerFactory ] ]
+d175 1
+a175 1
+  def registerClasses( classes: Seq[ Either[ MatcherFactory, ReplacerFactory ] ] ) =
+d184 1
+a184 1
+  def registerClass( theClass: Either[ MatcherFactory, ReplacerFactory ] ) =
+d186 1
+a186 1
+      case Left( matcher ) => {
+d194 1
+a194 1
+      case Right( replacer ) => {
+d202 3
+a206 65
+
+/**
+ * Creates a matcher from a parse tree.
+ * @@param name The name of the factory
+ * @@param desc A description of the factory
+ * @@param neededParams The parameters that are valid for the parse tree
+ * @@param tree The parse tree
+ * @@author Kyle Dewey
+ */
+class ParseTreeMatcherFactory( name: String,
+			       desc: String,
+			       neededParams: Map[ String, ParamInfo ],
+			       val tree: ParseNode )
+extends MatcherFactory( name,
+		        desc, 
+		        neededParams ) {
+  import MatcherFactory._
+  private val parser = new ParseTreeFactory[ Matcher ]( name,
+						        desc,
+						        neededParams,
+						        tree )
+  /**
+   * Creates a new instance of a matcher using a parse tree.
+   * @@param params Params to instantiate the matcher with
+   * @@return a new matcher instantiated with the given params
+   * @@throws ParameterizedInstantationException If the params were
+   *         ok but the underlying matcher could not be created
+   */
+  override def internalInstantiate( params: Seq[ NamedParam ] ): Matcher =
+    // note that we are sure to have our parameters be correct, so
+    // we can just pass them along
+    toMatcher( parser.internalInstantiate( params ) )
+}
+
+
+/**
+ * Creates a replacer from a parse tree.
+ * @@param name The name of the factory
+ * @@param desc A description for the factory
+ * @@param neededParams The parameters that are valid for the parse tree
+ * @@param tree The parse tree
+ * @@author Kyle Dewey
+ */
+class ParseTreeReplacerFactory( name: String,
+			        desc: String,
+			        neededParams: Map[ String, ParamInfo ],
+			        val tree: ParseNode )
+extends ReplacerFactory( name,
+			 desc,
+			 neededParams ) {
+  import ReplacerFactory._
+  private val parser = new ParseTreeFactory[ Replacer ]( name,
+							 desc,
+						         neededParams,
+						         tree )
+  /**
+   * Creates a new instance of a replacer using a parse tree.
+   * @@param params Params to instantiate the replacer with
+   * @@return a new replacer instantiated with the given params
+   * @@throws ParameterizedInstantationException If the params were
+   *         ok but the underlying replacer could not be created
+   */
+  override def internalInstantiate( params: Seq[ NamedParam ] ): Replacer =
+    toReplacer( parser.internalInstantiate( params ) )
+}
+@
+
+
+1.2
+log
+@Moved some code to its rightful place in ParamType.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parser.scala,v 1.1 2010/06/15 17:56:41 kyledewey Exp $
+d9 3
+d134 1
+a134 2
+   * @@returns a sequence of all the classes.  Each element is a tuple of
+   *          the class name, class description, and the class itself
+d138 1
+a138 3
+  def parseClasses(): Seq[ ( String, 
+		             String, 
+		             Either[ MatcherFactory, ReplacerFactory ] ) ]
+d162 1
+a162 1
+  def registerClasses( classes: Seq[ ( String, String, Either[ MatcherFactory, ReplacerFactory ] ) ] ) =
+d164 1
+a164 1
+  
+d166 4
+a169 5
+   * Registers a given tuple corresponding to a class.
+   * @@param tuple The tuple corresponding to a class.  The elements are
+   *        the name, the description, and the class itself.
+   * @@throws ClassParseException If a class with the given name already
+   *         exists
+d171 2
+a172 2
+  def registerClass( tuple: ( String, String, Either[ MatcherFactory, ReplacerFactory ] ) )  =
+    tuple._3 match {
+d174 2
+a175 4
+	if ( !MatcherFactoryManager.isRegistered( tuple._1 ) ) {
+	  MatcherFactoryManager.registerFactory( tuple._1,
+						 tuple._2,
+						 matcher )
+d178 1
+a178 1
+					 tuple._1 + "\" already exists." )
+d182 2
+a183 4
+	if ( !ReplacerFactoryManager.isRegistered( tuple._1 ) ) {
+	  ReplacerFactoryManager.registerFactory( tuple._1,
+						  tuple._2,
+						  replacer )
+d186 1
+a186 1
+					 tuple._1 + "\" already exists." )
+d194 3
+a197 1
+ * @@param neededParams The parameters that are valid for the parse tree
+d200 7
+a206 3
+class ParseTreeMatcherFactory( val tree: ParseNode,
+			       neededParams: Map[ String, ParamInfo ] )
+extends MatcherFactory( neededParams ) {
+d208 4
+a211 2
+  private val parser = new ParseTreeFactory[ Matcher ]( tree,
+						        neededParams )
+d220 1
+a220 1
+    // note that we are guarenteed to have our parameters be correct, so
+d228 3
+a231 1
+ * @@param neededParams The parameters that are valid for the parse tree
+d234 7
+a240 3
+class ParseTreeReplacerFactory( val tree: ParseNode,
+			        neededParams: Map[ String, ParamInfo ] )
+extends ReplacerFactory( neededParams ) {
+d242 4
+a245 2
+  private val parser = new ParseTreeFactory[ Replacer ]( tree,
+						         neededParams )
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d74 3
+a76 5
+  def validateClassType( typeName: String ): Boolean = 
+    typeName match {
+      case "Matcher" => true
+      case "Replacer" => true
+      case _ => 
+d81 2
+d113 4
+a116 10
+    text.toLowerCase match {
+      case "constant" => ConstantType
+      case "variable" => VariableType
+      case "matcher" => MatcherType
+      case "replacer" => ReplacerType
+      case "data" => DataType
+      case _ => 
+	throw new ClassParseException( "Unknown param type: \"" + 
+				       text  + "\"" )
+    }
+d217 3
+a219 1
+    toMatcher( parser.instantiate( params ) )
+d243 1
+a243 1
+    toReplacer( parser.instantiate( params ) )
+@

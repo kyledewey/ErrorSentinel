@@ -1,0 +1,576 @@
+head	1.6;
+access;
+symbols;
+locks
+	kyledewey:1.6; strict;
+comment	@# @;
+
+
+1.6
+date	2011.06.08.04.29.49;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.05.28.19.03.16;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.05.27.01.34.03;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2011.05.25.21.54.04;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2011.05.25.20.16.07;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.07.11.05.54.17;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Contains code to write out projects.
+@
+
+
+1.6
+log
+@Now conforms to the interface for constants.
+@
+text
+@/*
+ * Writer.scala
+ *
+ * Version:
+ *     $Id: Writer.scala,v 1.5 2011/05/28 19:03:16 kyledewey Exp $
+ *
+ * Revisions:
+ *      $Log: Writer.scala,v $
+ *      Revision 1.5  2011/05/28 19:03:16  kyledewey
+ *      Added code so output XML is formatted nicely.
+ *
+ *      Revision 1.4  2011/05/27 01:34:03  kyledewey
+ *      Refactored so that the routine used to transform
+ *      vanilla spreadsheets into a custom version is passed
+ *      as a parameter instead of being hardcoded.
+ *
+ *      Revision 1.3  2011/05/25 21:54:04  kyledewey
+ *      Added support for values instead of just variables.
+ *
+ *      Revision 1.2  2011/05/25 20:16:07  kyledewey
+ *      Refactored so spreadsheet variables can be passed directly
+ *      in the XML file.  Helps to decouple code from the sheet.
+ *
+ *      Revision 1.1  2010/07/11 05:54:17  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.project
+
+import java.io._
+import sentinel.model._
+
+/**
+ * Exception thrown when there was an error on writing out a project's
+ * definition.
+ * @@param message An informative message to show the user
+ * @@author Kyle Dewey
+ */
+case class ProjectWriteException( message: String )
+     extends IOException( message ) {}
+
+/**
+ * Interface that describes something that can write out a project
+ * @@author Kyle Dewey
+ */
+trait ProjectWriter {
+  /**
+   * Writes the given project out to the given file
+   * @@param project The file to write to
+   * @@param file The file to write to
+   * @@throws ProjectWriteException If a format-level writing error occurred
+   * @@throws IOException If an error occurred on write
+   */
+  def writeProject( project: Project[ _ ],
+		    file: File ): Unit
+
+  /**
+   * Writes the given project out to the given file
+   * @@param project The file to write to
+   * @@param fileName The name of the file to write to
+   * @@throws ProjectWriteException If a format-level writing error occurred
+   * @@throws IOException If an error occurred on write
+   */
+  def writeProject( project: Project[ _ ],
+		    fileName: String ) {
+    writeProject( project,
+		  new File( fileName ) )
+  }
+}
+
+/**
+ * Something that can write out a project in XML format.
+ * @@author Kyle Dewey
+ */
+object WriteXML extends ProjectWriter {
+  import scala.xml._
+
+  /**
+   * Given a cell range, creates an XML representing the cell range
+   * @@param range The range to write out
+   * @@return An XML node describing the cell range
+   */
+  def cellRangeToNode( range: CellRange ) = {
+    import Spreadsheet._
+    <CellRange>
+      <Sheet>{ range.sheet.getOrElse( ANY_SHEET ) }</Sheet>
+      <Row>{ range.row.getOrElse( ANY_ROW ) }</Row>
+      <Column>{ range.column.getOrElse( ANY_COLUMN ) }</Column>
+    </CellRange>
+  }
+
+  /**
+   * Given a named parameter, it will return the name and the type
+   * in a single nodeseq
+   * @@param namedParam The named parameter
+   */
+  def namedParamNameType( namedParam: NamedParam ) = {
+    <Name>{ namedParam.name }</Name>
+    <Type>{ namedParam.param.typeName }</Type>
+  }
+
+  /**
+   * Converts the given constant to a value node
+   * @@param namedParam The named parameter
+   * @@return An XML value node corresponding to the value
+   * @@throws ProjectWriteException If the underlying parameter isn't a constant
+   */
+  def constantParamToNode( namedParam: NamedParam ) = {
+    if ( !namedParam.param.isConstantType ) {
+      throw new ProjectWriteException( "Given parameter is not a constant: " +
+				       namedParam.name )
+    }
+
+    <Value>
+      { namedParamNameType( namedParam ) }
+      <Contents>{ namedParam.param.sentStringValue }</Contents>
+    </Value>
+  }
+
+  /**
+   * Converts the given named parameter to a variable node
+   * @@param namedParam The named parameter
+   * @@return An XML variable node encapsulating all the information in it
+   * @@throws ProjectWriteException If an underlying parameter isn't a variable
+   */
+  def variableParamToNode( namedParam: NamedParam ) = {
+    if ( !namedParam.param.isInstanceOf[ CellRange ] ) {
+      throw new ProjectWriteException( "Given parameter is not a variable: " +
+				       namedParam.name )
+    }
+    <Variable>
+    { namedParamNameType( namedParam ) }
+    { cellRangeToNode( namedParam.param.asInstanceOf[ CellRange ] ) }
+    </Variable>
+  }
+
+  /**
+   * Given named parameters, it will convert variables to a Variables
+   * node.
+   * @@param namedParams The named parameters
+   * @@throws ProjectWriteException If a given parameter was expected to be
+   * a variable but isn't
+   */
+  def namedParamsToVariablesNode( namedParams: Seq[ NamedParam ] ) = {
+    <Variables>
+    { namedParams.filter( _.param.isVariableType )
+                           .map( variableParamToNode( _ ) ) }
+    </Variables>
+  }
+
+  /**
+   * Given named parameters, it will convert constants to a Values node.
+   * @@param namedParams The named parameters
+   * @@throws ProjectWriteException If a given parameter was expected to be
+   * a constant but isn't
+   */
+  def namedParamsToValuesNode( namedParams: Seq[ NamedParam ] ) = {
+    <Values>
+    { namedParams.filter( _.param.isConstantType )
+                 .map( constantParamToNode( _ ) ) }
+    </Values>
+  }
+
+  /**
+   * Converts the given named parameters to a Variables and a Values node
+   * @@param namedParams The named parameters
+   * @@return nodes for both variables and constants
+   * @@throws ProjectWriteException If an underlying parameter isn't a variable
+   */
+  def namedParamsToNodes( namedParams: Seq[ NamedParam ] ) = 
+    namedParamsToValuesNode( namedParams ) ++ 
+      namedParamsToVariablesNode( namedParams )
+
+  /**
+   * Converts the given class name to a node
+   * @@param className The class name
+   * @@return An XML node holding the class name
+   */
+  def classNameToNode( className: String ) =
+    <ClassName>{ className }</ClassName>
+
+  /**
+   * Gets the inner part of a node for an instance.
+   * This portion does not differ between matchers and replacers
+   * @@param instance The instance
+   * @@return Two XML nodes in a NodeSeq: one for the class name, and the
+   * other for the variables
+   * @@throws ProjectWriteException If an underlying parameter isn't a variable
+   */
+  def instanceInnerNodes( instance: Instance ) = 
+    classNameToNode( instance.className ) ++ 
+      namedParamsToNodes( instance.params )
+
+  /**
+   * Converts the given instance to a node
+   * @@param instance The instance
+   * @@return An XML node holding all the instance information
+   * @@throws ProjectWriteException If an underlying parameter isn't a variable,
+   * or if the instance is neither a matcher or a replacer
+   */
+  def instanceToNode( instance: Instance ) = {
+    import ParamType._
+    lazy val inner = instanceInnerNodes( instance )
+    instance.getType match {
+      case MatcherType => <Matcher>{ inner }</Matcher>
+      case ReplacerType => <Replacer>{ inner }</Replacer>
+      case _ => throw new ProjectWriteException( "Unknown instance type: " +
+						 instance.typeName )
+    }
+  }
+
+  /**
+   * Given good data matcher information, it will create an XML node
+   * encapsualting all of it.
+   * @@param goodData The good data information from an associations object
+   * @@return An XML node describing the good data
+   * @@throws ProjectWriteException If an underlying parameter isn't a variable,
+   * or if the instance is neither a matcher or a replacer
+   */
+  def goodDataToNode( goodData: Pair[ Matcher, CellRange ] ) = {
+    <GoodData>
+      { cellRangeToNode( goodData._2 ) }
+      { instanceToNode( goodData._1 ) }
+    </GoodData>
+  }
+
+  /**
+   * Given all the good data matcher information, it will create an XML
+   * node encapsulating all of it
+   * @@param goodDatas The good data information from an association
+   * @@return An XML node describing all the good data matchers
+   * @@throws ProjectWriteException If an underlying parameter isn't a variable,
+   * or if the instance is neither a matcher or a replacer
+   */
+  def goodDatasToNode( goodDatas: Seq[ Pair[ Matcher, CellRange ] ] ) = {
+    <GoodDatas>
+      { goodDatas.map( goodDataToNode( _ ) ) }
+    </GoodDatas>
+  }
+
+  /**
+   * Given an error correction pair, it will create a single node that
+   * encapsulates all the information within.
+   * @@param errorCorrectionPair The matcher/replacer pair, along with the
+   * cell range that it applies to
+   * @@return An XML node that holds all of the information
+   * @@throws ProjectWriteException If an underlying parameter isn't a variable,
+   * or if the instance is neither a matcher or a replacer
+   */
+  def errorCorrectionPairToNode( errorCorrectionPair: Pair[ Pair[ Matcher, Replacer ], CellRange ] ) = {
+    <ErrorCorrection>
+      { instanceToNode( errorCorrectionPair._1._1 ) }
+      { instanceToNode( errorCorrectionPair._1._2 ) }
+      { cellRangeToNode( errorCorrectionPair._2 ) }
+    </ErrorCorrection>
+  }
+
+  /**
+   * Given error correction pairs, it will create a single node
+   * that encapsulates the information
+   * @@param errorCorrectionPairs The matcher/replacer error correction pairs,
+   * along with cell ranges that they apply to
+   * @@return An XML node that holds all the information within
+   * @@throws ProjectWriteException If an underlying parameter isn't a variable,
+   * or if the instance is neither a matcher or a replacer
+   */
+  def errorCorrectionPairsToNode( errorCorrectionPairs: Seq[ Pair[ Pair[ Matcher, Replacer ], CellRange ] ] ) = {
+    <ErrorCorrections>
+      { errorCorrectionPairs.map( errorCorrectionPairToNode( _ ) ) }
+    </ErrorCorrections>
+  }
+
+  /**
+   * Creates an associations node, given an associations object
+   * @@param associations The associations to write out
+   * @@return An XML node describing the associations
+   */
+  def associationsToNode( associations: Associations ) = {
+    <Associations>
+      { goodDatasToNode( associations.goodDataMatchers ) }
+      { errorCorrectionPairsToNode( associations.errorCorrectionPairs ) }
+    </Associations>
+  }
+
+  /**
+   * Creates a sheet node, given a sheet
+   * @@param sheet The sheet to write out
+   * @@return A node containing the sheet
+   */
+  def sheetToNode( sheet: Sheet ) = {
+    <Sheet>
+      <Name>{ sheet.name }</Name>
+      <File>{ sheet.fileName }</File>
+      <Type>{ sheet.fileType }</Type>
+    </Sheet>
+  }
+
+  /**
+   * Creates a sheets node, given a bunch of sheets
+   * @@param sheets The sheets to write out
+   * @@return A node containing all the sheets
+   */
+  def sheetsToNode( sheets: Seq[ Sheet ] ) = {
+    <Sheets>
+      { sheets.map( sheetToNode( _ ) ) }
+    </Sheets>
+  }
+
+  /**
+   * Creates a definition node, given a language definition file
+   * @@param definition The language definition
+   * @@return A node containing the definition information
+   */
+  def definitionToNode( definition: Language ) = {
+    <Definition>
+      <File>{ definition.fileName }</File>
+      <Type>{ definition.fileType }</Type>
+    </Definition>
+  }
+
+  /**
+   * Creates a definitions node, given a bunch of language definitions
+   * @@param definitions The definitions to write out
+   * @@return A node containing all the definitions
+   */
+  def definitionsToNode( definitions: Seq[ Language ] ) = {
+    <Definitions>
+      { definitions.map( definitionToNode( _ ) ) }
+    </Definitions>
+  }
+
+  /**
+   * Creates a project node, given a project
+   * @@param project The project
+   * @@return The project, as a node
+   */
+  def projectToNode( project: Project[ _ ] ) = {
+    <Project>
+      { sheetsToNode( project.sheets.values.toList ) }
+      { definitionsToNode( project.langs ) }
+      { associationsToNode( project.associations ) }
+    </Project>
+  }
+
+  /**
+   * Writes the given project out to the given file
+   * @@param project The file to write to
+   * @@param file The file to write to
+   * @@throws ProjectWriteException If a format-level writing error occurred
+   * @@throws IOException If an error occurred on write
+   */
+  def writeProject( project: Project[ _ ],
+		    file: File ) {
+    import java.io._
+    import sentinel.model.writer.xml._
+    val printer = new PrettyPrinter( XMLWriter.WIDTH,
+				     XMLWriter.INDENTATION )
+    val asString = printer.format( projectToNode( project ) )
+    val writer = new BufferedWriter( new FileWriter( file ) )
+    writer.write( asString )
+    writer.close()
+  }
+}
+
+@
+
+
+1.5
+log
+@Added code so output XML is formatted nicely.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Writer.scala,v 1.4 2011/05/27 01:34:03 kyledewey Exp $
+d9 3
+d111 1
+a111 1
+    if ( !namedParam.param.isInstanceOf[ Constant ] ) {
+d118 1
+a118 1
+      <Contents>{ namedParam.param.printableValue.getOrElse( "" ) }</Contents>
+@
+
+
+1.4
+log
+@Refactored so that the routine used to transform
+vanilla spreadsheets into a custom version is passed
+as a parameter instead of being hardcoded.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Writer.scala,v 1.3 2011/05/25 21:54:04 kyledewey Exp kyledewey $
+d9 5
+d115 1
+a115 1
+      <Contents>{ namedParam.param.printableValue }</Contents>
+d353 8
+a360 2
+    XML.save( file.getName,
+	      projectToNode( project ) )
+@
+
+
+1.3
+log
+@Added support for values instead of just variables.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Writer.scala,v 1.2 2011/05/25 20:16:07 kyledewey Exp kyledewey $
+d9 3
+d48 1
+a48 1
+  def writeProject( project: Project,
+d58 1
+a58 1
+  def writeProject( project: Project,
+d331 1
+a331 1
+  def projectToNode( project: Project ) = {
+d346 1
+a346 1
+  def writeProject( project: Project,
+@
+
+
+1.2
+log
+@Refactored so spreadsheet variables can be passed directly
+in the XML file.  Helps to decouple code from the sheet.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Writer.scala,v 1.1 2010/07/11 05:54:17 kyledewey Exp $
+d9 4
+d84 28
+d115 1
+a115 1
+   * @@throws ProjectWriteException If the underlying parameter isn't a variable
+d117 3
+a119 10
+  def namedParamToNode( namedParam: NamedParam ) = {
+    if ( namedParam.param.isInstanceOf[ CellRange ] ) {
+      <Variable>
+	<Name>{ namedParam.name }</Name>
+	<Type>{ namedParam.param.typeName }</Type>
+	{ cellRangeToNode( namedParam.param.asInstanceOf[ CellRange ] ) }
+      </Variable>
+    } else {
+      throw new ProjectWriteException( "Non-spreadsheet variable in toplevel " +
+				       "association with name: " + 
+d122 4
+d129 2
+a130 1
+   * Converts the given named parameters to a variables node
+d132 2
+a133 2
+   * @@return An XML variables node
+   * @@throws ProjectWriteException If an underlying parameter isn't a variable
+d135 1
+a135 1
+  def namedParamsToNode( namedParams: Seq[ NamedParam ] ) = {
+d137 2
+a138 1
+      { namedParams.map( namedParamToNode( _ ) ) }
+d143 23
+d183 1
+a183 1
+      namedParamsToNode( instance.params )
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d80 106
+a185 4
+   * Given a replacer factory, returns an XML node representing that
+   * factory
+   * @@param replacer The replacer factory to write out
+   * @@return An XML node describing the factory
+d187 6
+a192 4
+  def replacerToNode( replacer: ReplacerFactory ) = {
+    <Replacer>
+      <ClassName>{ replacer.name }</ClassName>
+    </Replacer>
+d196 7
+a202 3
+   * Creates an association node, given an association
+   * @@param association The association to write out
+   * @@return An XML node describing the association
+d204 4
+a207 5
+  def associationToNode( association: Association ) = {
+    <Association>
+      { cellRangeToNode( association.range ) }
+      { replacerToNode( association.replacer ) }
+    </Association>
+d211 1
+a211 1
+   * Creates an associations node, given a sequence of associations
+d213 1
+a213 1
+   * @@return An XML node containing the data for the associations
+d215 1
+a215 1
+  def associationsToNode( associations: Seq[ Association ] ) = {
+d217 2
+a218 1
+      { associations.map( associationToNode( _ ) ) }
+@

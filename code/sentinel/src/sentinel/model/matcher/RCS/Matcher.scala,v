@@ -1,0 +1,808 @@
+head	1.12;
+access;
+symbols;
+locks
+	kyledewey:1.12; strict;
+comment	@# @;
+
+
+1.12
+date	2011.06.18.03.30.08;	author kyledewey;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2011.06.08.04.25.53;	author kyledewey;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.06.02.19.00.13;	author kyledewey;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2011.06.02.00.20.00;	author kyledewey;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2011.05.25.20.14.06;	author kyledewey;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.06.26.16.35.43;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.06.26.04.04.04;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.06.20.17.29.04;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.06.18.19.36.41;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.06.18.03.07.47;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.06.16.01.00.12;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.06.15.17.55.00;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Contains some helper code for matchers along with
+built in matchers.
+@
+
+
+1.12
+log
+@Moved True and False to sentinel.model.Parameters.
+@
+text
+@/*
+ * Matcher.scala
+ *
+ * Version:
+ *     $Id: Matcher.scala,v 1.11 2011/06/08 04:25:53 kyledewey Exp $
+ *
+ * Revisions:
+ *      $Log: Matcher.scala,v $
+ *      Revision 1.11  2011/06/08 04:25:53  kyledewey
+ *      Now conforms to the new Param interface.
+ *
+ *      Revision 1.10  2011/06/02 19:00:13  kyledewey
+ *      Added the Not matcher.
+ *
+ *      Revision 1.9  2011/06/02 00:20:00  kyledewey
+ *      The base case for forallPairs that
+ *      takes a single value now dereferences that value
+ *      as a no-op before returning true.  This forces
+ *      a ValueException to be generated on invalid data.
+ *
+ *      Revision 1.8  2011/05/25 20:14:06  kyledewey
+ *      Made it so the class name is also taken as a parameter.
+ *
+ *      Revision 1.7  2010/06/26 16:35:43  kyledewey
+ *      Added no argument constructors for true and false,
+ *      intended as convenience for built-ins.
+ *
+ *      Revision 1.6  2010/06/26 04:04:04  kyledewey
+ *      Added helper functions common to many matchers.
+ *
+ *      Revision 1.5  2010/06/20 17:29:04  kyledewey
+ *      Moved factory code to sentinel.model.Factory.scala
+ *
+ *      Revision 1.4  2010/06/18 19:36:41  kyledewey
+ *      Made factories take a name and description.
+ *
+ *      Revision 1.3  2010/06/18 03:07:47  kyledewey
+ *      Made it so the factory calls internalInstantiate()
+ *
+ *      Revision 1.2  2010/06/16 01:00:12  kyledewey
+ *      Fixed typo in name of ParameterizedInstantiationException.
+ *
+ *      Revision 1.1  2010/06/15 17:55:00  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.model.matcher
+
+import sentinel.model._
+import sentinel.model.InstanceFactory._
+
+/**
+ * Contains routines that are useful for matchers.
+ * @@author Kyle Dewey
+ */
+object Matcher {
+  /**
+   * Executes a given predicate for each pair of items.
+   * Note that this means a comparison of (1,2),(2,3), etc., and
+   * is still O( n )
+   * @@param items The items to look at
+   * @@param pred The predicate to test with
+   * @@return true if the predicate matches on all pairs as described
+   * @@throws ValueException If we could not get the value of a given element
+   */
+  def forallPairs[ T ]( items: Seq[ T ] )( pred: ( T, T ) => Boolean ) = {
+    def forPairs( list: List[ T ] ): Boolean = 
+      list match {
+	case Nil => true
+	case item :: Nil => true
+	case head :: middle :: tail => {
+	  if ( pred( head, middle ) ) {
+	    forPairs( middle :: tail )
+	  } else false
+	}
+      }
+    forPairs( items.toList )
+  }
+
+  /**
+   * Compares all items to make sure that each is less than the last
+   * @@param items The items to compare
+   * @@return true if item1 < item2 < item3, else false
+   * @@throws ValueException if we could not get the value of any single element
+   */
+  def allLess[ T <: Comparable[ T ] ]( items: Seq[ T ] ) =
+    forallPairs( items )( _.compareTo( _ ) < 0 )
+
+  /**
+   * Compares all items to make sure that each is greater than the last
+   * @@param items The items to compare
+   * @@return true if item1 > item2 > item3
+   * @@throws ValueException If we could not get the value of any single element
+   */
+  def allGreater[ T <: Comparable[ T ] ]( items: Seq[ T ] ) =
+    forallPairs( items )( _.compareTo( _ ) > 0 )
+
+  /**
+   * Compares all items to see if they are monotonically increasing.
+   * In other words, 3 <= 4 <= 4.
+   * @@param items The items to compare
+   * @@return true if the items are monotonically increasing
+   * @@throws ValueException If we could not get the value of any single element
+   */
+  def allLessOrEqual[ T <: Comparable[ T ] ]( items: Seq[ T ] ) =
+    forallPairs( items )( _.compareTo( _ ) <= 0 )
+
+  /**
+   * Compares all items to see if they are monotonically decreasing.
+   * In other words, 4 >= 3 >= 2
+   * @@param items The items to compare
+   * @@return true if the items are monotonically decreasing
+   * @@throws ValueException If we could not get the value of any single element
+   */
+  def allGreaterOrEqual[ T <: Comparable[ T ] ]( items: Seq[ T ] ) =
+    forallPairs( items )( _.compareTo( _ ) >= 0 )
+  
+  /**
+   * Compares all items to make sure that they all have the same value.
+   * @@param items The items to compare
+   * @@return true if they all had the same value, else false
+   * @@throws ValueException If we could not get the value out of any element
+   * for whatever reason
+   */
+  def allEqual[ T ]( items: Seq[ T ] ) = 
+    forallPairs( items )( _ == _ )
+
+  /**
+   * Compares all items to make sure that they all have different
+   * values.
+   * @@param items The items to compare
+   * @@return true if they all had different values, else false
+   * @@throws ValueException If we could not get the value out of any element
+   */
+  def allDifferent[ T ]( items: Seq[ T ] ) = {
+    val asSet = Set() ++ items
+    asSet.size == items.size
+  }
+}
+
+/**
+ * Matcher that will invert the given matcher's return value
+ * @@param className The name of the class
+ * @@param params The params to the matcher
+ * <ul><li>"matcher" - matcher to invert the value of</li></ul>
+ * @@author Kyle Dewey
+ */
+class Not( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Matcher {
+  private val input = param( "matcher", params ).matcherValue
+
+  /**
+   * Merely returns the opposite of the given matcher
+   * @@return The opposite of the given matcher
+   */
+  override def matches() =
+    !input.matches
+}
+
+/**
+ * Matcher that represents a logical and.
+ * @@param className The name of the class
+ * @@param params the params to the matcher
+ *        <ul><li>"input" - 0 or more matchers</li></ul>
+ * @@author Kyle Dewey
+ */
+class And( val className: String, 
+	   val params: Seq[ NamedParam ] ) extends Matcher {
+  private val input = InstanceFactory.matchers( asArray( "input", params ) )
+
+  /**
+   * Returns true if and only if all given matchers return true.
+   * Supports short circuit evaluation.  If no matchers are given,
+   * it returns true.
+   * @@return true if all matchers returned true, else false
+   */
+  override def matches(): Boolean = 
+    // note that forall short circuits
+    input.forall( _.matches )
+}
+
+/**
+ * Matcher that represents a logical or.
+ * @@param className The name of the class
+ * @@param params Params to the matcher
+ *        <ul><li>"input" - 0 or more matchers</li></ul>
+ * @@author Kyle Dewey
+ */
+class Or( val className: String, 
+	  val params: Seq[ NamedParam ] ) extends Matcher {
+  private val input = InstanceFactory.matchers( asArray( "input", params ) )
+  
+  /**
+   * Returns false if and only if all matchers return false.
+   * Supports short circuit evaluation  If no matchers are
+   * given, it returns false
+   * @@return false if all matchers returned false, else true
+   */
+  override def matches(): Boolean = 
+    // note that exists short circuits
+    input.exists( _.matches )
+}
+
+/**
+ * Matcher that will match something exactly
+ * @@param className The name of the class
+ * @@param params Params to the matcher<ul>
+ *        <li>"input": any data</li>
+ *        <li>"against": any data</li></ul>
+ * @@author Kyle Dewey
+ */
+class Exact( val className: String, 
+	     val params: Seq[ NamedParam ] ) extends Matcher {
+  private val input = param( "input", params )
+  private val against = param( "against", params )
+
+  /**
+   * Returns true if the two params are of the same value
+   * @@return true if equal, else false
+   */
+  override def matches() =
+    input.sentStringValue == against.sentStringValue
+}
+
+/**
+ * Merely throws a matcher exception.
+ * @@param className The name of the class
+ * @@param params Params to the matcher
+ * <ul><li>"message": any data to show what happened</li></ul>
+ * @@author Kyle Dewey
+ */
+class ThrowMatchException( val className: String, 
+			   val params: Seq[ NamedParam ] ) extends Matcher {
+  private val message = param( "message", params )
+
+  /**
+   * Doesn't actually ever return.
+   * Merely throws an exception with whatever message was given.
+   * @@return nothing
+   * @@throws MatchException Under all cases
+   */
+  override def matches() =
+    throw new MatchException( message.sentStringValue )
+}
+@
+
+
+1.11
+log
+@Now conforms to the new Param interface.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.10 2011/06/02 19:00:13 kyledewey Exp $
+d9 3
+a206 46
+ * Matcher that always returns true
+ * @@param className The name of the class
+ * @@param params Params to the matcher (takes none)
+ * @@author Kyle Dewey
+ */
+class True( val className: String, 
+	    val params: Seq[ NamedParam ] ) extends Matcher {
+  /**
+   * Convenience constructor for use with built-ins.
+   * Note that using this means that the class name CANNOT be changed!
+   */
+  def this() = 
+    this( "True", Seq() )
+
+  /**
+   * Always returns true
+   * @@return true
+   */
+  override def matches() = 
+    true
+}
+
+/**
+ * Matcher that always returns false
+ * @@param className The name of the class
+ * @@param params Params to the matcher (takes none)
+ * @@author Kyle Dewey
+ */
+class False( val className: String, 
+	     val params: Seq[ NamedParam ] ) extends Matcher {
+  /**
+   * Convenience constructor for use with built-ins.
+   * Note that using this means that the class name CANNOT be changed!
+   */
+  def this() = 
+    this( "False", Seq() )
+
+  /**
+   * Always returns false
+   * @@return false
+   */
+  override def matches() = 
+    false
+}
+
+/**
+@
+
+
+1.10
+log
+@Added the Not matcher.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.9 2011/06/02 00:20:00 kyledewey Exp $
+d9 3
+d65 2
+a66 2
+  def forallPairs[ T ]( items: Seq[ Value[ T ] ] )( pred: ( Value[ T ], Value[ T ] ) => Boolean ) = {
+    def forPairs( list: List[ Value[ T ] ] ): Boolean = 
+d69 1
+a69 1
+	case item :: Nil => item.value ; true
+d85 2
+a86 2
+  def allLess[ T ]( items: Seq[ Value[ T ] ] ) =
+    forallPairs( items )( _ < _ )
+d94 2
+a95 2
+  def allGreater[ T ]( items: Seq[ Value[ T ] ] ) =
+    forallPairs( items )( _ > _ )
+d104 2
+a105 2
+  def allLessOrEqual[ T ]( items: Seq[ Value[ T ] ] ) =
+    forallPairs( items )( _ <= _ )
+d114 2
+a115 2
+  def allGreaterOrEqual[ T ]( items: Seq[ Value[ T ] ] ) =
+    forallPairs( items )( _ >= _ )
+d124 1
+a124 1
+  def allEqual[ T ]( items: Seq[ Value[ T ] ] ) = 
+d134 2
+a135 2
+  def allDifferent( items: Seq[ Value[ _ ] ] ) = {
+    val asSet = Set() ++ items.map( _.value )
+d149 1
+a149 1
+  private val matcher = param[ Matcher ]( "matcher", params )
+d156 1
+a156 1
+    !matcher.matches
+d168 1
+a168 1
+  private val matchers = asArray[ Matcher ]( "input", params )
+d178 1
+a178 1
+    matchers.forall( _.matches )
+d190 1
+a190 1
+  private val matchers = asArray[ Matcher ]( "input", params )
+d200 1
+a200 1
+    matchers.exists( _.matches )
+d259 2
+a260 2
+  private val input = param[ Data ]( "input", params )
+  private val against = param[ Data ]( "against", params )
+d267 1
+a267 1
+    input.data == against.data
+d279 1
+a279 1
+  private val message = param[ Data ]( "message", params )
+d288 1
+a288 1
+    throw new MatchException( message.data )
+@
+
+
+1.9
+log
+@The base case for forallPairs that
+takes a single value now dereferences that value
+as a no-op before returning true.  This forces
+a ValueException to be generated on invalid data.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.8 2011/05/25 20:14:06 kyledewey Exp $
+d9 6
+d138 19
+@
+
+
+1.8
+log
+@Made it so the class name is also taken as a parameter.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.7 2010/06/26 16:35:43 kyledewey Exp $
+d9 3
+d56 2
+a57 2
+  def forallPairs[ T ]( items: Seq[ T ] )( pred: ( T, T ) => Boolean ) = {
+    def forPairs( list: List[ T ] ): Boolean = 
+d60 1
+a60 1
+	case item :: Nil => true
+@
+
+
+1.7
+log
+@Added no argument constructors for true and false,
+intended as convenience for built-ins.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.6 2010/06/26 04:04:04 kyledewey Exp kyledewey $
+d9 4
+d130 1
+d135 2
+a136 1
+class And( params: Seq[ NamedParam ] ) extends Matcher {
+d152 1
+d157 2
+a158 1
+class Or( params: Seq[ NamedParam ] ) extends Matcher {
+d174 1
+d178 2
+a179 1
+class True( params: Seq[ NamedParam ] ) extends Matcher {
+d182 1
+d185 1
+a185 1
+    this( Seq() )
+d197 1
+d201 2
+a202 1
+class False( params: Seq[ NamedParam ] ) extends Matcher {
+d205 1
+d208 1
+a208 1
+    this( Seq() )
+d220 1
+d226 2
+a227 1
+class Exact( params: Seq[ NamedParam ] ) extends Matcher {
+d241 1
+d246 2
+a247 1
+class ThrowMatchException( params: Seq[ NamedParam ] ) extends Matcher {
+@
+
+
+1.6
+log
+@Added helper functions common to many matchers.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.5 2010/06/20 17:29:04 kyledewey Exp kyledewey $
+d9 3
+d171 6
+d180 2
+a181 1
+  override def matches() = true
+d191 6
+d200 2
+a201 1
+  override def matches() = false
+@
+
+
+1.5
+log
+@Moved factory code to sentinel.model.Factory.scala
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.4 2010/06/18 19:36:41 kyledewey Exp kyledewey $
+d9 3
+d32 88
+a119 1
+// BEGIN BUILT IN MATCHERS
+d124 1
+a124 1
+ *        "input" - 0 or more matchers
+d136 3
+a138 8
+  override def matches(): Boolean = {
+    var x = 0
+    while ( x < matchers.length ) {
+      if ( !matchers( x ).matches ) return false
+      x += 1
+    }
+    true
+  }
+d144 1
+a144 1
+ *        "input" - 0 or more matchers
+d156 3
+a158 8
+  override def matches(): Boolean = {
+    var x = 0
+    while( x < matchers.length ) {
+      if ( matchers( x ).matches ) return true
+      x += 1
+    }
+    false
+  }
+d189 3
+a191 3
+ * @@param params Params to the matcher 
+ *        -"input": any data
+ *        -"against": any data
+d207 1
+a207 1
+ * Matcher that will determine if the given item is a character or not
+d209 1
+a209 1
+ *        -"character": any data
+d212 2
+a213 2
+class IsCharacter( params: Seq[ NamedParam ] ) extends Matcher {
+  private val character = param[ Data ]( "character", params )
+d216 4
+a219 2
+   * Determines if the parameter is a character.
+   * @@return true if it is, else false
+d222 1
+a222 1
+    character.data.length == 1
+a223 1
+
+@
+
+
+1.4
+log
+@Made factories take a name and description.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.3 2010/06/18 03:07:47 kyledewey Exp kyledewey $
+d9 3
+d27 1
+a27 101
+import sentinel.model.parser._
+import sentinel.model.ParameterizedObjectFactory._
+
+/**
+ * Exception thrown if the underlying type isn't a matcher.
+ * @@param message Message for the exception
+ * @@author Kyle Dewey
+ */
+case class NonMatcherException( message: String ) extends Exception( message ) {
+  /**
+   * Creates a new exception with no message
+   */
+  def this() =
+    this( null )
+}
+
+/**
+ * Contains functions and values common to
+ * matcher factories.
+ * @@author Kyle Dewey
+ */
+object MatcherFactory {
+  // begin constants
+  val BAD_CLASS = "Matcher factory attempted to instantiate non-matcher class"
+  // end constants
+
+  /**
+   * Casts something to a matcher.  If the cast was unsuccessful,
+   * it will throw an exception.
+   * @@param item The item to cast to a matcher
+   * @@return The item as a matcher
+   * @@throws ParameterizedInstantiationException If the item is not a matcher
+   */
+  def toMatcher( item: Any ): Matcher = {
+    try {
+      item.asInstanceOf[ Matcher ]
+    } catch {
+      case e: ClassCastException =>
+	throw new ParameterizedInstantiationException( BAD_CLASS, e )
+    }
+  }
+}
+
+/**
+ * Definition for a factory that can create a matcher.
+ *
+ * @@param name The name of the factory
+ * @@param desc A description of the factory
+ * @@param neededParams What params are needed to instantiate the matcher
+ *
+ * @@author Kyle Dewey
+ */
+abstract class MatcherFactory( name: String,
+			       desc: String,
+			       neededParams: Map[ String, ParamInfo ] )
+extends ParameterizedObjectFactory[ Matcher ]( name,
+					       desc,
+					       neededParams ) {}
+
+/**
+ * Definition for a factory that creates a matcher based upon an
+ * existing class in the JVM.
+ * @@param name The name of the factory
+ * @@param desc A description of the factory
+ * @@param neededParams The parameters to the underlying matcher
+ * @@param JVMClassName The name of the class that backs instances created
+ *        by the factory
+ * @@author Kyle Dewey
+ */
+class ReflectionMatcherFactory( name: String,
+			        desc: String,
+			        neededParams: Map[ String, ParamInfo ],
+			        val JVMClassName: String )
+extends MatcherFactory( name,
+		        desc,
+		        neededParams ) {
+  import MatcherFactory._
+
+  private val reflector = new ReflectionFactory[ Matcher ]( name,
+							    desc,
+							    neededParams,
+							    JVMClassName )
+
+  /**
+   * Creates a new instance of the underlying matcher using
+   * reflection.
+   * @@param params Params to construct the underlying matcher with
+   * @@return A new matcher instantiated with the given params
+   * @@throws ParameterizedInstantiationException If the params were ok
+   *         but the underlying matcher could not be instantiated
+   */
+  override def internalInstantiate( params: Seq[ NamedParam ] ): Matcher =
+    toMatcher( reflector.internalInstantiate( params ) )
+}
+
+/**
+ * Organizes all matcher factories.
+ * @@author Kyle Dewey
+ */
+object MatcherFactoryManager 
+extends FactoryManager[ Matcher, ParameterizedObjectFactory[ Matcher ] ]() {}
+@
+
+
+1.3
+log
+@Made it so the factory calls internalInstantiate()
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.2 2010/06/16 01:00:12 kyledewey Exp kyledewey $
+d9 3
+d70 2
+d76 6
+a81 2
+abstract class MatcherFactory( neededParams: Map[ String, ParamInfo ] )
+extends ParameterizedObjectFactory[ Matcher ]( neededParams ) {}
+d86 2
+a87 1
+ * @@param className The name of the class to create
+d89 2
+d93 7
+a99 3
+class ReflectionMatcherFactory( val className: String,
+			        neededParams: Map[ String, ParamInfo ] )
+extends MatcherFactory( neededParams ) {
+d102 4
+a105 2
+  private val reflector = new ReflectionFactory[ Matcher ]( className,
+							    neededParams )
+@
+
+
+1.2
+log
+@Fixed typo in name of ParameterizedInstantiationException.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Matcher.scala,v 1.1 2010/06/15 17:55:00 kyledewey Exp kyledewey $
+d9 3
+d98 1
+a98 1
+    toMatcher( reflector.instantiate( params ) )
+d204 18
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d49 1
+a49 1
+   * @@throws ParameterizedInstantationException If the item is not a matcher
+d56 1
+a56 1
+	throw new ParameterizedInstantationException( BAD_CLASS, e )
+d91 1
+a91 1
+   * @@throws ParameterizedInstantationException If the params were ok
+@

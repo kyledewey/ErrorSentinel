@@ -1,0 +1,47 @@
+head	1.1;
+access;
+symbols;
+locks
+	kyledewey:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2011.05.27.01.39.02;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@The makefile for sentinel.utils.interactive.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#
+# Makefile
+#
+# Version:
+#     $Id$
+#
+# Revisions:
+#      $Log$
+#
+#
+#
+
+PACKAGE = sentinel.utils.interactive
+
+SOURCE = \
+	WithReplacementSpreadsheet.scala \
+	SentinelTable.scala \
+	SentinelTablePanel.scala \
+	ErrorSentinel.scala \
+
+include $(JAVA_DEV_ROOT)/Makefile
+
+@

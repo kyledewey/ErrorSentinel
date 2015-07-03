@@ -1,0 +1,5671 @@
+head	1.32;
+access;
+symbols;
+locks
+	kyledewey:1.32; strict;
+comment	@# @;
+
+
+1.32
+date	2011.06.21.17.01.38;	author kyledewey;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2011.06.20.22.40.51;	author kyledewey;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2011.06.18.03.28.47;	author kyledewey;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2011.06.17.20.48.16;	author kyledewey;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2011.06.08.04.23.43;	author kyledewey;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2011.06.07.08.15.44;	author kyledewey;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2011.06.02.00.21.37;	author kyledewey;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2011.05.31.17.17.48;	author kyledewey;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2011.05.31.00.02.59;	author kyledewey;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2011.05.29.15.21.51;	author kyledewey;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2011.05.27.18.48.02;	author kyledewey;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2011.05.27.01.32.13;	author kyledewey;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2011.05.25.21.52.58;	author kyledewey;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2011.05.25.20.04.57;	author kyledewey;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2011.04.19.12.59.14;	author kyledewey;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2011.03.27.14.04.37;	author kyledewey;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2011.02.27.07.48.15;	author kyledewey;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2011.02.27.06.39.55;	author kyledewey;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2011.02.12.02.50.14;	author kyledewey;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2010.07.11.05.44.00;	author kyledewey;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2010.06.26.04.02.24;	author kyledewey;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2010.06.25.03.43.57;	author kyledewey;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2010.06.25.03.17.51;	author kyledewey;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2010.06.23.03.10.20;	author kyledewey;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2010.06.20.23.36.55;	author kyledewey;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.06.20.23.28.52;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.06.20.17.25.38;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.06.18.19.35.31;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.06.18.03.01.07;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.06.16.00.58.54;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.06.15.23.58.19;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.06.15.17.53.40;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Contains code for parameters.
+@
+
+
+1.32
+log
+@Added the ToConstant trait.
+Made Constant and SimpleValue inherit from ToConstant.
+@
+text
+@/*
+ * Parameters.scala
+ *
+ * Version:
+ *     $Id: Parameters.scala,v 1.31 2011/06/20 22:40:51 kyledewey Exp kyledewey $
+ *
+ * Revisions:
+ *      $Log: Parameters.scala,v $
+ *      Revision 1.31  2011/06/20 22:40:51  kyledewey
+ *      Added an equals() and hashCode() method to
+ *      NamedParm, based only on the parameter name.
+ *
+ *      Revision 1.30  2011/06/18 03:28:47  kyledewey
+ *      Moved True and False to here.
+ *
+ *      Revision 1.29  2011/06/17 20:48:16  kyledewey
+ *      Added more description for the new parameters setup.
+ *
+ *      Revision 1.28  2011/06/08 04:23:43  kyledewey
+ *      Massive refactor so that all parameter types are uniform
+ *      from the perspective of matchers and replacers.
+ *
+ *      Revision 1.27  2011/06/07 08:15:44  kyledewey
+ *      Moved Data into this file.
+ *      Added typed replacers.
+ *      Added conversion routines for connverting to typed replacers.
+ *
+ *      Revision 1.26  2011/06/02 00:21:37  kyledewey
+ *      Added an equals() and hashCode() method to
+ *      the Value trait.
+ *
+ *      Revision 1.25  2011/05/31 17:17:48  kyledewey
+ *      Added code to the CellRange object to allow for
+ *      the parsing in of cell ranges from strings.
+ *
+ *      Revision 1.24  2011/05/31 00:02:59  kyledewey
+ *      Added a toString() method to CellRange.
+ *
+ *      Revision 1.23  2011/05/29 15:21:51  kyledewey
+ *      Added the various inRange() methods to CellRange.
+ *
+ *      Revision 1.22  2011/05/27 18:48:02  kyledewey
+ *      Added the CellPointer class.
+ *
+ *      Revision 1.21  2011/05/27 01:32:13  kyledewey
+ *      Added an equals() and hashCode() method to CellRange.
+ *
+ *      Revision 1.20  2011/05/25 21:52:58  kyledewey
+ *      Constant now extends Param.
+ *      Added an apply method to Constant that takes the
+ *      type of constant to make.
+ *
+ *      Revision 1.19  2011/05/25 20:04:57  kyledewey
+ *      Added foreach() for cell ranges, and code to simplify
+ *      the creation of SpreadsheetVariables.
+ *
+ *      Revision 1.18  2011/04/19 12:59:14  kyledewey
+ *      Made replacers and matchers traits instead of
+ *      abstract classes.
+ *
+ *      Revision 1.17  2011/03/27 14:04:37  kyledewey
+ *      Added methods to ParamInfo to create copies with
+ *      specific changes.
+ *
+ *      Revision 1.16  2011/02/27 07:48:15  kyledewey
+ *      Removed non-working code for the special case of
+ *      converting SimpleVariables.
+ *
+ *      Revision 1.15  2011/02/27 06:39:55  kyledewey
+ *      Added the printableValue() method to Param.
+ *
+ *      Revision 1.14  2011/02/12 02:50:14  kyledewey
+ *      Refactored so that there are both Spreadsheet and Simple variables.
+ *
+ *      Revision 1.13  2010/07/11 05:44:00  kyledewey
+ *      Minor shifting of file contents to make the order
+ *      match more closely with dependencies.
+ *
+ *      Revision 1.12  2010/06/26 04:02:24  kyledewey
+ *      Made Value extend Ordered.
+ *
+ *      Revision 1.11  2010/06/25 03:43:57  kyledewey
+ *      Changed Int to Long in Replacer's implicit conversions.
+ *
+ *      Revision 1.10  2010/06/25 03:17:51  kyledewey
+ *      Refactored so that variables have types.
+ *
+ *      Revision 1.9  2010/06/23 03:10:20  kyledewey
+ *      Added the sortParams() routine to ParamInfo.
+ *
+ *      Revision 1.8  2010/06/20 23:36:55  kyledewey
+ *      Added more implicit definitions to object Replacer.
+ *
+ *      Revision 1.7  2010/06/20 23:28:52  kyledewey
+ *      Made replace() return type Data, and created
+ *      string2Data() method,
+ *
+ *      Revision 1.6  2010/06/20 17:25:38  kyledewey
+ *      Major refactor.  Added typed parameters, and code
+ *      to allow for implicit conversions where neccessary.
+ *      The language is now a hybrid statically/dynamically
+ *      typed language, instead of a purely dynamically
+ *      typed language.
+ *
+ *      Revision 1.5  2010/06/18 19:35:31  kyledewey
+ *      Added the to*() and convertTo methods to Param.
+ *
+ *      Revision 1.4  2010/06/18 03:01:07  kyledewey
+ *      Added routines to ParamType to better get the name
+ *      of a param or type of a param.
+ *
+ *      Revision 1.3  2010/06/16 00:58:54  kyledewey
+ *      Fixed typo in name of ParameterizedInstantiationException;
+ *      Changed getMessage and toString in the exception to provide
+ *      more information.
+ *
+ *      Revision 1.2  2010/06/15 23:58:19  kyledewey
+ *      Added typeName() method to Param;
+ *      Added toString() to ParamType.
+ *
+ *      Revision 1.1  2010/06/15 17:53:40  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.model
+
+/**
+ * Contains the types of parameters that are possible
+ *
+ * @@author Kyle Dewey
+ */
+object ParamType extends Enumeration {
+  type ParamType = Value
+  val StringType, 
+      IntType,
+      RealType,
+      CharType,
+      MatcherType, 
+      ReplacerType = Value 
+
+  // begin constants
+  val STRING_STRING = "String"
+  val INTEGER_STRING = "Integer"
+  val REAL_STRING = "Real"
+  val CHARACTER_STRING = "Character"
+  val VARIABLE_STRING = "Variable"
+  val MATCHER_STRING = "Matcher"
+  val REPLACER_STRING = "Replacer"
+  val paramToString = Map( StringType -> STRING_STRING,
+			   IntType -> INTEGER_STRING,
+			   RealType -> REAL_STRING,
+			   CharType -> CHARACTER_STRING,
+			   MatcherType -> MATCHER_STRING,
+			   ReplacerType -> REPLACER_STRING )
+  val stringToParam = Map() ++ paramToString.map( param =>
+    param._2 -> param._1 )
+  val instanceTypes = Set( MatcherType,
+		           ReplacerType )
+  // end constants
+
+  /**
+   * Determines if the given type is an instance type.
+   * @@param theType The type to check
+   * @@return true if it is an instance type, else false
+   */
+  def isInstanceType( theType: ParamType ) =
+    theType == MatcherType || theType == ReplacerType
+
+  /**
+   * Determines if the given string is that of an instance type.
+   * @@param theType The type to check
+   * @@return false if the string is not recognized, or it is not
+   * that of an instance type
+   */
+  def isInstanceType( theType: String ): Boolean = {
+    if ( stringToParam.contains( theType ) ) {
+      isInstanceType( stringToParam( theType ) )
+    } else false
+  }
+
+  /**
+   * Given a parameter type, will convert it to a string
+   * @@param param The parameter type
+   * @@return A human-readable string representing this type
+   */
+  def toString( param: ParamType ): String = 
+    paramToString( param )
+
+  /**
+   * Returns true if the given function didn't throw an exception,
+   * else false.
+   * @@param function The function to call
+   * @@return true if it didn't throw an exception, else false
+   */
+  def falseIfException( function: => Unit ) =
+    Constant.callOrNone( function ).isDefined
+
+  /**
+   * Determines if the given text looks like a double.
+   * Merely tries to parse it as a double.
+   * @@param text The text to check
+   * @@return true if it could be parsed to a double, else false
+   */
+  def looksLikeDouble( text: String ) = 
+    falseIfException( java.lang.Double.parseDouble( text ) )
+
+  /**
+   * Determines if the given text looks like an integer.
+   * Merely tries to parse it as an integer
+   * @@param text The text to check
+   * @@return true if it could be parsed to an integer, else false
+   */
+  def looksLikeInteger( text: String ) =
+    falseIfException( java.lang.Integer.parseInt( text ) )
+
+  /**
+   * Determines if the given text looks like a character.
+   * Merely checks that its length is 1.
+   * @@param text The text to check
+   * @@return <code>text.length == 1 </code>
+   */
+  def looksLikeCharacter( text: String ) =
+    text.length == 1
+
+  /**
+   * Given a string holding the contents of a value, it attempts
+   * to determine what parameter type it best looks like.
+   * Note that this is a very gross estimate!
+   * @@param text The text of the parameter
+   * @@return The param type it most closely matches
+   */
+  def looksLike( text: String ) =
+    if ( looksLikeInteger( text ) ) IntType
+    else if ( looksLikeDouble( text ) ) RealType
+    else if ( looksLikeCharacter( text ) ) CharType
+    else StringType
+}
+
+import ParamType._
+
+/**
+ * Holds information about a parameter.  This is relevant
+ * to factories which wish to create matchers or replacers.
+ * Note that these are intended to represent actual parameters,
+ * which is why there is no Param within.  Also note that all
+ * parameters are named parameters.
+ * 
+ * @@param name The name of the parameter
+ * @@param desc A description of the parameter
+ * @@param paramType The type of the parameter
+ * @@param array Whether or not it is an array
+ * @@param required Whether or not it is required
+ *
+ * @@author Kyle Dewey
+ */
+class ParamInfo( val name: String,
+		 val desc: String,
+		 val paramType: ParamType,
+		 val isArray: Boolean,
+		 val isRequired: Boolean ) extends Ordered[ ParamInfo ] {
+  /**
+   * Creates a ParamInfo object from a tuple.
+   * This is done for convenience, as the constructor is a bit lengthy.
+   * @@param tuple tuple of name, description, param type, whether or
+   *        not the item is an array, and whether or not the item is
+   *        required
+   */
+  def this( tuple: Tuple5[ String, String, ParamType, Boolean, Boolean ] ) =
+    this( tuple._1,
+	  tuple._2,
+	  tuple._3,
+	  tuple._4,
+	  tuple._5 )
+
+  /**
+   * Changes the name of this param info object
+   * @@param newName The new name of the object
+   * @@return A new ParamInfo object, identical to this with the exception
+   * of the name
+   */
+  def newName( newName: String ) =
+    new ParamInfo( newName,
+		   desc,
+		   paramType,
+		   isArray,
+		   isRequired )
+
+  /**
+   * Changes the description of this object.
+   * @@param newDesc The new description
+   * @@return A new object with the given description (copy)
+   */
+  def newDesc( newDesc: String ) =
+    new ParamInfo( name, newDesc,
+		   paramType, isArray, isRequired )
+
+  /**
+   * Changes the type of this object
+   * @@param newType The new type to use
+   * @@return A new copy, with the given type
+   */
+  def newType( newType: ParamType ) =
+    new ParamInfo( name, desc,
+		   newType, isArray, isRequired )
+
+  /**
+   * Changes whether or not this is an array
+   * @@param newIsArray the new isArray value
+   * @@return A new copy, with the given isArray value
+   */
+  def newIsArray( newIsArray: Boolean ) =
+    new ParamInfo( name, desc,
+		   paramType, newIsArray, isRequired )
+
+  /**
+   * Changes whether or not this parameter is required
+   * @@param newIsRequired The new isRequired value
+   * @@return A new copy, with the given isRequired value
+   */
+  def newIsRequired( newIsRequired: Boolean ) =
+    new ParamInfo( name, desc,
+		   paramType, isArray, newIsRequired )
+
+  /**
+   * Compares this ParamInfo object to another.  The comparison
+   * is based on the name.
+   * @@param other The other ParamInfo object to compare to
+   * @@return <code>this.name.compare( other.name )</code>
+   */
+  override def compare( other: ParamInfo ) =
+    name.compare( other.name )
+
+  /**
+   * Converts this ParamInfo object to a string.
+   * @@return A string representing this ParamInfo object
+   */
+  override def toString() = {
+    "Name: " + name + "\n" +
+    "Description: " + desc + "\n" +
+    "Type: " + ParamType.toString( paramType  ) + "\n" +
+    "Can be array: " + isArray + "\n" +
+    "Is required: " + isRequired
+  }
+}
+
+/**
+ * Contains helper methods for manipulating
+ * ParamInfo objects.
+ *
+ * @@author Kyle Dewey
+ */
+object ParamInfo {
+  /**
+   * Creates a map of ParamInfo objects, given a sequence
+   * of tuples of information about them.
+   * @@param infos A series of tuples describing elements of the resultant
+   *        map
+   * @@return A map, where there is one element for each item in the sequence.
+   *         The keys are the name of the param, and the values are ParamInfo
+   *         objects
+   */
+  def apply( infos: Seq[ ( String, 
+			   String, 
+			   ParamType, 
+			   Boolean, 
+			   Boolean ) ] ) = {
+    Map() ++ infos.map( tuple =>
+      tuple._1 -> new ParamInfo( tuple ) )
+  }
+
+  /**
+   * Given a bunch of params, will return them such that
+   * all required params are first, and in abc order, followed
+   * by all optional params in abc order.
+   * @@param params The params to sort
+   * @@return The same params, in a different order
+   */
+  def sortParams( params: Seq[ ParamInfo ] ): Seq[ ParamInfo ] = {
+    val ( required,
+	  optional ) = params.partition( _.isRequired )
+    required.toList.sort( _ < _ ) ++ optional.toList.sort( _ < _ )
+  }
+}
+
+/**
+ * <p>Represents a parameter.  Basically, this is anything that in some
+ * way, shape, or form returns a value.</p>
+ * <p>There are two similarly named types of methods: *Value() and to*().
+ * The *Value() methods are intended to be used at runtime to get the
+ * value of items.  The to*() methods are intended to be used at compile time
+ * (parse tree parsing) in type conversions that can be done statically.</p>
+ * <p>Note that the conversion methods with to*() exist for optimization
+ * purposes. It will always be correct to return the parameter as-is.  However,
+ * returning None indicates that the given conversion is always impossible,
+ * which is relevant to static typing.</p>
+ * @@author Kyle Dewey
+ */
+trait Param {
+  import ParamType._
+
+  /**
+   * Gets the underlying data of this parameter as a string
+   * @@return The underlying data as a string.  Note that the default
+   * is to throw an exception.
+   */
+  def sentStringValue(): String = {
+    throw new ValueException( "Could not convert parameter with type " +
+			      typeName + " to a string." )
+  }
+
+  /**
+   * Gets the underlying data of this parameter as an integer. (long)
+   * @@return The underlying data as a long.  Note that the default is to
+   * parse the string value as a long.
+   */
+  def sentIntValue() = {
+    try {
+      java.lang.Long.parseLong( sentStringValue )
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+      case e: NumberFormatException =>
+	throw new ValueException( "Could not convert \"" +
+				  sentStringValue + "\" to an integer" )
+    }
+  }
+
+  /**
+   * Like <code>sentIntValue</code>, but with reals (double).
+   * @@return The value as a double.  Note that the default is to parse
+   * the string value as a real.
+   */
+  def sentRealValue() = {
+    try {
+      java.lang.Double.parseDouble( sentStringValue )
+    } catch {
+      case e: VariableDereferenceException =>	throw new ValueException( e.getMessage )
+      case e: NumberFormatException =>
+	throw new ValueException( "Could not convert \"" +
+				  sentStringValue + "\" to a real number" )
+    }
+  }
+
+  /**
+   * Like <code>sentIntValue</code>, but it returns the data as a char.
+   * @@return The data as a char.  Note that this simply returns the first
+   * character of the underlying string.  If the string contains more than
+   * a single character, this throws an execption.
+   */
+  def sentCharValue() = {
+    try {
+      val string = sentStringValue
+      if ( string.length == 1 ) string.charAt( 0 )
+      else throw new ValueException( "Could not convert \"" +
+				     string + "\" to a character" )
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+    }
+  }
+
+  /**
+   * Returns a matcher representation of this.
+   * @@return This as a matcher.  If it's not already a
+   * matcher, this throws an exception.
+   */
+  def matcherValue(): Matcher = {
+    val matcher = toMatcher
+    if ( matcher.isDefined &&
+         matcher.get.isInstanceOf[ Matcher ] ) {
+      matcher.get.asInstanceOf[ Matcher ]
+    } else {
+      throw new ValueException( "Could not convert param to a matcher." )
+    }
+  }
+
+  /**
+   * Returns a replacer representation of this.
+   * @@return This as a replacer.  If it's not already a replacer,
+   * this throws an exception.
+   */
+  def replacerValue(): Replacer = {
+    val replacer = toReplacer
+    if ( replacer.isDefined &&
+	 replacer.get.isInstanceOf[ Replacer ] ) {
+      replacer.get.asInstanceOf[ Replacer ]
+    } else {
+      throw new ValueException( "Could not convert param to a replacer." )
+    }
+  }
+
+  /**
+   * Converts this to a string representation, in case there is a more efficient
+   * representation than the current representation.
+   * @@return A representation that may more closely resemble that of a string.
+   * The default is <code>Some( this )</code>
+   */
+  def toSentString(): Option[ Param ] =
+    Some( this )
+
+  /**
+   * Like <code>toSentString</code>, but with integers (long).
+   * @@return <code>Some( this )</code>
+   */
+  def toSentInt(): Option[ Param ] =
+    Some( this )
+
+  /**
+   * Like <code>toSentString</code>, but with reals (double)
+   * @@return <code>Some( this )</code>
+   */
+  def toSentReal(): Option[ Param ] =
+    Some( this )
+
+  /**
+   * Like <code>toSentString</code>,  but with characters.
+   * @@return <code>Some( this )</code>
+   */
+  def toSentChar(): Option[ Param ] =
+    Some( this )
+
+  /**
+   * Like <code>toSentString</code>, but with replacers.
+   * Note that the default differs slightly.
+   * @@return <code>Some( new VerbatimReplacer( this ) )</code>
+   */
+  def toReplacer(): Option[ Param ] =
+    Some( new VerbatimReplacer( this ) )
+
+  /**
+   * Like <code>toSentString</code>, but with matchers.
+   * Note that the default differs.
+   * @@return <code>None</code>
+   */
+  def toMatcher(): Option[ Param ] =
+    None
+
+  /**
+   * Converts to an arbitrary type.
+   * Note that this will simply dispatch to the proper underlying conversion
+   * routine.
+   * @@param toType The type to convert to
+   * @@return A converted representation
+   */
+  def convertTo( toType: ParamType ): Option[ Param ] =
+    toType match {
+      case StringType => toSentString
+      case IntType => toSentInt
+      case RealType => toSentReal
+      case CharType => toSentChar
+      case MatcherType => toMatcher
+      case ReplacerType => toReplacer
+      case _ => None
+    }
+
+  /**
+   * Gets the preferred type of this param.
+   * @@return The type of this param
+   */
+  def getType(): ParamType
+
+  /**
+   * Determines if this is a instance type.
+   * Instance types can be created by users, and are flexible.
+   * @@return false by default
+   */
+  def isInstanceType() = false
+
+  /**
+   * Determines if this is a constant type.
+   * Constant types are not as flexible, but they contain strong
+   * typing information that leads to more reliable code.
+   * @@return false by default
+   */
+  def isConstantType() = false
+
+  /**
+   * Determines if this is a variable type.
+   * The values of variable types can change like instances, but
+   * they are not instances.
+   * @@return false by default
+   */
+  def isVariableType() = false
+
+  /**
+   * Gets the name of the preferred type of this param.
+   * @@return The name of the type of this param
+   */
+  def typeName(): String =
+    ParamType.toString( getType )
+
+  /**
+   * Converts this parameter to a string.
+   * Attempts to use the value of the parameter.
+   * @@return A string representing this parameter.  If it fails to get
+   * the value for whatever reason, then it will return None
+   */
+  def printableValue() = 
+    Constant.callOrNone( printableValueUnsafe )
+
+  def printableValueUnsafe() =
+    sentStringValue
+}
+
+/**
+ * A parameter with the underlying type of SentInt
+ * @@author Kyle Dewey
+ */
+trait SentInt extends Param with Ordered[ SentInt ] {
+  def getType() = IntType
+  def compare( other: SentInt ) =
+    sentIntValue.compare( other.sentIntValue )
+}
+
+/**
+ * Like <code>SentInt</code>, but it is statically typed.
+ * Related methods are overridden for efficiency.
+ * @@author Kyle Dewey
+ */
+trait StaticSentInt extends SentInt {
+  def staticIntValue(): Long
+  override def sentStringValue() =
+    staticIntValue.toString
+  override def sentIntValue() = 
+    staticIntValue
+  override def sentRealValue() = 
+    staticIntValue.asInstanceOf[ Double ]
+}
+
+/**
+ * A parameter with the underlying type of SentString.
+ * @@author Kyle Dewey
+ */
+trait SentString extends Param with Ordered[ SentString ] {
+  def getType() = StringType 
+  def compare( other: SentString ) =
+    sentStringValue.compare( other.sentStringValue )
+}
+
+/**
+ * Like <code>SentString</code>, but it is statically typed.
+ * Related methods are overridden for efficiency.
+ * @@author Kyle Dewey
+ */
+trait StaticSentString extends SentString {
+  def staticStringValue(): String
+  override def sentStringValue() =
+    staticStringValue
+}
+
+/**
+ * A parameter with the underlying type of SentChar.
+ * @@author Kyle Dewey
+ */
+trait SentChar extends Param with Ordered[ SentChar ] {
+  def getType() = CharType
+  def compare( other: SentChar ) =
+    sentCharValue.compare( other.sentCharValue )
+}
+
+/**
+ * Like <code>SentChar</code>, but it is statically typed.
+ * Related methods are overridden for efficiency.
+ * @@author Kyle Dewey
+ */
+trait StaticSentChar extends SentChar {
+  def staticCharValue(): Char
+  override def sentStringValue() =
+    "" + staticCharValue
+  override def sentCharValue() =
+    staticCharValue
+}
+
+/**
+ * A parameter with the underlying type of SentReal.
+ * @@author Kyle Dewey
+ */
+trait SentReal extends Param with Ordered[ SentReal ] {
+  def getType() = RealType
+  def compare( other: SentReal ) =
+    sentRealValue.compare( other.sentRealValue )
+}
+
+/**
+ * Like <code>SentReal</code>, but it is statically typed.
+ * Related methods are overridden for efficiency.
+ * @@author Kyle Dewey
+ */
+trait StaticSentReal extends SentReal {
+  def staticRealValue(): Double
+  override def sentRealValue() =
+    staticRealValue
+}
+
+/**
+ * Represents a parameter with a name.
+ * Note that in most cases, the underlying parameter
+ * should not change.  This is neccessary because parameters
+ * often need to be renamed, as in parsing a parse tree.
+ * Conversely, not all parameters need names, so it doesn't
+ * make sense to put that information inside of Param.
+ * @@param name The name of the parameter
+ * @@param param The parameter
+ * @@author Kyle Dewey
+ */
+class NamedParam( val name: String, val param: Param ) {
+  /**
+   * Simulates renaming this parameter.
+   * A new NamedParam with the new name and the same
+   * underlying param is returned instead.
+   * @@param newName The new name
+   * @@return a new NamedParam, with the new name but the same
+   *         underlying param
+   */
+  def rename( newName: String ): NamedParam =
+    new NamedParam( newName, param )
+
+  /**
+   * Determines if one named param equal another.
+   * The determination is based soley on the name.
+   * @@param other The other object to compare to
+   * @@return true if the names equal, else false
+   */
+  override def equals( other: Any ) =
+    other != null &&
+    other.isInstanceOf[ NamedParam ] &&
+    other.asInstanceOf[ NamedParam ].name == name
+  
+  /**
+   * Gets the hash code of this named parameter.
+   * Based solely on the name.
+   * @@return <code>name.hashCode</code>
+   */
+  override def hashCode() =
+    name.hashCode
+}
+
+/**
+ * Exception thrown when a value could not be returned for
+ * whatever reason.
+ * @@param message A message as to why the value could not be returned
+ * @@author Kyle Dewey
+ */
+case class ValueException( message: String ) extends Exception( message ) {}
+
+/**
+ * Exception thrown when a parameter with a given name
+ * doesn't exist.
+ *
+ * @@param message A message describing the error
+ * 
+ * @@author Kyle Dewey
+ */
+case class ParameterNameException( message: String ) 
+     extends Exception( message ) {}
+
+/**
+ * Contains helper routines for ParameterTypeException.
+ * @@author Kyle Dewey
+ */
+object ParameterTypeExceptionHelpers {
+  import ParamType._
+
+  /**
+   * Given a value and it's type, it will return the inner portion
+   * of the message for makeMessage.
+   * @@param found The type that was found
+   * @@param value The value that was found
+   * @@return A string of the form " with value <value>", or a null string
+   * if the value is empty.  Encloses strings in quotes.
+   */
+  def makeMessage( found: ParamType, value: Option[ String ] ): String = {
+    if ( value.isDefined ) {
+      val inner =
+	if ( found == StringType ) {
+	  "\"" + value.get + "\"" 
+	} else {
+	  value.get
+	}
+      " with value " + inner
+    } else {
+      ""
+    }
+  }
+
+  /**
+   * Given the type found, the value found, and the expected type,
+   * makes an error message that can be used for a ParameterTypeException.
+   * @@param found The type that was found
+   * @@param value The value here
+   * @@param expected The expected type
+   * @@return An error message for a ParameterTypeException
+   */
+  def makeMessage( found: ParamType,
+		   value: Option[ String ],
+		   expected: ParamType ): String = {
+    "Found type " + ParamType.toString( found ) +
+    makeMessage( found, value ) + ". Expected type " +
+    ParamType.toString( expected )
+  }
+
+  /**
+   * Given the named param that triggered the exception and the expected
+   * type, creates a message
+   * @@param param The parameter that triggered the exception
+   * @@param expected The expected type
+   * @@return An error message for ParameterTypeException
+   */
+  def makeMessage( param: NamedParam, expected: ParamType ): String =
+    makeMessage( param.param.getType,
+		 param.param.printableValue,
+		 expected )
+}
+
+/**
+ * Exception thrown when a parameter's expected type
+ * doesn't match the actual type
+ * @@param message A message describing the error
+ * @@param param Named parameter that triggered the exception
+ * @@author Kyle Dewey
+ */
+case class ParameterTypeException( message: String, val param: NamedParam )extends Exception( message ) {
+  import ParamType._
+
+  /**
+   * Creates a new exception given the parameter that triggered the exception
+   * and the expected type
+   * @@param param The parameter that triggered the exception
+   * @@param expected The expected type
+   */
+  def this( param: NamedParam, expected: ParamType ) =
+    this( ParameterTypeExceptionHelpers.makeMessage( param, expected ),
+	  param )
+}
+
+/**
+ * Exception thrown when a required parameter was not passed.
+ * @@param message A message describing the error
+ * @@author Kyle Dewey
+ */
+case class ParameterRequirementException( message: String )
+     extends Exception( message ) {}
+
+/**
+ * Exception thrown when the type of a parameter was correct,
+ * but it was (or was not) as an array when it was supposed
+ * to be
+ * @@param message A message describing the error
+ * @@author Kyle Dewey
+ */
+case class ParameterArrayException( message: String ) 
+     extends Exception( message ) {}
+
+/**
+ * Exception thrown when parameters were correct, but for
+ * some reason an object could not be instantiated.
+ * @@param exception The exception that triggered this to be thrown
+ * @@param message The message that triggered this exception
+ * @@author Kyle Dewey
+ */
+case class ParameterizedInstantiationException( val exception: Exception,
+					        message: String ) 
+     extends Exception( message ) {
+  /**
+   * Synonym with the constructor, in case the order is messed up.
+   * @@param message The message
+   * @@param exception The underlying exception
+   */
+  def this( message: String, exception: Exception ) =
+    this( exception, message )
+       
+  /**
+   * Creates a new ParameterizedInstantiationException with the given
+   * exception at the base, and no message
+   * 
+   * @@param exception The underlying exception
+   */
+  def this( exception: Exception ) =
+    this( exception, null )
+
+  /**
+   * Creates a new exception with the given message, and no
+   * exception.
+   * @@param message The message
+   */
+   def this( message: String ) =
+     this( message, null )
+       
+  /**
+   * Gets the message of the underlying exception,
+   * and/or the message given to this
+   * @@return the underlying exception's message
+   */
+  override def getMessage() = {
+    if ( message != null &&
+	 exception.getMessage != null ) {
+      message + "; " + exception.getMessage
+    } else if ( message != null ) {
+      message
+    } else {
+      exception.getMessage
+    }
+  }
+
+  /**
+   * Gets this as a string plus the underlying message
+   * as a string.
+   * @@return the underlying exception as a string
+   */
+  override def toString() = 
+    super.toString + "; " + exception.toString
+}
+
+/**
+ * All the to*() methods return constant representation of the
+ * current *Value() methods.
+ * @@author Kyle Dewey
+ */
+trait ToConstant extends Param {
+  import Constant._
+
+  override def toSentInt() = 
+    callOrNone( Constant( sentIntValue ) )
+
+  override def toSentReal() = 
+    callOrNone( Constant( sentRealValue ) )
+
+  override def toSentChar() = 
+    callOrNone( Constant( sentCharValue ) )
+
+  override def toSentString() = 
+    callOrNone( Constant( sentStringValue ) )
+}
+
+/**
+ * Represents a constant.
+ * Constants have fixed values, which cannot be changed after being set
+ * @@author Kyle Dewey
+ */
+trait Constant[ T ] extends ToConstant {
+  def value(): T
+  override def isConstantType() = true
+}
+
+class StringConstant( val value: String ) 
+extends Constant[ String ] with StaticSentString {
+  def staticStringValue() = value
+}
+
+class IntConstant( val value: Long )
+extends Constant[ Long ] with StaticSentInt {
+  def staticIntValue() = value
+}
+
+class RealConstant( val value: Double )
+extends Constant[ Double ] with StaticSentReal {
+  def staticRealValue() = value
+}
+
+class CharConstant( val value: Char )
+extends Constant[ Char ] with StaticSentChar {
+  def staticCharValue() = value
+}
+
+/**
+ * Creates constants of the appropriate type, depending on
+ * what parameter was passed.
+ * @@author Kyle Dewey
+ */
+object Constant {
+  /**
+   * Wraps the given function call in a try block.
+   * If the call threw an exception, this returns None.
+   * @@param function The function to wrap
+   * @@return The result of the function, or None if it threw an exception
+   */
+  def callOrNone[ T ]( function: => T ) = {
+    try {
+      Some( function )
+    } catch {
+      case e: Exception => None
+    }
+  }
+
+  /**
+   * Creates a new constant of the given type with the given value.
+   * If the type is invalid, None is returned
+   * @@param theType The type of the constant to make
+   * @@param value The value for the constant
+   * @@return A constant of the given type holding the given value.  Returns
+   * None if the format conversion was impossible
+   */
+  def apply( theType: ParamType, value: String ): Option[ Param ] = 
+    apply( value ).convertTo( theType )
+
+
+  /**
+   * Creates a new string constant
+   * @@param value The string to put into the constant
+   * @@return A new string constant
+   */
+  def apply( value: String ) =
+    new StringConstant( value )
+
+  /**
+   * Creates a new real constant.
+   * @@param value The double to put into the constant
+   * @@return A new real constant
+   */
+  def apply( value: Double ) = 
+    new RealConstant( value )
+
+  /**
+   * Creates a new character constant
+   * @@param value The character to put into the constant
+   * @@return A new character constant
+   */
+  def apply( value: Char ) =
+    new CharConstant( value )
+
+  /**
+   * Creates a new integer constant
+   * @@param value The integer to put into the constant
+   * @@return A new integer constant
+   */
+  def apply( value: Long ) =
+    new IntConstant( value )
+}
+
+/**
+ * Exception thrown when an attempt to access a nonexistent
+ * spreadsheet/row/column is attempted.
+ * @@param message A useful message to show the user
+ * @@author Kyle Dewey
+ */
+case class VariableDereferenceException( message: String ) extends Exception {}
+
+/**
+ * Exception thrown when a parameter passed to a variable is invalid.
+ * @@param message A useful message to show the user
+ * @@author Kyle Dewey
+ */
+case class VariableArgumentException( message: String )
+     extends IllegalArgumentException {}
+
+/**
+ * Represents a variable.  Variables have values which can change over time.
+ * @@author Kyle Dewey
+ */
+trait Variable extends Param {
+  override def isVariableType() = true
+}
+
+/**
+ * A simple variable that contains the very data it's going to
+ * give
+ * @@param variable The data to return
+ * @@author Kyle Dewey
+ */
+abstract class SimpleVariable[ T ]( var variable: T ) 
+extends Variable with ToConstant {}
+
+/**
+ * A simple variable with the underlying type of SentString.
+ * @@param _variable The initial value
+ * @@author Kyle Dewey
+ */
+class SimpleStringVariable( _variable: String ) 
+extends SimpleVariable[ String ]( _variable ) with StaticSentString {
+  def staticStringValue() = variable
+}
+
+/**
+ * A simple variable with the underlying type of SentChar.
+ * @@param _variable The initial value
+ * @@author Kyle Dewey
+ */
+class SimpleCharVariable( _variable: Char ) 
+extends SimpleVariable[ Char ]( _variable ) with StaticSentChar {
+  def staticCharValue() = variable
+}
+
+/**
+ * A simple variable with the underlying type of SentInt.
+ * @@param _variable The initial value
+ * @@author Kyle Dewey
+ */
+class SimpleIntVariable( _variable: Long ) 
+extends SimpleVariable[ Long ]( _variable ) with StaticSentInt {
+  def staticIntValue() = variable
+}
+
+/**
+ * A simple variable with the underlying type of SentReal.
+ * @@param _variable The initial value
+ * @@author Kyle Dewey
+ */
+class SimpleRealVariable( _variable: Double )
+extends SimpleVariable[ Double ]( _variable ) with StaticSentReal {
+  def staticRealValue() = variable
+}
+
+/**
+ * Refers to a single cell in a spreadsheet.
+ * Unlike CellRange, this is guarenteed to be instantiated.
+ * @@param sheet The sheet this applies to
+ * @@param row The row this applies to
+ * @@param column The column this applies to
+ * @@author Kyle Dewey
+ */
+case class CellPointer( val sheet: String,
+		        val row: Int,
+		        val column: Int ) {}
+
+/**
+ * Holds constants applicable to cell ranges.
+ * @@author Kyle Dewey
+ */
+object CellRange {
+  import Spreadsheet._
+  /**
+   * if the given string equals the given value, this returns
+   * None.  Otherwise it returns Some( String )
+   * @@param value The string value
+   * @@param compare The value to compare against
+   * @@return Some( value ) if value != compare, else None
+   */
+  def valueOrNone( value: String, compare: String ) =
+    if ( value == compare ) {
+      None
+    } else {
+      Some( value )
+    }
+
+  /**
+   * Parses a sheet as a string.
+   * If the sheet is ANY_SHEET, then it returns none
+   * @@param sheet The sheet as a string
+   * @@return Either Some( sheet ) or None.  The value is valid for CellRange
+   */
+  def parseSheet( sheet: String ) =
+    valueOrNone( sheet, ANY_SHEET )
+
+  /**
+   * Parses in the given value as an integer.
+   * It works like valueOrNone as well.
+   * @@param string The string
+   * @@param compare The string to compare to
+   * @@return A parameter for CellRange
+   * @@throws NumberFormatException If the given row isn't an integer
+   */
+  def parseInt( string: String, compare: String ) = {
+    val first = valueOrNone( string, compare )
+    if ( first.isDefined ) {
+      Some( Integer.parseInt( first.get ) ) 
+    } else {
+      None
+    }
+  }
+
+  /**
+   * Parses in a row as a string.
+   * If the row is ANY_ROW, this returns None.
+   * @@param row The row as a string
+   * @@return A parameter for CellRange
+   * @@throws NumberFormatException If the given row isn't an integer
+   */
+  def parseRow( row: String ) = 
+    parseInt( row, ANY_ROW )
+
+  /**
+   * Parses in a column as a string.
+   * If the column is ANY_COLUMN, this returns None
+   * @@param column The column as a string
+   * @@return A parameter for CellRange
+   * @@throws NumberFormatException If the given column isn't an integer
+   */
+  def parseColumn( column: String ) =
+    parseInt( column, ANY_COLUMN )
+
+  /**
+   * Parses in a cell range from a string.
+   * @@param string The string holding a cell range
+   * @@return A cell range representation of the string, or None if
+   * such a range could not be made.
+   */
+  def parseCellRange( string: String ) = {
+    val split = string.split( DELIMETER )
+    if ( split.length == 3 ) {
+      try {
+	Some( new CellRange( parseSheet( split( 0 ) ),
+			     parseRow( split( 1 ) ),
+			     parseColumn( split( 2 ) ) ) )
+      } catch {
+	case e: NumberFormatException => None
+      }
+    } else {
+      None
+    }
+  }
+}
+
+/**
+ * Holds a range of cells across a range of sheets.
+ * @@param sheet The sheet the range applies to.  Specify None for all sheets.
+ * @@param row The row the range applies to.  Specify None for all rows.
+ * @@param column The column the range applies to.  Sprecify None for all
+ * columns
+ * @@author Kyle Dewey
+ */
+class CellRange( val sheet: Option[ String ],
+		 val row: Option[ Int ],
+		 val column: Option[ Int ] ) {
+  /**
+   * Determines if the given sheet is in the range of this cell range.
+   * @@param theSheet The sheet name to check
+   * @@return true if it's in range, else false
+   */
+  def sheetInRange( theSheet: String ) =
+    if ( sheet.isDefined ) {
+      sheet.get == theSheet
+    } else {
+      true 
+    }
+
+  /**
+   * Determines if the given row is in the range of this cell range.
+   * @@param theRow The row
+   * @@return true if it's in range, else false.
+   */
+  def rowInRange( theRow: Int ) = 
+    if ( row.isDefined ) {
+      row.get == theRow
+    } else {
+      true
+    }
+  
+  /**
+   * Determines if the given column is in this cell range.
+   * @@param theColumn The Column
+   * @@return true if it's in range, else false
+   */
+  def columnInRange( theColumn: Int ) =
+    if ( column.isDefined ) {
+      column.get == theColumn
+    } else {
+      true
+    }
+
+  /**
+   * Determines if the given sheet, row, and column is
+   * within this cell range.  This is O(1).
+   * @@param sheet The the sheet.
+   * @@param row The row
+   * @@param column The column
+   * @@return true if the given info is in the range, else false
+   */
+  def inRange( sheet: Spreadsheet, row: Int, column: Int ): Boolean = 
+    ( rowInRange( row ) &&
+      columnInRange( column ) &&
+      sheetInRange( sheet.name ) &&
+      sheet.inRange( row, column ) )
+    
+  /**
+   * Like <code>inRange</code>, but the sheet is specified as
+   * a sheet name.  Note that if the given sheet doesn't
+   * exist, this returns false.
+   * @@param sheet The name of the sheet
+   * @@param row The row
+   * @@param column The column
+   * @@return true if the given info is in range, else false
+   */
+  def inRange( sheet: String, row: Int, column: Int ): Boolean = {
+    val asSpread = Spreadsheet.getSpreadsheet( sheet )
+    if ( asSpread.isDefined ) {
+      inRange( asSpread.get, row, column )
+    } else {
+      false 
+    }
+  }
+  
+  /**
+   * Executes the given function for each cell defined by this cell
+   * range.  Notes that it will use Spreadsheet's getSpreadsheets
+   * if the sheet isn't defined.
+   * @@param function The function to execute.  Takes in the current sheet,
+   * row, and column
+   */
+  def foreach( function: ( String, Int, Int ) => Unit ) {
+    import Spreadsheet._
+    sheets.foreach( sheet => {
+      val spreadsheet = getSpreadsheet( sheet )
+      if ( spreadsheet.isDefined ) {
+	val rows =
+	  if ( row.isDefined ) Seq( row.get )
+	  else 0.until( spreadsheet.get.getRowCount ).toSeq
+	val columns =
+	  if ( column.isDefined ) Seq( column.get )
+	  else 0.until( spreadsheet.get.getColumnCount ).toSeq
+	rows.foreach( row =>
+	  columns.foreach( column => 
+	    function( sheet, row, column ) ) )
+      }
+    } )
+  }
+  
+  /**
+   * Gets the sheets that this cell range applies to.
+   * Note that this cannot be done for rows and columns, as that depends
+   * on the individual sheet
+   * @@return The sheets that this cell range applies to
+   */
+  def sheets() =
+    if ( sheet.isDefined ) Seq( sheet.get )
+    else Spreadsheet.getSpreadsheets.map( _.self )
+
+  /**
+   * Makes sure that the sheet, row, and column all have values.
+   * If they don't currently have values, then the current value of
+   * each will be used.
+   * @@return A new cell pointer that holds either these values
+   * or the values of the current items in Spreadsheet
+   */
+  def cellPointer() =
+    new CellPointer( sheet.getOrElse( Spreadsheet.currentSpreadsheet ),
+		     row.getOrElse( Spreadsheet.currentRow ),
+		     column.getOrElse( Spreadsheet.currentColumn ) )
+  
+  /**
+   * Determines if this cell range equals another.
+   * This means that the sheet, row, and column are the same.
+   * @@param other The other object to compare to
+   */
+  override def equals( other: Any ) = 
+    if ( other != null &&
+	 other.isInstanceOf[ CellRange ] ) {
+      val asCell = other.asInstanceOf[ CellRange ]
+      ( sheet == asCell.sheet &&
+        row == asCell.row &&
+        column == asCell.column )
+    } else {
+      false 
+    }
+
+  /**
+   * Gets the hash code of this cell range.
+   * Simply the addition of the items within
+   * @@return The additive hashcode of the contents of this cell range
+   */
+  override def hashCode() =
+    sheet.hashCode + row.hashCode + column.hashCode 
+
+  /**
+   * Gets a human-readable description of this cell range.
+   * @@return A human-readable description of the contents
+   */
+  override def toString() = {
+    import Spreadsheet._
+    import CellRange._
+    sheet.getOrElse( ANY_SHEET ) + DELIMETER +
+      row.getOrElse( ANY_ROW ) + DELIMETER +
+      column.getOrElse( ANY_COLUMN )
+  }
+}
+
+/**
+ * Exception thrown when we don't recognize the type of a spreadsheet variable.
+ * @@param message A message to show the user
+ * @@author Kyle Dewey
+ */
+case class UnknownSpreadsheetVariableType( message: String )
+     extends Exception( message ) {}
+
+/**
+ * <p>Represets a variable. Variables are essentially pointers to cells
+ * in the spreadheet.  They allow for the rest of the error correction
+ * language to be completely independent of spreadsheets.</p>
+ * <p>Note that variables can be set to a fixed place in a spreadsheet,
+ * as in mySheet:3:2.  In this example, the spreadsheet is mySheet, the
+ * row is #3, and the column is #2.  Indexes start at 0.</p>
+ * <p>Of course, the power of a variable is in it's ability to change.  This
+ * is permitted by having a concept of a current sheet, row, and column.  To
+ * specify the current, merely pass None in the appropriate argument.  For
+ * instance, *:*:* refers to the current spreasheet, the current row, and
+ * the current column.</p>
+ * <p>Note that all uses of current are not valid.  Although programmatically
+ * there is always a current sheet, row, and column, certain combinations
+ * which are error-prone are disallowed.  For instance, if given something
+ * like: *:4:3, this will generate a VariableArgumentException.  This variable
+ * points to row 4 and column 3 of the current spreadsheet, which is
+ * extremely dangerous.  (Proper usage would mean that the value at row 4
+ * and column 3 is fixed for all spreadsheets, which, even if it were true,
+ * would be indicative of very bad practice which should in no way be
+ * encouraged.)  It is always acceptable to point to the current row and
+ * column.  To get a better idea of what is valid and where, refer to the
+ * following list of examples:</p>
+ * <table border="1">
+ * <tr><td>*:*:*</td><td>Valid</td></tr>
+ * <tr><td>MySheet:*:*</td><td>Valid</td></tr>
+ * <tr><td>MySheet:*:3</td><td>Valid</td></tr>
+ * <tr><td>MySheet:4:*</td><td>Valid</td></tr>
+ * <tr><td>MySheet:4:3</td><td>Valid</td></tr>
+ * <tr><td>*:4:3</td><td>Invalid</td></tr>
+ * </table>
+ * <p>More or less, if one wants to reference a specific row and/or
+ * column, then the sheet must be defined (not *).</p>  
+ * @@param sheet The name of the spreasheet we are associated with.
+ * Specify None for *.
+ * @@param row The row of the spreadsheet we are associated with.
+ * Specify None for *.
+ * @@param column The column of the spreadhseet we are associated with.
+ * Specify None for *.
+ * @@throws VariableArgumentException If an attempt to reference a specific
+ * row and column was made but a specific spreadsheet wasn't declared.  Also
+ * if a negative row or column was given.  Note that spreadsheet name checking
+ * isn't done until an attempt to get a spreadsheet value is made, so that
+ * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+ * would have to be made before variables).
+ * @@author Kyle Dewey
+ */
+class SpreadsheetVariable( sheet: Option[ String ], 
+			   row: Option[ Int ],
+			   column: Option[ Int ] ) 
+extends CellRange( sheet, row, column ) with Variable with SentString {
+  Variable.verifyArgs( sheet,
+		       row,
+		       column )
+
+  /**
+   * Creates a new spreadsheet variable based off of an existing cell range.
+   * @@param range The existing cell range
+   */
+  def this( range: CellRange ) =
+    this( range.sheet,
+	  range.row,
+	  range.column )
+
+  /**
+   * Gets the value of the cell in the spreadsheet
+   * @@return The value of the cell in the spreadsheet specified by where
+   * @@throws VariableDereferenceException If the given spreadsheet is
+   * invalid, or if the row and/or column is invalid
+   */
+  override def sentStringValue() = {
+    import Spreadsheet._
+    try {
+      val theSheet = getSpreadsheet( sheet )
+      if ( theSheet.isDefined ) {
+	theSheet.get.getValueAt( row.getOrElse( currentRow ),
+				 column.getOrElse( currentColumn ) ).toString
+      } else {
+	throw new VariableDereferenceException( "Unknown spreadsheet with name: " +
+					        sheet.getOrElse( "CURRENT SHEET" ) )
+      }
+    } catch {
+      case e: ArrayIndexOutOfBoundsException =>
+	throw new VariableDereferenceException( "Invalid row or column: " +
+					        e.getMessage )
+    }
+  }
+}
+
+/**
+ * Can create variables of different types.
+ * @@author Kyle Dewey
+ */
+object Variable {
+  /**
+   * Verifies that the arguments passed to the variable are valid
+   * @@param sheet The sheet that we are associated with
+   * @@param row The row we are associated with
+   * @@param column The column we are associated with
+   * @@throws VariableArgumentException If the row and column is negative,
+   * or if the row and/or column is specifically defined but the spreadsheet
+   * is not
+   */
+  def verifyArgs( sheet: Option[ String ],
+		  row: Option[ Int ],
+		  column: Option[ Int ] ) {
+    if ( row.isDefined &&
+	 row.get < 0 ) {
+      throw new VariableArgumentException( "Variable row cannot be negative" )
+    } else if ( column.isDefined &&
+	        column.get < 0 ) {
+      throw new VariableArgumentException( "Variable column cannot be negative" )
+    } else if ( ( row.isDefined || column.isDefined ) &&
+	        sheet.isEmpty ) {
+      throw new VariableArgumentException( "Specific row and/or column, but no " +
+					   "specific spreadsheet" )
+    }
+  }
+}
+
+/**
+ * Represents an instance of a class.
+ * By far, instances are the most flexible kind of params.
+ * Conversely, they are also the most "magical", and misuse
+ * can lead to non-robust code.
+ * @@author Kyle Dewey
+ */
+trait Instance extends Param {
+  /**
+   * Gets all parameters that have been passed to this instance.
+   * @@return All the parameters that were passed to this instance
+   */
+  def params(): Seq[ NamedParam ]
+
+  /**
+   * Gets the class name of this instance.
+   * @@return The class name of this instance
+   */
+  def className(): String
+
+  /**
+   * Gets whether or not the instance is functionally pure.
+   * For pure functions, the same parameters will always yield the same
+   * outputs.  There are a slew of optimizations that can be performed
+   * on pure functions.  By default, instances in Error Sentinel are pure.
+   * @@return true
+   */
+  def isPure() = true
+}
+
+/**
+ * Exception thrown when a problem occurs in a matcher.
+ * @@param message A message to show the user
+ * @@author Kyle Dewey
+ */
+case class MatchException( message: String ) extends Exception( message ) {}
+
+/**
+ * Exception thrown when a problem occurs in a replacer.
+ * @@param message A message to show the user
+ * @@author Kyle Dewey
+ */
+case class ReplaceException( message: String ) extends Exception( message ) {}
+
+/**
+ * <p>Base class for anything that wants to act as a matcher.
+ * Note that matchers are intended to be created via 
+ * factory objects.</p>
+ * <p>Note that matchers should have a constructor
+ * that takes a String, Seq[ Param ].  The string
+ * is the name of the resulting matcher/replacer.  The
+ * Seq[ Param ] is a listing of params, which are guarenteed
+ * to be valid as long as the following is true:
+ * -The matcher/replacer was created through its correpsonding factory
+ * -The neccessary params specified in the factory are correct</p>
+ *
+ * @@author Kyle Dewey
+ */
+trait Matcher extends Instance {
+  /**
+   * Determines if we have a match, as determined by parameters.
+   * @@return true if this matcher matches, else false
+   * @@throws MatchException If no match could be determined
+   */
+  def matches(): Boolean
+
+  /**
+   * Overridden for efficiency.
+   * @@return <code>Some( this )</code>
+   */
+  override def toMatcher() =
+    Some( this )
+
+  /**
+   * Returns <code>matches</code> as a string.
+   * @@return <code>Some( matches.toString )</code>
+   */
+  override def printableValueUnsafe() = 
+    matches.toString
+
+  /**
+   * Gets that this is a matcher.
+   * @@return That this is a matcher
+   */
+  override def getType() =
+    ParamType.MatcherType
+}
+
+/**
+ * Matcher that always returns true
+ * @@param className The name of the class
+ * @@param params Params to the matcher (takes none)
+ * @@author Kyle Dewey
+ */
+class True( val className: String, 
+	    val params: Seq[ NamedParam ] ) extends Matcher {
+  /**
+   * Convenience constructor for use with built-ins.
+   * Note that using this means that the class name CANNOT be changed!
+   */
+  def this() = 
+    this( "True", Seq() )
+
+  /**
+   * Always returns true
+   * @@return true
+   */
+  override def matches() = 
+    true
+}
+
+/**
+ * Matcher that always returns false
+ * @@param className The name of the class
+ * @@param params Params to the matcher (takes none)
+ * @@author Kyle Dewey
+ */
+class False( val className: String, 
+	     val params: Seq[ NamedParam ] ) extends Matcher {
+  /**
+   * Convenience constructor for use with built-ins.
+   * Note that using this means that the class name CANNOT be changed!
+   */
+  def this() = 
+    this( "False", Seq() )
+
+  /**
+   * Always returns false
+   * @@return false
+   */
+  override def matches() = 
+    false
+}
+
+/**
+ * Object that assists with operations dealing with replacers.
+ * @@author Kyle Dewey
+ */
+object Replacer {
+  /**
+   * Converts a string to data.
+   * This is intended for the return value of replace(),
+   * where it is very common to return a string.
+   * @@param string The string to convert
+   * @@return The string as Data, specifically a StringConstant
+   */
+  implicit def string2Param( string: String ) =
+    Constant( string )
+
+  /**
+   * Converts an integer to data.
+   * Saves some typing for mathematical operations.
+   * @@param integer The integer to convert
+   * @@return The integer as Data, specifically an IntConstant
+   */
+  implicit def integer2Param( integer: Int ) =
+    long2Param( integer.asInstanceOf[ Long ] )
+
+  /**
+   * Converts a long to data
+   * Saves some typing for mathematical operations
+   * @@param long The long to convert
+   * @@return The long as Data, specifically an IntConstant
+   */
+  implicit def long2Param( long: Long ) =
+    Constant( long )
+
+  /**
+   * Converts a double to data.
+   * Saves some typing for mathematical operations.
+   * @@param theDouble The double to convert
+   * @@return The double as data, specifically a RealConstant
+   */
+  implicit def double2Param( theDouble: Double ) =
+    Constant( theDouble )
+
+  /**
+   * Converts a character to data.
+   * Saves some typing in replacer.
+   * @@param theChar The character to convert
+   * @@return The character as data, specifically a CharConstant
+   */
+  implicit def char2Param( theChar: Char ) =
+    Constant( theChar )
+}
+
+/**
+ * <p>Base class for anything that wants to act as a replacer.
+ * Note that replacers are intended to be created via factory
+ * objects.</p>
+ *
+ * <p>Note that replacers only replace; as to why they perform
+ * a replacement is irrelevant</p>
+ *
+ * @@author Kyle Dewey
+ */
+trait Replacer extends Instance {
+  /**
+   * Gets a replacement.
+   * Note that what the replacement is is defined by parameters
+   * specific to an individual replacer.  Also note that what
+   * a replacer replaces is determined by a matcher.
+   * @@return The replacement
+   * @@throws ReplaceException If no replacement could be determined
+   */
+  def replace(): Param
+
+  /**
+   * Overridden to return <code>this</code>
+   * @@return <code>Some( this )</code>
+   */
+  override def toReplacer() =
+    Some( this )
+
+  /**
+   * Delegates to replace.
+   * @@return <code>replace.sentStringValue</code>
+   */
+  override def sentStringValue() =
+    replace.sentStringValue
+
+  /**
+   * Delegates to replace.
+   * @@return <code>replace.sentIntValue<code>
+   */
+  override def sentIntValue() =
+    replace.sentIntValue
+
+  /**
+   * Delegates to replace.
+   * @@return <code>replace.sentCharValue</code>
+   */
+  override def sentCharValue() =
+    replace.sentCharValue
+
+  /**
+   * Delegates to replace.
+   * @@return <code>replace.sentRealValue<code>
+   */
+  override def sentRealValue() =
+    replace.sentRealValue
+
+  /**
+   * Gets that this is a replacer.
+   * @@return That this is a replacer
+   */
+  override def getType() =
+    ParamType.ReplacerType
+}
+
+/**
+ * A basic replacer that will replace with whatever it was
+ * given as a parameter.  This is intended for conversions to
+ * replacers.
+ * @@param toReturn What to return on calling replace()
+ * @@author Kyle Dewey
+ */
+class VerbatimReplacer( val replace: Param ) extends Replacer {
+  /**
+   * The parameters passed are not normal, so this merely returns
+   * an empty Seq.
+   * @@return an empty seq
+   */
+  def params() = Seq()
+
+  /**
+   * Gets the name of the class.
+   * @@return The name of the class
+   */
+  def className() = "VerbatimReplacer"
+}
+@
+
+
+1.31
+log
+@Added an equals() and hashCode() method to
+NamedParm, based only on the parameter name.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.30 2011/06/18 03:28:47 kyledewey Exp kyledewey $
+d9 4
+d601 4
+a604 1
+    Constant.callOrNone( sentStringValue )
+d917 2
+a918 2
+ * Represents a constant.
+ * Constants have fixed values, which cannot be changed after being set
+d921 1
+a921 1
+trait Constant[ T ] extends Param {
+d923 1
+a923 2
+  def value(): T
+  override def isConstantType() = true
+d937 10
+d1062 2
+a1063 1
+abstract class SimpleVariable[ T ]( var variable: T ) extends Variable {}
+d1573 2
+a1574 2
+  override def printableValue() = 
+    Constant.callOrNone( matches.toString )
+@
+
+
+1.30
+log
+@Moved True and False to here.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.29 2011/06/17 20:48:16 kyledewey Exp kyledewey $
+d9 3
+d712 19
+@
+
+
+1.29
+log
+@Added more description for the new parameters setup.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.28 2011/06/08 04:23:43 kyledewey Exp $
+d9 3
+d1546 46
+@
+
+
+1.28
+log
+@Massive refactor so that all parameter types are uniform
+from the perspective of matchers and replacers.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.27 2011/06/07 08:15:44 kyledewey Exp kyledewey $
+d9 4
+d181 6
+d188 1
+a188 6
+    try {
+      function
+      true
+    } catch {
+      case e: Exception => false
+    }
+d190 6
+d199 6
+d208 6
+d380 6
+a385 2
+ * <p>Note that the conversion methods exist for optimization purposes.
+ * It will always be correct to return the parameter as-is.  However,
+d403 5
+d420 5
+d436 6
+d454 5
+d469 5
+d484 6
+d493 4
+d500 4
+d507 4
+d514 5
+d522 5
+d530 7
+d591 1
+a591 5
+    try {
+      Some( sentStringValue )
+    } catch {
+      case e: Exception => None
+    }
+d594 4
+a597 1
+// static as in statically typed
+d604 5
+d619 4
+d629 5
+d640 4
+d650 5
+d658 1
+a658 1
+    staticCharValue.toString
+d663 4
+d673 5
+a1018 1
+ * @@param cellValue The value to show on calling <code>cellValue</code>
+d1023 5
+d1033 5
+d1043 5
+d1053 5
+d1473 9
+d1520 4
+d1527 4
+d1532 1
+a1532 5
+    try {
+      Some( matches.toString )
+    } catch {
+      case e: Exception => None
+    }
+d1615 4
+d1622 4
+d1628 5
+d1635 5
+d1642 5
+@
+
+
+1.27
+log
+@Moved Data into this file.
+Added typed replacers.
+Added conversion routines for connverting to typed replacers.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.26 2011/06/02 00:21:37 kyledewey Exp kyledewey $
+d9 5
+d127 1
+a127 2
+      ReplacerType, 
+      DataType = Value
+a136 1
+  val DATA_STRING = "Data"
+d142 1
+a142 2
+			   ReplacerType -> REPLACER_STRING,
+			   DataType -> DATA_STRING )
+d176 30
+d355 6
+a360 5
+ * Represents a parameter.  Basically, this is anything that in some
+ * way, shape, or form returns a value.  That said, note that different
+ * kinds of parameters return vastly different kinds of values, and
+ * so it is inappropriate to put that information in a base class.
+ * 
+d367 95
+a461 1
+   * Gets the type of this param.
+d469 1
+a469 1
+   * @@return true if this is a instance type
+d471 1
+a471 2
+  def isInstanceType() =
+    this.isInstanceOf[ Instance ]
+d477 1
+a477 1
+   * @@return true if this is a constant type
+d479 1
+a479 2
+  def isConstantType() =
+    this.isInstanceOf[ Constant ]
+d483 3
+a485 4
+   * Variable types represent cells within spreadsheets.  They
+   * are the only type that can actually change its value
+   * after being created.  Instance types can only change their behavior.
+   * @@return true if this is a variable type
+d487 1
+a487 2
+  def isVariableType() =
+    this.isInstanceOf[ Variable ]
+d490 1
+a490 1
+   * Gets the name of the type of this param.
+a497 77
+   * If conversion is impossible, then it returns None.
+   * @@return This param as a string
+   */
+  def toSentString(): Option[ SentString ] = 
+    ParamConverter.toSentString( this )
+
+  /**
+   * Converts this parameter to an integer.
+   * If conversion is impossible, then it returns None.
+   * @@return This param as an integer
+   */
+  def toSentInt(): Option[ SentInt ] = 
+    ParamConverter.toSentInt( this )
+
+  /**
+   * Converts this parameter to a floating-point value.
+   * If conversion is impossible, then it returns None
+   * @@return This param as a real number
+   */
+  def toSentReal(): Option[ SentReal ] = 
+    ParamConverter.toSentReal( this )
+
+  /**
+   * Converts this parameter to a character.
+   * If conversion is impossible, then it returns None
+   * @@return This param as a character
+   */
+  def toSentChar(): Option[ SentChar ] = 
+    ParamConverter.toSentChar( this )
+
+  /**
+   * Converts this parameter to a matcher.
+   * If conversion is impossible, then it returns None
+   * @@return This param as a matcher
+   */
+  def toMatcher(): Option[ Matcher ] = 
+    ParamConverter.toMatcher( this )
+
+  /**
+   * Converts this parameter to a replacer.
+   * If conversion is impossible, then it returns None
+   * @@return This param as a replacer
+   */
+  def toReplacer(): Option[ Replacer ] = 
+    ParamConverter.toReplacer( this )
+
+  /**
+   * Converts this parameter to the polymorphic type data.
+   * If conversion is impossible, then it returns None.
+   * @@return This param as data
+   */
+  def toData(): Option[ Data ] = 
+    ParamConverter.toData( this )
+
+  /**
+   * Converts this parameter to the given type.
+   * Note that conversions local to Param are used for this, NOT
+   * teh convert method provided in ParamConverter.
+   * @@param toType The type to convert to
+   * @@return This parameter as the given type.  If the parameter is already
+   *         of this type, then it is returned as-is.  If conversion is
+   *         impossible, then None is returned
+   */
+  def convertTo( toType: ParamType ): Option[ Param ] = 
+    toType match {
+      case StringType => toSentString
+      case IntType => toSentInt
+      case RealType => toSentReal
+      case CharType => toSentChar
+      case MatcherType => toMatcher
+      case ReplacerType => toReplacer
+      case DataType => toData
+      case _ => None
+    }
+
+  /**
+   * Converts this parameter to a string.
+d502 1
+a502 1
+  def printableValue() = {
+d504 1
+a504 5
+      this match {
+	case d: Data => Some( d.data )
+	case m: Matcher => Some( if ( m.matches ) "true" else "false" )
+	case _ => None
+      }
+d508 44
+a551 1
+  }
+d553 4
+d559 4
+a562 15
+/**
+ * A generic routine for getting data as a string.
+ * Applicable to a wide variety of types and useful in
+ * a number of situations where the concrete implementation
+ * really doesn't matter. 
+ *
+ * @@author Kyle Dewey
+ */
+trait Data extends Param {
+  /**
+   * Whatever this item is, gets the data as a string.
+   *
+   * @@return The contents as a string
+   */
+  def data(): String
+a597 133
+ * Represents something that returns a specific value in sentinel.
+ * This is intended for anything that isn't an instance (i.e. anything
+ * that isn't either a matcher or a replacer.
+ * @@author Kyle Dewey
+ */
+trait Value[ T ] extends Param with Ordered[ Value[ T ] ] with Data {
+  /**
+   * Gets the value, whatever it is
+   * @@return The value
+   * @@throws ValueException If it wasn't possible to get the value for
+   * any reason
+   */
+  def value(): T 
+
+  /**
+   * Gets the hash code of the value.
+   * @@return The hash code of the value
+   */
+  override def hashCode() =
+    value.hashCode
+
+  /**
+   * Compares the value to another object.
+   * The comparison is true if both objects are Values and the values
+   * equal.
+   * @@param other The other item to compare to
+   * @@return True if the other item is a value and
+   * <code>value.equals( other.value )</code>
+   */
+  override def equals( other: Any ) =
+    other.isInstanceOf[ Value[ _ ] ] &&
+    value.equals( other.asInstanceOf[ Value[ _ ] ].value )
+
+  /**
+   * Gets the value as a string.
+   * @@return The value as a string
+   */
+  override def data() =
+    value.toString
+}
+
+/**
+ * Represents an integer in sentinel.
+ * Note that integers can be both constants and variables.
+ * @@author Kyle Dewey
+ */
+trait SentInt extends Value[ Long ] {
+  /**
+   * Gets that this is an integer.
+   * @@return That this is an integer
+   */
+  override def getType() =
+    ParamType.IntType
+
+  /**
+   * Compares this integer to another
+   * @@param other The other integer to compare to
+   * @@return <code>this.value.compare( other.value )</code>
+   */
+  override def compare( other: Value[ Long ] ) =
+    this.value.compare( other.value )
+}
+
+/**
+ * Represents a real number in sentinel.
+ * Can be either a variable or a constant.
+ * @@author Kyle Dewey
+ */
+trait SentReal extends Value[ Double ] {
+  /**
+   * Gets that this is a real number.
+   * @@return That this is a real number
+   */
+  override def getType() =
+    ParamType.RealType
+
+  /**
+   * Compares this real number to another
+   * @@param other The other number to compare to
+   * @@return <code>this.value.compare( other.value )</code>
+   */
+  override def compare( other: Value[ Double ] ) =
+    this.value.compare( other.value )
+}
+
+/**
+ * Represents a character in sentinel.
+ * Note that this can mean both variables and constants
+ * @@author Kyle Dewey
+ */
+trait SentChar extends Value[ Char ] {
+  /**
+   * Gets that this is a character.
+   * @@return That this is a character.
+   */
+  override def getType() =
+    ParamType.CharType
+
+  /**
+   * Compares this character to another
+   * @@param other The other character to compare to
+   * @@return <code>this.value.compare( other.value )</code>
+   */
+  override def compare( other: Value[ Char ] ) =
+    this.value.compare( other.value )
+}
+
+/**
+ * Represents a string in sentinel.
+ * Can be either a variable or a constant
+ * @@author Kyle Dewey
+ */
+trait SentString extends Value[ String ] {
+  /**
+   * Gets that this is a string
+   * @@return That this is a string
+   */
+  override def getType() =
+    ParamType.StringType
+
+  /**
+   * Compares this string to another
+   * @@param other The other string to compare to
+   * @@return <code>this.value.compareTo( other.value )</code>
+   */
+  override def compare( other: Value[ String ] ) =
+    // note that compareTo is used instead of compare
+    // compare will force a conversion to RichString, which
+    // is wasteful
+    this.value.compareTo( other.value )
+}
+
+/**
+d766 2
+a767 3
+ * Contains code to perform various parameter conversions.
+ * Note that these match the default behavior of Param's
+ * conversion routines.
+d770 6
+a775 56
+object ParamConverter {
+  import ParamType._
+
+  /**
+   * Converts the given parameter to a string
+   * Returns the constant, or None if a conversion was impossible.
+   * @@param param The param to convert
+   * @@return The converted param, or None if conversion was impossible
+   */
+  def toSentString( param: Param ): Option[ SentString ] =
+    param match {
+      case p: SentString => Some( p )
+      case p: SpreadsheetVariable => Some( new SpreadsheetStringVariable( p.sheet,
+									  p.row,
+									  p.column ) )
+      case p: Replacer => Some( new SentStringReplacerProxy( p ) )
+      case p: Constant => Some( Constant( p.data ) )
+      case p: SimpleVariable => Some( new SimpleStringVariable( p.cellValue ) )
+      case _ => None
+    }
+
+  /**
+   * Determines if the given param looks like a string.
+   * This means it either is one or can be converted to one.
+   * @@param param The param to check
+   * @@return true if it looks like a string, else false
+   */
+  def looksLikeSentString( param: Param ) =
+    toSentString( param ).isDefined
+
+  /**
+   * Attempts to convert the given item to an integer.
+   * If the item is already an integer, it is returned as is.
+   * Otherwise a new integer is returned.
+   * @@param param The param to convert
+   * @@return The converted parameter, or None if conversion was impossible
+   */
+  def toSentInt( param: Param ): Option[ SentInt ] = {
+    println( param + ": " + param.printableValue )
+    param match {
+      case p: SentInt => Some( p )
+      case p: SpreadsheetVariable => Some( new SpreadsheetIntVariable( p.sheet,
+								       p.row,
+								       p.column ) )
+      case p: Replacer => Some( new SentIntReplacerProxy( p ) )
+      case p: Constant => {
+	try {
+	  Some( Constant( java.lang.Long.parseLong( p.data ) ) )
+	} catch {
+	  case _ => None
+	}
+      }
+      case p: SimpleVariable => Some( new SimpleIntVariable( p.cellValue ) )
+      case _ => None
+    }
+  }
+d777 2
+a778 32
+  /**
+   * Determines if the given item looks like an integer.
+   * @@param param The param to check.
+   * @@return true if it looks like an integer, else false
+   */
+  def looksLikeSentInt( param: Param ) = 
+    toSentInt( param ).isDefined
+
+  /**
+   * Attempts to convert the given item to a real number.
+   * Note that if the item is already a real number, then
+   * it will be returned as is.
+   * @@param The param to convert.
+   * @@return the converted param, or None if conversion was impossible
+   */
+  def toSentReal( param: Param ): Option[ SentReal ] =
+    param match {
+      case p: SentReal => Some( p )
+      case p: SpreadsheetVariable => Some( new SpreadsheetRealVariable( p.sheet,
+								        p.row,
+								        p.column ) )
+      case p: Replacer => Some( new SentRealReplacerProxy( p ) )
+      case p: Constant => {
+	try {
+	  Some( Constant( java.lang.Double.parseDouble( p.data ) ) )
+	} catch {
+	  case _ => None
+	}
+      }
+      case p: SimpleVariable => Some( new SimpleRealVariable( p.cellValue ) )
+      case _ => None
+    }
+d780 2
+a781 41
+  /**
+   * Determines if the parameter looks like a real number.
+   * @@param param The param to check
+   * @@return true if it looks like a real number, else false
+   */
+  def looksLikeSentReal( param: Param ) =
+    toSentReal( param ).isDefined
+
+  /**
+   * Converts the parameter to a char.
+   * If it already is one, it is returned as is.
+   * If a conversion is possible, then it will be returned.
+   * If a conversion is impossible, then None is returned
+   * @@param param The param to convert
+   * @@return The converted param, or None if conversion wasn't possible
+   */
+  def toSentChar( param: Param ): Option[ SentChar ] =
+    param match {
+      case p: SentChar => Some( p )
+      case p: SpreadsheetVariable => Some( new SpreadsheetCharVariable( p.sheet,
+								        p.row,
+								        p.column ) )
+      case p: Replacer => Some( new SentCharReplacerProxy( p ) )
+      case p: Constant => {
+	val data = p.data
+	if ( data.length == 1 )
+	  Some( Constant( data( 0 ) ) )
+	else None
+      }
+      case p: SimpleVariable => Some( new SimpleCharVariable( p.cellValue ) )
+      case _ => None
+    }
+  
+  /**
+   * Determines if the given parameter can be converted to
+   * a char.
+   * @@param param The param to check
+   * @@return true if it can be converted, else false
+   */
+  def looksLikeSentChar( param: Param ) =
+    toSentChar( param ).isDefined
+d783 3
+a785 12
+  /**
+   * Converts the given parameter to a replacer.
+   * @@param param The param to convert
+   * @@return The parameter as a replacer
+   */
+  def toReplacer( param: Param ): Option[ Replacer ] =
+    param match {
+      case param: Replacer => Some( param )
+      case param: Variable => Some( new VariableReplacer( param ) )
+      case param: Constant => Some( new VerbatimReplacer( param.data ) )
+      case _ => None 
+    }
+d787 4
+a790 8
+  /**
+   * Determines if the given parameter can be converted to
+   * a replacer.
+   * @@param param The param to check
+   * @@return true if it can be converted, else false
+   */
+  def looksLikeReplacer( param: Param ) =
+    toReplacer( param ).isDefined
+d792 4
+a795 10
+  /**
+   * Converts the given parameter to a matcher.
+   * @@param param The param to convert
+   * @@return The converted param, of None if conversion was impossible
+   */
+  def toMatcher( param: Param ): Option[ Matcher ] =
+    param match {
+      case param: Matcher => Some( param )
+      case _ => None
+    }
+d797 4
+a800 44
+  /**
+   * Determines if the given parameter can be converted to
+   * a matcher.
+   * @@param param The param to check
+   * @@return true if it can be converted, else false
+   */
+  def looksLikeMatcher( param: Param ) =
+    toMatcher( param ).isDefined
+
+  /**
+   * Converts the given parameter to data.
+   * @@param param The param to convert
+   * @@return The converted param, or None if conversion was impossible
+   */
+  def toData( param: Param ): Option[ Data ] =
+    param match {
+      case param: Data => Some( param )
+      case _ => None
+    }
+
+  /**
+   * Determines if the given param can be converted to data
+   * @@param param The param to check
+   * @@return true if it can be converted, else false
+   */
+  def looksLikeData( param: Param ) =
+    toData( param ).isDefined
+
+  /**
+   * Given a value, attempts to determine what kind of parameter is
+   * <b>best</b> suited to storing it.  Most everything can be stored
+   * in a string constant, though that is not the best for most
+   * kinds of parameters.  Note that this will always return a constant
+   * type.
+   * @@param value The value for the parameter
+   * @@return The kind that it is best suited towards
+   */
+  def looksLike( value: String ): ParamType = {
+    val asParam = Constant( value )
+    if ( looksLikeSentInt( asParam ) ) IntType
+    else if ( looksLikeSentReal( asParam ) ) RealType
+    else if ( looksLikeSentChar( asParam ) ) CharType
+    else StringType
+  }
+d802 3
+a804 18
+  /**
+   * Given a parameter and a type to convert to, it will attempt to
+   * perform a conversion.
+   * @@param param The param to attempt to convert
+   * @@param toType The type to convert it to
+   * @@return The converted param, or None if conversion was impossible
+   */
+  def convert( param: Param, toType: ParamType ): Option[ Param ] =
+    toType match {
+      case StringType => param.toSentString
+      case IntType => param.toSentInt
+      case RealType => param.toSentReal
+      case CharType => param.toSentChar
+      case MatcherType => param.toMatcher
+      case ReplacerType => param.toReplacer
+      case DataType => param.toData
+      case _ => None
+    }
+a807 9
+ * Represents a constant.
+ * Note that this doesn't really do anything, but to signify to
+ * calling code that the given value is that of a constant.
+ * Constants have fixed values, which cannot be changed after being set
+ * @@author Kyle Dewey
+ */
+trait Constant extends Data {}
+
+/**
+d814 14
+d838 1
+d873 3
+a875 3
+ * Represents a string constant.
+ * @@param value The value of the constant
+ * 
+d878 1
+a878 1
+class StringConstant( val value: String ) extends SentString with Constant {}
+d881 2
+a882 2
+ * Represents an integer constant.
+ * @@param value The value of the integer.
+d885 2
+a886 31
+class IntConstant( val value: Long ) extends SentInt with Constant {}
+
+/**
+ * Represents a floating point constant.
+ * @@param value The value of the number
+ * @@author Kyle Dewey
+ */
+class RealConstant( val value: Double ) extends SentReal with Constant {}
+
+/**
+ * Represents a character.
+ * @@param value The value of the character.
+ * @@author Kyle Dewey
+ */
+class CharConstant( val value: Char ) extends SentChar with Constant {}
+
+/**
+ * Exception thrown when an attempt to access a nonexistent
+ * spreadsheet/row/column is attempted.
+ * @@param message A useful message to show the user
+ * @@author Kyle Dewey
+ */
+case class VariableDereferenceException( message: String ) extends Exception {}
+
+/**
+ * Exception thrown when a parameter passed to a variable is invalid.
+ * @@param message A useful message to show the user
+ * @@author Kyle Dewey
+ */
+case class VariableArgumentException( message: String )
+     extends IllegalArgumentException {}
+a889 1
+ * Within Sentinel, variables point to cells within spreadsheets.
+d893 1
+a893 7
+  /**
+   * Gets the value of the cell in the spreadsheet
+   * @@return The value of the cell in the spreadsheet specified by where
+   * @@throws VariableDereferenceException If the given spreadsheet is invalid, or
+   * if the row and/or column is invalid
+   */
+  def cellValue(): String 
+d897 4
+a900 1
+ * A string variable.  Simply returns the value of what's in the spreadsheet
+d903 5
+a907 14
+trait StringVariable extends Variable with SentString {
+  /**
+   * Gets the value of the cell in the spreadsheet.
+   * @@return The value of the cell in the spreadsheet
+   * @@throws ValueException If the variable could not be dereferenced
+   */
+  override def value() = {
+    try {
+      cellValue
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+    }
+  }
+d910 3
+a912 23
+/**
+ * An integer that is a variable.
+ * This is used to wrap spreadsheet values to integers.
+ * @@author Kyle Dewey
+ */
+trait IntVariable extends Variable with SentInt {
+  /**
+   * Gets the value of the cell in the spreadsheet as an integer.
+   * @@return The value of the cell as an integer
+   * @@throws ValueException If the value of the cell could not be converted
+   * to an integer, or the variable refers to an invalid place in the spreadsheet
+   */
+  override def value() = {
+    try {
+      java.lang.Long.parseLong( cellValue )
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+      case e: NumberFormatException =>
+	throw new ValueException( "Could not convert \"" +
+				  cellValue + "\" to an integer" )
+    }
+  }
+d915 3
+a917 25
+/**
+ * A real that is a variable.
+ * For wrapping spreadsheet values to real numbers.
+ * @@author Kyle Dewey
+ */
+trait RealVariable extends Variable with SentReal {
+  /**
+   * Gets the value of the cell in the spreasheet as
+   * a real number.
+   * @@return The value of the cell as a real number
+   * @@throws ValueException If the value in the cell could not be converted
+   * to a real number, or if the variable refers to an invalid place in the
+   * spreadsheet
+   */
+  override def value() = {
+    try {
+      java.lang.Double.parseDouble( cellValue )
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+      case e: NumberFormatException =>
+	throw new ValueException( "Could not convert \"" +
+				  cellValue + "\" to a real number" )
+    }
+  }
+d920 3
+a922 24
+/**
+ * A char that is a variable
+ * For wrapping spreadsheet values to characters
+ * @@author Kyle Dewey
+ */
+trait CharVariable extends Variable with SentChar {
+  /**
+   * Gets the value of the cell in the spreadsheet as a character.
+   * @@return The value of the cell as a character
+   * @@throws ValueException If it was not possible to convert the value to a
+   * character, or if the variable points to an invalid place in the
+   * spreadsheet
+   */
+  override def value() = {
+    try {
+      val cell = cellValue
+      if ( cell.length == 1 ) cell.charAt( 0 )
+      else throw new ValueException( "Could not convert \"" +
+				     cell + "\" to a character" )
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+    }
+  }
+a923 39
+ 
+/**
+ * A simple variable that contains the very data it's going to
+ * give on cellValue().
+ * @@todo Fix these so they work like normal parameters.  At the moment they
+ * are converted to constants, which is OK because they are only used in
+ * the VPL which must constantly reparse the tree anyway.
+ * @@param cellValue The value to show on calling <code>cellValue</code>
+ * @@author Kyle Dewey
+ */
+abstract class SimpleVariable( var cellValue: String ) extends Variable {}
+
+/**
+ * A simple variable that's a string
+ * @@param cellValue The initial string value
+ */
+class SimpleStringVariable( cellValue: String ) 
+extends SimpleVariable( cellValue ) with StringVariable {}
+
+/**
+ * A simple variable that's a char
+ * @@param cellValue The initial character value
+ */
+class SimpleCharVariable( cellValue: String ) 
+extends SimpleVariable( cellValue ) with CharVariable {}
+
+/**
+ * A simple variable that's an int.
+ * @@param cellValue The initial integer value
+ */
+class SimpleIntVariable( cellValue: String ) 
+extends SimpleVariable( cellValue ) with IntVariable {}
+
+/**
+ * A simple variable that's a real number
+ * @@param cellValue The initial real number value
+ */
+class SimpleRealVariable( cellValue: String )
+extends SimpleVariable( cellValue ) with RealVariable {}
+a1196 67
+ * Used to create spreadsheet variables of the correct type.
+ * @@author Kyle Dewey
+ */
+object SpreadsheetVariable {
+  // maps parameter types to functions that can create sheets of
+  // that type.
+  val makeVarWithType: Map[ ParamType, 
+			    ( Option[ String ],
+			      Option[ Int ],
+			      Option[ Int ] ) => SpreadsheetVariable ] =
+    Map( Pair( StringType,
+	       ( sheet: Option[ String ],
+		 row: Option[ Int ],
+		 column: Option[ Int ] ) =>
+		   new SpreadsheetStringVariable( sheet, row, column ) ),
+	 Pair( IntType,
+	       ( sheet: Option[ String ],
+		 row: Option[ Int ],
+		 column: Option[ Int ] ) =>
+		   new SpreadsheetIntVariable( sheet, row, column ) ),
+	 Pair( RealType,
+	       ( sheet: Option[ String ],
+		 row: Option[ Int ],
+		 column: Option[ Int ] ) =>
+		   new SpreadsheetRealVariable( sheet, row, column ) ),
+	 Pair( CharType,
+	       ( sheet: Option[ String ],
+		 row: Option[ Int ],
+		 column: Option[ Int ] ) =>
+		   new SpreadsheetCharVariable( sheet, row, column ) ) )
+
+  /**
+   * Creates a variable of the given type using the given cell range
+   * information.
+   * @@param theType The type of the variable to create
+   * @@param sheet The sheet to use
+   * @@param row The row to use
+   * @@param column The column to use
+   * @@throws UnknownSpreadsheetVariableType If we don't recognize the type
+   */
+  def apply( theType: ParamType,
+	     sheet: Option[ String ],
+	     row: Option[ Int ],
+	     column: Option[ Int ] ): SpreadsheetVariable = {
+    if ( makeVarWithType.contains( theType ) ) {
+      makeVarWithType( theType )( sheet, row, column )
+    } else {
+      throw new UnknownSpreadsheetVariableType( "Unknown spreadsheet " +
+					        "variable type: " + 
+					        ParamType.toString( theType ) )
+    }
+  }
+
+  /**
+   * Like <code>apply</code>, but it uses a cell range instead
+   * @@param theType The type of the variable to create
+   * @@param range The cell range to use
+   * @@throws UnknownSpreadsheetVariableType If we don't recognize the type
+   */
+  def apply( theType: ParamType, range: CellRange ): SpreadsheetVariable =
+    this( theType,
+	  range.sheet,
+	  range.row,
+	  range.column )
+}
+
+/**
+d1243 4
+a1246 4
+abstract class SpreadsheetVariable( sheet: Option[ String ], 
+				    row: Option[ Int ],
+				    column: Option[ Int ] ) 
+extends CellRange( sheet, row, column ) with Variable {
+d1250 10
+d1263 2
+a1264 2
+   * @@throws VariableDereferenceException If the given spreadsheet is invalid, or
+   * if the row and/or column is invalid
+d1266 1
+a1266 1
+  def cellValue(): String = {
+a1285 95
+ * An integer that is a variable.
+ * This is used to wrap spreadsheet values to integers.
+ * @@param sheet The name of the spreasheet we are associated with.
+ * Specify None for *.
+ * @@param row The row of the spreadsheet we are associated with.
+ * Specify None for *.
+ * @@param column The column of the spreadhseet we are associated with.
+ * Specify None for *.
+ * @@throws VariableArgumentException If an attempt to reference a specific
+ * row and column was made but a specific spreadsheet wasn't declared.  Also
+ * if a negative row or column was given.  Note that spreadsheet name checking
+ * isn't done until an attempt to get a spreadsheet value is made, so that
+ * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+ * would have to be made before variables).
+ * @@author Kyle Dewey
+ */
+class SpreadsheetIntVariable( sheet: Option[ String ],
+			      row: Option[ Int ],
+			      column: Option[ Int ] )
+extends SpreadsheetVariable( sheet,
+			     row,
+			     column ) with IntVariable {}
+
+/**
+ * A real that is a variable.
+ * For wrapping spreadsheet values to real numbers.
+ * @@param sheet The name of the spreasheet we are associated with.
+ * Specify None for *.
+ * @@param row The row of the spreadsheet we are associated with.
+ * Specify None for *.
+ * @@param column The column of the spreadhseet we are associated with.
+ * Specify None for *.
+ * @@throws VariableArgumentException If an attempt to reference a specific
+ * row and column was made but a specific spreadsheet wasn't declared.  Also
+ * if a negative row or column was given.  Note that spreadsheet name checking
+ * isn't done until an attempt to get a spreadsheet value is made, so that
+ * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+ * would have to be made before variables).
+ * @@author Kyle Dewey
+ */
+class SpreadsheetRealVariable( sheet: Option[ String ],
+			       row: Option[ Int ],
+			       column: Option[ Int ] )
+extends SpreadsheetVariable( sheet,
+			     row,
+			     column ) with RealVariable {}
+
+/**
+ * A char that is a variable
+ * For wrapping spreadsheet values to characters
+ * @@param sheet The name of the spreasheet we are associated with.
+ * Specify None for *.
+ * @@param row The row of the spreadsheet we are associated with.
+ * Specify None for *.
+ * @@param column The column of the spreadhseet we are associated with.
+ * Specify None for *.
+ * @@throws VariableArgumentException If an attempt to reference a specific
+ * row and column was made but a specific spreadsheet wasn't declared.  Also
+ * if a negative row or column was given.  Note that spreadsheet name checking
+ * isn't done until an attempt to get a spreadsheet value is made, so that
+ * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+ * would have to be made before variables).
+ * @@author Kyle Dewey
+ */
+class SpreadsheetCharVariable( sheet: Option[ String ],
+			       row: Option[ Int ],
+			       column: Option[ Int ] )
+extends SpreadsheetVariable( sheet,
+			     row,
+			     column ) with CharVariable {}
+
+/**
+ * A string variable.
+ * @@param sheet The name of the spreasheet we are associated with.
+ * Specify None for *.
+ * @@param row The row of the spreadsheet we are associated with.
+ * Specify None for *.
+ * @@param column The column of the spreadhseet we are associated with.
+ * Specify None for *.
+ * @@throws VariableArgumentException If an attempt to reference a specific
+ * row and column was made but a specific spreadsheet wasn't declared.  Also
+ * if a negative row or column was given.  Note that spreadsheet name checking
+ * isn't done until an attempt to get a spreadsheet value is made, so that
+ * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+ * would have to be made before variables).
+ * @@author Kyle Dewey
+ */
+class SpreadsheetStringVariable( sheet: Option[ String ],
+				 row: Option[ Int ],
+				 column: Option[ Int ] )
+extends SpreadsheetVariable( sheet,
+			     row,
+			     column ) with StringVariable {}
+
+/**
+a1313 86
+
+  /**
+   * Creates a simple variable of the given type.
+   * @@param cellValue The initial cell value of the variable
+   * @@param theType The type of the variable to create
+   * @@return A simple variable of the given type, or None if there isn't
+   * a simple variable in existance for that type.
+   */
+  def apply( cellValue: String,
+	     theType: ParamType ): Option[ SimpleVariable ] = {
+    theType match {
+      case StringType => Some( new SimpleStringVariable( cellValue ) )
+      case IntType => Some( new SimpleIntVariable( cellValue ) )
+      case RealType => Some( new SimpleRealVariable( cellValue ) )
+      case CharType => Some( new SimpleCharVariable( cellValue ) )
+      case _ => None
+    }
+  }
+	       
+  /**
+   * Creates a variable of the given type.
+   * @@param sheet The sheet the variable is associated with
+   * @@param row The row the variable is associated with
+   * @@param column The column the variable is associated with
+   * @@param theType The type of the variable to create
+   * @@return A variable of the given type, or None if
+   * there is no variable type correlating to that type
+   * @@throws VariableArgumentException If an attempt to reference a specific
+   * row and column was made but a specific spreadsheet wasn't declared.  Also
+   * if a negative row or column was given.  Note that spreadsheet name checking
+   * isn't done until an attempt to get a spreadsheet value is made, so that
+   * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+   * would have to be made before variables).
+   */
+  def apply( sheet: Option[ String ],
+	     row: Option[ Int ],
+	     column: Option[ Int ],
+	     theType: ParamType ): Option[ SpreadsheetVariable ] =
+    theType match {
+      case StringType => Some( new SpreadsheetStringVariable( sheet, row, column ) )
+      case IntType => Some( new SpreadsheetIntVariable( sheet, row, column ) )
+      case RealType => Some( new SpreadsheetRealVariable( sheet, row, column ) )
+      case CharType => Some( new SpreadsheetCharVariable( sheet, row, column ) )
+      case _ => None
+    }
+  
+  /**
+   * Creates a variable of the given type, where the
+   * type is a string.
+   * @@param sheet The sheet the variable is associated with
+   * @@param row The row the variable is associated with
+   * @@param column The column the variable is associated with
+   * @@param theType The type of the variable
+   * @@return A variable of the given type, or None if the given string
+   * didn't correlate to a type or the type it did correlate to
+   * wasn't a variable type
+   * @@throws VariableArgumentException If an attempt to reference a specific
+   * row and column was made but a specific spreadsheet wasn't declared.  Also
+   * if a negative row or column was given.  Note that spreadsheet name checking
+   * isn't done until an attempt to get a spreadsheet value is made, so that
+   * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+   * would have to be made before variables).
+   */
+  def apply( sheet: Option[ String ],
+	     row: Option[ Int ],
+	     column: Option[ Int ],
+	     theType: String ): Option[ SpreadsheetVariable ] = {
+    if ( !ParamType.stringToParam.contains( theType ) ) None
+    else apply( sheet,
+	        row,
+	        column,
+	        ParamType.stringToParam( theType ) )
+  }
+
+  /**
+   * Creates a simple variable of the given type, where the type is a string.
+   * @@param cellValue The initial value of the variable
+   * @@param theType The type of the variable, as a string
+   * @@return A simple variable of the given type, or None if there is no such type
+   */
+  def apply( cellValue: String,
+	     theType: String ): Option[ SimpleVariable ] = {
+    if ( !ParamType.stringToParam.contains( theType ) ) None
+    else apply( cellValue,
+	        ParamType.stringToParam( theType ) )
+  }
+d1373 10
+d1403 1
+a1403 1
+  implicit def string2Data( string: String ) =
+d1412 2
+a1413 2
+  implicit def integer2Data( integer: Int ) =
+    long2Data( integer.asInstanceOf[ Long ] )
+d1421 1
+a1421 1
+  implicit def long2Data( long: Long ) =
+d1430 1
+a1430 1
+  implicit def double2Data( theDouble: Double ) =
+d1439 1
+a1439 1
+  implicit def char2Data( theChar: Char ) =
+d1443 1
+a1443 1
+/*
+d1453 1
+a1453 1
+trait Replacer extends Instance with Data {
+d1462 4
+a1465 1
+  def replace(): Data
+d1467 8
+a1474 7
+  /**
+   * Synonymous with <code>replace()</code>.
+   *
+   * @@return The replacement
+   */
+  override def data() = 
+    replace.data
+a1484 121
+ * Like replacer, only the return value is of a more specific type.
+ * Additionally, the replacer itself dons that type.
+ * This is needed in order to assign types to parameters without
+ * worrying about what the underlying parameter is.
+ * @@author Kyle Dewey
+ */
+trait TypedReplacer[ T ] extends Replacer with Value[ T ] {
+  /**
+   * Gets the replacement of the value.
+   * Note that the type is far more specific.
+   * @@return The value of the replacement
+   */
+  def replace(): Value[ T ]
+
+  /**
+   * Merely gets the underlying value of the replacement
+   * @@return <code>replace.value</code>
+   */
+  def value() = replace.value
+}
+
+/**
+ * A replacer with a SentChar return type.
+ * @@author Kyle Dewey
+ */
+trait SentCharReplacer extends TypedReplacer[ Char ] with SentChar {}
+
+/**
+ * A replacer with a SentInt return type.
+ * @@author Kyle Dewey
+ */
+trait SentIntReplacer extends TypedReplacer[ Long ] with SentInt {}
+
+/**
+ * A replacer with a SentReal return type.
+ * @@author Kyle Dewey
+ */
+trait SentRealReplacer extends TypedReplacer[ Double ] with SentReal {}
+
+/**
+ * A replacer with a SentString return type.
+ * @@author Kyle Dewey
+ */
+trait SentStringReplacer extends TypedReplacer[ String ] with SentString {}
+
+/**
+ * A proxy that assigns a type to an otherwise untyped replacer.
+ * This is needed to perform type conversions on replacers
+ * in a way that abstracts the underlying implementation away.
+ * @@param replacer The untyped replacer this acts as a proxy for
+ * @@author Kyle Dewey
+ */
+abstract class TypedReplacerProxy( val replacer: Replacer ) 
+extends Replacer with Variable with Proxy {
+  /**
+   * Gets the underlying replacer
+   * @@return The underlying replacer
+   */
+  def self() = replacer
+
+  /**
+   * Gets the class of the replacer
+   * Merely delegates to the replacer
+   * @@return <code>replacer.className</code>
+   */
+  def className() = replacer.className
+
+  /**
+   * Gets the parameters passed to the replacer.
+   * Merely delegates to the replacer
+   * @@return <code>replacer.params</code>
+   */
+  def params() = replacer.params
+
+  /**
+   * Gets the replacement of the replacer
+   * Merely delegates to the replacer
+   * @@return <code>replacer.replace<code>
+   */
+  def replace() = replacer.replace
+
+  /**
+   * Merely gets the replacer's data.
+   * @@return The replacer's data
+   */
+  def cellValue() = replacer.data
+}
+
+/**
+ * A replacer proxy with the type of SentChar
+ * @@param replacer The replacer this is a proxy for
+ * @@author Kyle Dewey
+ */
+class SentCharReplacerProxy( replacer: Replacer ) 
+extends TypedReplacerProxy( replacer ) with CharVariable {}
+
+/**
+ * A replacer proxy with the type of SentInt
+ * @@param replacer The replacer this is a proxy for
+ * @@author Kyle Dewey
+ */
+class SentIntReplacerProxy( replacer: Replacer )
+extends TypedReplacerProxy( replacer ) with IntVariable {}
+
+/**
+ * A replacer proxy with the type of SentReal
+ * @@param replacer The replacer this is a proxy for
+ * @@author Kyle Dewey
+ */
+class SentRealReplacerProxy( replacer: Replacer )
+extends TypedReplacerProxy( replacer ) with RealVariable {}
+
+/**
+ * A replacer proxy with the type of SentString
+ * @@param replacer The replacer this is a proxy for
+ * @@author Kyle Dewey
+ */
+class SentStringReplacerProxy( replacer: Replacer )
+extends TypedReplacerProxy( replacer ) with StringVariable {}
+
+/**
+d1491 1
+a1491 8
+class VerbatimReplacer( val toReturn: Constant ) extends Replacer {
+  /**
+   * Creates a new replacer using a string
+   * @@param string The string to return
+   */
+  def this( string: String ) =
+    this( Constant( string ) )
+
+a1503 34
+
+  /**
+   * Merely returns whatever toReturn is.
+   * @@return The replacement
+   */
+  override def replace() =
+    toReturn
+}
+
+/**
+ * A replacer wrapped around a variable.
+ * @@param variable The variable we are wrapped around
+ * @@author Kyle Dewey
+ */
+class VariableReplacer( val variable: Variable ) extends Replacer {
+  /**
+   * Merely returns the value of the variable.
+   * @@return The variable's current value
+   */
+  override def replace() =
+    Constant( variable.cellValue )
+
+  /**
+   * The parameters passed are not normal, so this merely returns
+   * an empty Seq.
+   * @@return an empty seq
+   */
+  def params() = Seq()
+
+  /**
+   * Gets the name of the class.
+   * @@return The name of the class
+   */
+  def className() = "VariableReplacer"
+a1504 3
+
+
+
+@
+
+
+1.26
+log
+@Added an equals() and hashCode() method to
+the Value trait.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.25 2011/05/31 17:17:48 kyledewey Exp $
+d9 4
+d446 1
+a446 1
+      case DataType => ParamConverter.dataToParam( toData )
+d471 17
+a678 2
+    var retval = ""
+
+d680 9
+a688 4
+      retval = " with value " + value.get
+      if ( found == StringType ) {
+	retval = "\"" + retval + "\""
+      }
+a689 2
+
+    retval
+d841 3
+a843 1
+      case p: Data => Some( Constant( p.data ) )
+d863 2
+a864 1
+  def toSentInt( param: Param ): Option[ SentInt ] =
+d870 2
+a871 1
+      case p: Data => {
+d878 1
+d881 1
+d904 2
+a905 1
+      case p: Data => {
+d912 1
+d938 2
+a939 1
+      case p: Data => {
+d945 1
+d967 1
+a967 1
+      case param: Data => Some( new VerbatimReplacer( param.data ) )
+a1011 12
+   * Converts the given data to a param.
+   * @@param param The param to convert
+   * @@return the data as a param, or None if conversion was impossible
+   */
+  def dataToParam( param: Option[ Data ] ): Option[ Param ] = {
+    if ( param.isDefined &&
+	 param.get.isInstanceOf[ Param ] )
+      Some( param.get.asInstanceOf[ Param ] )
+    else None
+  }
+      
+  /**
+d1045 7
+a1051 7
+      case StringType => toSentString( param )
+      case IntType => toSentInt( param )
+      case RealType => toSentReal( param )
+      case CharType => toSentChar( param )
+      case MatcherType => toMatcher( param )
+      case ReplacerType => toReplacer( param )
+      case DataType => dataToParam( toData( param ) )
+d1063 1
+a1063 1
+trait Constant extends Param {}
+d1272 1
+a1272 1
+
+d1276 3
+d2018 1
+a2018 1
+  implicit def string2Data( string: String ): Data =
+d2027 1
+a2027 1
+  implicit def integer2Data( integer: Int ): Data =
+d2036 1
+a2036 1
+  implicit def long2Data( long: Long ): Data =
+d2045 1
+a2045 1
+  implicit def double2Data( theDouble: Double ): Data =
+d2054 1
+a2054 1
+  implicit def char2Data( theChar: Char ): Data =
+d2096 121
+d2223 1
+a2223 1
+class VerbatimReplacer( val toReturn: Data ) extends Replacer {
+d2229 1
+a2229 1
+    this( Replacer.string2Data( string ) )
+d2263 1
+a2263 1
+    Replacer.string2Data( variable.cellValue )
+@
+
+
+1.25
+log
+@Added code to the CellRange object to allow for
+the parsing in of cell ranges from strings.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.24 2011/05/31 00:02:59 kyledewey Exp kyledewey $
+d9 4
+d514 19
+@
+
+
+1.24
+log
+@Added a toString() method to CellRange.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.23 2011/05/29 15:21:51 kyledewey Exp $
+d9 3
+d1283 81
+a1363 1
+  val DELIMETER = ":"
+@
+
+
+1.23
+log
+@Added the various inRange() methods to CellRange.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.22 2011/05/27 18:48:02 kyledewey Exp $
+d9 3
+d1276 8
+d1432 12
+@
+
+
+1.22
+log
+@Added the CellPointer class.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.21 2011/05/27 01:32:13 kyledewey Exp kyledewey $
+d9 3
+d1284 68
+@
+
+
+1.21
+log
+@Added an equals() and hashCode() method to CellRange.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.20 2011/05/25 21:52:58 kyledewey Exp $
+d9 3
+d1258 12
+a1288 3
+    val sheets =
+      if ( sheet.isDefined ) Seq( sheet.get )
+      else getSpreadsheets.map( _.self )
+d1304 23
+a1326 1
+
+@
+
+
+1.20
+log
+@Constant now extends Param.
+Added an apply method to Constant that takes the
+type of constant to make.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.19 2011/05/25 20:04:57 kyledewey Exp kyledewey $
+d9 5
+d1292 24
+@
+
+
+1.19
+log
+@Added foreach() for cell ranges, and code to simplify
+the creation of SpreadsheetVariables.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.18 2011/04/19 12:59:14 kyledewey Exp kyledewey $
+d9 4
+d1003 1
+a1003 1
+trait Constant {}
+d1012 11
+@
+
+
+1.18
+log
+@Made replacers and matchers traits instead of
+abstract classes.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.17 2011/03/27 14:04:37 kyledewey Exp $
+d9 4
+d1090 1
+a1090 1
+trait Variable {
+d1204 1
+a1204 1
+class SimpleVariable( var cellValue: String ) extends Variable {}
+d1244 104
+a1347 1
+		 val column: Option[ Int ] ) {}
+d1396 4
+a1399 4
+class SpreadsheetVariable( sheet: Option[ String ], 
+			   row: Option[ Int ],
+			   column: Option[ Int ] ) 
+extends CellRange( sheet, row, column ) {
+d1647 13
+a1659 1
+trait Instance extends Param {}
+d1810 13
+d1842 13
+@
+
+
+1.17
+log
+@Added methods to ParamInfo to create copies with
+specific changes.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.16 2011/02/27 07:48:15 kyledewey Exp $
+d9 4
+d1540 1
+a1540 1
+abstract class Instance extends Param {}
+d1570 1
+a1570 1
+abstract class Matcher extends Instance {
+d1648 1
+a1648 1
+abstract class Replacer extends Instance with Data {
+@
+
+
+1.16
+log
+@Removed non-working code for the special case of
+converting SimpleVariables.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.15 2011/02/27 06:39:55 kyledewey Exp kyledewey $
+d9 4
+d176 49
+d591 57
+d654 13
+a666 2
+case class ParameterTypeException( message: String, val param: NamedParam )
+     extends Exception( message ) {}
+@
+
+
+1.15
+log
+@Added the printableValue() method to Param.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.14 2011/02/12 02:50:14 kyledewey Exp $
+d9 3
+a642 1
+      case p: SimpleVariable => Some( new SimpleStringVariable( p.cellValue ) )
+a668 1
+      case p: SimpleVariable => Some( new SimpleIntVariable( p.cellValue ) )
+a699 1
+      case p: SimpleVariable => Some( new SimpleRealVariable( p.cellValue ) )
+a731 1
+      case p: SimpleVariable => Some( new SimpleCharVariable( p.cellValue ) )
+@
+
+
+1.14
+log
+@Refactored so that there are both Spreadsheet and Simple variables.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.13 2010/07/11 05:44:00 kyledewey Exp $
+d9 3
+d356 19
+a536 1
+ *
+d538 1
+d541 1
+a541 1
+case class ParameterTypeException( message: String )
+@
+
+
+1.13
+log
+@Minor shifting of file contents to make the order
+match more closely with dependencies.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.12 2010/06/26 04:02:24 kyledewey Exp $
+d9 4
+d618 4
+a621 3
+      case p: Variable => Some( new StringVariable( p.sheet,
+						    p.row,
+						    p.column ) )
+d645 4
+a648 3
+      case p: Variable => Some( new IntVariable( p.sheet,
+					         p.row,
+					         p.column ) )
+d677 4
+a680 3
+      case p: Variable => Some( new RealVariable( p.sheet,
+					          p.row,
+					          p.column ) )
+d710 4
+a713 3
+      case p: Variable => Some( new CharVariable( p.sheet,
+					          p.row,
+					          p.column ) )
+d936 149
+d1143 3
+a1145 3
+class Variable( sheet: Option[ String ], 
+	        row: Option[ Int ],
+	        column: Option[ Int ] ) 
+d1176 95
+d1301 18
+d1336 1
+a1336 1
+	     theType: ParamType ): Option[ Variable ] =
+d1338 4
+a1341 4
+      case StringType => Some( new StringVariable( sheet, row, column ) )
+      case IntType => Some( new IntVariable( sheet, row, column ) )
+      case RealType => Some( new RealVariable( sheet, row, column ) )
+      case CharType => Some( new CharVariable( sheet, row, column ) )
+d1365 1
+a1365 1
+	     theType: String ): Option[ Variable ] = {
+a1371 1
+}
+a1372 22
+/**
+ * A string variable.
+ * @@param sheet The name of the spreasheet we are associated with.
+ * Specify None for *.
+ * @@param row The row of the spreadsheet we are associated with.
+ * Specify None for *.
+ * @@param column The column of the spreadhseet we are associated with.
+ * Specify None for *.
+ * @@throws VariableArgumentException If an attempt to reference a specific
+ * row and column was made but a specific spreadsheet wasn't declared.  Also
+ * if a negative row or column was given.  Note that spreadsheet name checking
+ * isn't done until an attempt to get a spreadsheet value is made, so that
+ * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+ * would have to be made before variables).
+ * @@author Kyle Dewey
+ */
+class StringVariable( sheet: Option[ String ],
+		      row: Option[ Int ],
+		      column: Option[ Int ] )
+extends Variable( sheet,
+	          row,
+	          column ) with SentString {
+d1374 4
+a1377 3
+   * Gets the value of the cell in the spreadsheet.
+   * @@return The value of the cell in the spreadsheet
+   * @@throws ValueException If the variable could not be dereferenced
+d1379 5
+a1383 136
+  override def value() = {
+    try {
+      cellValue
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+    }
+  }
+}
+
+/**
+ * An integer that is a variable.
+ * This is used to wrap spreadsheet values to integers.
+ * @@param sheet The name of the spreasheet we are associated with.
+ * Specify None for *.
+ * @@param row The row of the spreadsheet we are associated with.
+ * Specify None for *.
+ * @@param column The column of the spreadhseet we are associated with.
+ * Specify None for *.
+ * @@throws VariableArgumentException If an attempt to reference a specific
+ * row and column was made but a specific spreadsheet wasn't declared.  Also
+ * if a negative row or column was given.  Note that spreadsheet name checking
+ * isn't done until an attempt to get a spreadsheet value is made, so that
+ * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+ * would have to be made before variables).
+ * @@author Kyle Dewey
+ */
+class IntVariable( sheet: Option[ String ],
+		   row: Option[ Int ],
+		   column: Option[ Int ] )
+extends Variable( sheet,
+	          row,
+	          column ) with SentInt {
+  /**
+   * Gets the value of the cell in the spreadsheet as an integer.
+   * @@return The value of the cell as an integer
+   * @@throws ValueException If the value of the cell could not be converted
+   * to an integer, or the variable refers to an invalid place in the spreadsheet
+   */
+  override def value() = {
+    try {
+      java.lang.Long.parseLong( cellValue )
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+      case e: NumberFormatException =>
+	throw new ValueException( "Could not convert \"" +
+				  cellValue + "\" to an integer" )
+    }
+  }
+}
+
+/**
+ * A real that is a variable.
+ * For wrapping spreadsheet values to real numbers.
+ * @@param sheet The name of the spreasheet we are associated with.
+ * Specify None for *.
+ * @@param row The row of the spreadsheet we are associated with.
+ * Specify None for *.
+ * @@param column The column of the spreadhseet we are associated with.
+ * Specify None for *.
+ * @@throws VariableArgumentException If an attempt to reference a specific
+ * row and column was made but a specific spreadsheet wasn't declared.  Also
+ * if a negative row or column was given.  Note that spreadsheet name checking
+ * isn't done until an attempt to get a spreadsheet value is made, so that
+ * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+ * would have to be made before variables).
+ * @@author Kyle Dewey
+ */
+class RealVariable( sheet: Option[ String ],
+		    row: Option[ Int ],
+		    column: Option[ Int ] )
+extends Variable( sheet,
+	          row,
+	          column ) with SentReal {
+  /**
+   * Gets the value of the cell in the spreasheet as
+   * a real number.
+   * @@return The value of the cell as a real number
+   * @@throws ValueException If the value in the cell could not be converted
+   * to a real number, or if the variable refers to an invalid place in the
+   * spreadsheet
+   */
+  override def value() = {
+    try {
+      java.lang.Double.parseDouble( cellValue )
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+      case e: NumberFormatException =>
+	throw new ValueException( "Could not convert \"" +
+				  cellValue + "\" to a real number" )
+    }
+  }
+}
+
+/**
+ * A char that is a variable
+ * For wrapping spreadsheet values to characters
+ * @@param sheet The name of the spreasheet we are associated with.
+ * Specify None for *.
+ * @@param row The row of the spreadsheet we are associated with.
+ * Specify None for *.
+ * @@param column The column of the spreadhseet we are associated with.
+ * Specify None for *.
+ * @@throws VariableArgumentException If an attempt to reference a specific
+ * row and column was made but a specific spreadsheet wasn't declared.  Also
+ * if a negative row or column was given.  Note that spreadsheet name checking
+ * isn't done until an attempt to get a spreadsheet value is made, so that
+ * spreadsheets and variables can be made in any order (otherwise, spreadsheets
+ * would have to be made before variables).
+ * @@author Kyle Dewey
+ */
+class CharVariable( sheet: Option[ String ],
+		    row: Option[ Int ],
+		    column: Option[ Int ] )
+extends Variable( sheet,
+	          row,
+	          column ) with SentChar {
+  /**
+   * Gets the value of the cell in the spreadsheet as a character.
+   * @@return The value of the cell as a character
+   * @@throws ValueException If it was not possible to convert the value to a
+   * character, or if the variable points to an invalid place in the
+   * spreadsheet
+   */
+  override def value() = {
+    try {
+      val cell = cellValue
+      if ( cell.length == 1 ) cell.charAt( 0 )
+      else throw new ValueException( "Could not convert \"" +
+				     cell + "\" to a character" )
+    } catch {
+      case e: VariableDereferenceException =>
+	throw new ValueException( e.getMessage )
+    }
+@
+
+
+1.12
+log
+@Made Value extend Ordered.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.11 2010/06/25 03:43:57 kyledewey Exp kyledewey $
+d9 3
+d498 4
+a501 50
+ * Represents a constant.
+ * Note that this doesn't really do anything, but to signify to
+ * calling code that the given value is that of a constant.
+ * Constants have fixed values, which cannot be changed after being set
+ * @@author Kyle Dewey
+ */
+trait Constant {}
+
+/**
+ * Creates constants of the appropriate type, depending on
+ * what parameter was passed.
+ * @@author Kyle Dewey
+ */
+object Constant {
+  /**
+   * Creates a new string constant
+   * @@param value The string to put into the constant
+   * @@return A new string constant
+   */
+  def apply( value: String ) =
+    new StringConstant( value )
+
+  /**
+   * Creates a new real constant.
+   * @@param value The double to put into the constant
+   * @@return A new real constant
+   */
+  def apply( value: Double ) = 
+    new RealConstant( value )
+
+  /**
+   * Creates a new character constant
+   * @@param value The character to put into the constant
+   * @@return A new character constant
+   */
+  def apply( value: Char ) =
+    new CharConstant( value )
+
+  /**
+   * Creates a new integer constant
+   * @@param value The integer to put into the constant
+   * @@return A new integer constant
+   */
+  def apply( value: Long ) =
+    new IntConstant( value )
+}
+
+/**
+ * Represents a string constant.
+ * @@param value The value of the constant
+d505 2
+a506 1
+class StringConstant( val value: String ) extends SentString with Constant {}
+d509 4
+a512 2
+ * Represents an integer constant.
+ * @@param value The value of the integer.
+d515 2
+a516 1
+class IntConstant( val value: Long ) extends SentInt with Constant {}
+d519 2
+a520 2
+ * Represents a floating point constant.
+ * @@param value The value of the number
+d523 2
+a524 1
+class RealConstant( val value: Double ) extends SentReal with Constant {}
+d527 4
+a530 2
+ * Represents a character.
+ * @@param value The value of the character.
+d533 2
+a534 1
+class CharConstant( val value: Char ) extends SentChar with Constant {}
+d537 4
+a540 7
+ * Represents a variable.  Variables change their
+ * values depending upon where we are in the spreadsheet.
+ * TODO: come up with a way to map to actual data
+ *
+ * @@param where Where the variable is in the spreadsheet.
+ *              For instance, something like previous_column
+ * 
+d543 11
+a553 1
+class Variable( val where: String ) {
+d555 4
+a558 3
+   * Gets the value of the cell in the spreadsheet
+   * @@todo Make this do something
+   * @@return The value of the cell in the spreadsheet specified by where
+d560 2
+a561 3
+  def cellValue() =
+    "CELL DATA"
+}
+a562 5
+/**
+ * Can create variables of different types.
+ * @@author Kyle Dewey
+ */
+object Variable {
+d564 3
+a566 5
+   * Creates a variable of the given type.
+   * @@param where Where the variable is
+   * @@param theType The type of the variable to create
+   * @@return A variable of the given type, or None if
+   * there is no variable type correlating to that type
+d568 3
+a570 9
+  def apply( where: String, theType: ParamType ): Option[ Variable ] =
+    theType match {
+      case StringType => Some( new StringVariable( where ) )
+      case IntType => Some( new IntVariable( where ) )
+      case RealType => Some( new RealVariable( where ) )
+      case CharType => Some( new CharVariable( where ) )
+      case _ => None
+    }
+  
+d572 3
+a574 7
+   * Creates a variable of the given type, where the
+   * type is a string.
+   * @@param where Where the variable is
+   * @@param theType The type of the variable
+   * @@return A variable of the given type, or None if the given string
+   * didn't correlate to a type or the type it did correlate to
+   * wasn't a variable type
+d576 9
+a584 3
+  def apply( where: String, theType: String ): Option[ Variable ] = {
+    if ( !ParamType.stringToParam.contains( theType ) ) None
+    else apply( where, ParamType.stringToParam( theType ) )
+a585 1
+}
+a586 7
+/**
+ * A string variable.
+ * @@param where Where the variable is in the spreadsheet
+ * @@author Kyle Dewey
+ */
+class StringVariable( where: String ) 
+extends Variable( where ) with SentString {
+d588 3
+a590 2
+   * Gets the value of the cell in the spreadsheet.
+   * @@return The value of the cell in the spreadsheet
+d592 2
+a593 2
+  override def value() =
+    cellValue
+d597 3
+a599 3
+ * An integer that is a variable.
+ * This is used to wrap spreadsheet values to integers.
+ * @@param where Where the variable is in the spreadsheet
+d602 3
+a604 1
+class IntVariable( where: String ) extends Variable( where ) with SentInt {
+d606 4
+a609 4
+   * Gets the value of the cell in the spreadsheet as an integer.
+   * @@return The value of the cell as an integer
+   * @@throws ValueException If the value of the cell could not be converted
+   * to an integer
+d611 8
+a618 7
+  override def value() = {
+    try {
+      java.lang.Long.parseLong( cellValue )
+    } catch {
+      case e: NumberFormatException =>
+	throw new ValueException( "Could not convert \"" +
+				  cellValue + "\" to an integer" )
+a619 2
+  }
+}
+a620 7
+/**
+ * A real that is a variable.
+ * For wrapping spreadsheet values to real numbers.
+ * @@param where Where the variable is in the speadsheet
+ * @@author Kyle Dewey
+ */
+class RealVariable( where: String ) extends Variable( where ) with SentReal {
+d622 14
+a635 5
+   * Gets the value of the cell in the spreasheet as
+   * a real number.
+   * @@return The value of the cell as a real number
+   * @@throws ValueException If the value in the cell could not be converted
+   * to a real number
+d637 14
+a650 7
+  override def value() = {
+    try {
+      java.lang.Double.parseDouble( cellValue )
+    } catch {
+      case e: NumberFormatException =>
+	throw new ValueException( "Could not convert \"" +
+				  cellValue + "\" to a real number" )
+a651 2
+  }
+}
+a652 7
+/**
+ * A char that is a variable
+ * For wrapping spreadsheet values to characters
+ * @@param where Where the variable is in the spreasheet
+ * @@author Kyle Dewey
+ */
+class CharVariable( where: String ) extends Variable( where ) with SentChar {
+d654 3
+a656 3
+   * Gets the value of the cell in the spreadsheet as a character.
+   * @@return The value of the cell as a character
+   * @@throws ValueException If it was not possible to convert the value
+d658 2
+a659 7
+  override def value() = {
+    val cell = cellValue
+    if ( cell.length == 1 ) cell( 0 )
+    else throw new ValueException( "Could not convert \"" +
+				   cell + "\" to a character" )
+  }
+}
+d661 22
+a682 8
+/**
+ * Represents an instance of a class.
+ * By far, instances are the most flexible kind of params.
+ * Conversely, they are also the most "magical", and misuse
+ * can lead to non-robust code.
+ * @@author Kyle Dewey
+ */
+abstract class Instance extends Param {}
+d684 7
+a690 6
+/**
+ * Exception thrown when a problem occurs in a matcher.
+ * @@param message A message to show the user
+ * @@author Kyle Dewey
+ */
+case class MatchException( message: String ) extends Exception {}
+a691 22
+/**
+ * Exception thrown when a problem occurs in a replacer.
+ * @@param message A message to show the user
+ * @@author Kyle Dewey
+ */
+case class ReplaceException( message: String ) extends Exception {}
+
+/**
+ * <p>Base class for anything that wants to act as a matcher.
+ * Note that matchers are intended to be created via 
+ * factory objects.</p>
+ * <p>Note that matchers should have a constructor
+ * that takes a String, Seq[ Param ].  The string
+ * is the name of the resulting matcher/replacer.  The
+ * Seq[ Param ] is a listing of params, which are guarenteed
+ * to be valid as long as the following is true:
+ * -The matcher/replacer was created through its correpsonding factory
+ * -The neccessary params specified in the factory are correct</p>
+ *
+ * @@author Kyle Dewey
+ */
+abstract class Matcher extends Instance {
+d693 27
+a719 3
+   * Determines if we have a match, as determined by parameters.
+   * @@return true if this matcher matches, else false
+   * @@throws MatchException If no match could be determined
+d721 2
+a722 1
+  def matches(): Boolean
+d725 3
+a727 2
+   * Gets that this is a matcher.
+   * @@return That this is a matcher
+d729 7
+a735 3
+  override def getType() =
+    ParamType.MatcherType
+}
+a736 5
+/**
+ * Object that assists with operations dealing with replacers.
+ * @@author Kyle Dewey
+ */
+object Replacer {
+d738 4
+a741 5
+   * Converts a string to data.
+   * This is intended for the return value of replace(),
+   * where it is very common to return a string.
+   * @@param string The string to convert
+   * @@return The string as Data, specifically a StringConstant
+d743 2
+a744 2
+  implicit def string2Data( string: String ): Data =
+    Constant( string )
+d747 3
+a749 4
+   * Converts an integer to data.
+   * Saves some typing for mathematical operations.
+   * @@param integer The integer to convert
+   * @@return The integer as Data, specifically an IntConstant
+d751 5
+a755 2
+  implicit def integer2Data( integer: Int ): Data =
+    long2Data( integer.asInstanceOf[ Long ] )
+d758 4
+a761 4
+   * Converts a long to data
+   * Saves some typing for mathematical operations
+   * @@param long The long to convert
+   * @@return The long as Data, specifically an IntConstant
+d763 2
+a764 2
+  implicit def long2Data( long: Long ): Data =
+    Constant( long )
+d767 3
+a769 4
+   * Converts a double to data.
+   * Saves some typing for mathematical operations.
+   * @@param theDouble The double to convert
+   * @@return The double as data, specifically a RealConstant
+d771 5
+a775 2
+  implicit def double2Data( theDouble: Double ): Data =
+    Constant( theDouble )
+d778 3
+a780 4
+   * Converts a character to data.
+   * Saves some typing in replacer.
+   * @@param theChar The character to convert
+   * @@return The character as data, specifically a CharConstant
+d782 7
+a788 15
+  implicit def char2Data( theChar: Char ): Data =
+    Constant( theChar )
+}
+
+/*
+ * <p>Base class for anything that wants to act as a replacer.
+ * Note that replacers are intended to be created via factory
+ * objects.</p>
+ *
+ * <p>Note that replacers only replace; as to why they perform
+ * a replacement is irrelevant</p>
+ *
+ * @@author Kyle Dewey
+ */
+abstract class Replacer extends Instance with Data {
+d790 3
+a792 6
+   * Gets a replacement.
+   * Note that what the replacement is is defined by parameters
+   * specific to an individual replacer.  Also note that what
+   * a replacer replaces is determined by a matcher.
+   * @@return The replacement
+   * @@throws ReplaceException If no replacement could be determined
+d794 2
+a795 1
+  def replace(): Data
+d798 7
+a804 3
+   * Synonymous with <code>replace()</code>.
+   *
+   * @@return The replacement
+d806 7
+a812 2
+  override def data() = 
+    replace.data
+d815 5
+a819 2
+   * Gets that this is a replacer.
+   * @@return That this is a replacer
+d821 11
+a831 2
+  override def getType() =
+    ParamType.ReplacerType
+d835 11
+a845 4
+ * A basic replacer that will replace with whatever it was
+ * given as a parameter.  This is intended for conversions to
+ * replacers.
+ * @@param toReturn What to return on calling replace()
+d848 13
+a860 4
+class VerbatimReplacer( val toReturn: Data ) extends Replacer {
+  /**
+   * Creates a new replacer using a string
+   * @@param string The string to return
+d862 2
+a863 2
+  def this( string: String ) =
+    this( Replacer.string2Data( string ) )
+d866 3
+a868 2
+   * Merely returns whatever toReturn is.
+   * @@return The replacement
+d870 2
+a871 3
+  override def replace() =
+    toReturn
+}
+a872 6
+/**
+ * A replacer wrapped around a variable.
+ * @@param variable The variable we are wrapped around
+ * @@author Kyle Dewey
+ */
+class VariableReplacer( val variable: Variable ) extends Replacer {
+d874 3
+a876 2
+   * Merely returns the value of the variable.
+   * @@return The variable's current value
+d878 2
+a879 2
+  override def replace() =
+    Replacer.string2Data( variable.cellValue )
+d883 2
+a884 4
+ * Exception thrown when a parameter with a given name
+ * doesn't exist.
+ *
+ * @@param message A message describing the error
+d888 1
+a888 2
+case class ParameterNameException( message: String ) 
+     extends Exception( message ) {}
+d891 2
+a892 4
+ * Exception thrown when a parameter's expected type
+ * doesn't match the actual type
+ *
+ * @@param message A message describing the error
+d895 1
+a895 2
+case class ParameterTypeException( message: String )
+     extends Exception( message ) {}
+d898 2
+a899 2
+ * Exception thrown when a required parameter was not passed.
+ * @@param message A message describing the error
+d902 1
+a902 2
+case class ParameterRequirementException( message: String )
+     extends Exception( message ) {}
+d905 2
+a906 4
+ * Exception thrown when the type of a parameter was correct,
+ * but it was (or was not) as an array when it was supposed
+ * to be
+ * @@param message A message describing the error
+d909 108
+a1016 2
+case class ParameterArrayException( message: String ) 
+     extends Exception( message ) {}
+d1019 1
+a1019 4
+ * Exception thrown when parameters were correct, but for
+ * some reason an object could not be instantiated.
+ * @@param exception The exception that triggered this to be thrown
+ * @@param message The message that triggered this exception
+d1022 53
+a1074 3
+case class ParameterizedInstantiationException( val exception: Exception,
+					        message: String ) 
+     extends Exception( message ) {
+d1076 50
+a1125 7
+   * Synonym with the constructor, in case the order is messed up.
+   * @@param message The message
+   * @@param exception The underlying exception
+   */
+  def this( message: String, exception: Exception ) =
+    this( exception, message )
+       
+d1127 3
+a1129 4
+   * Creates a new ParameterizedInstantiationException with the given
+   * exception at the base, and no message
+   * 
+   * @@param exception The underlying exception
+d1131 9
+a1139 2
+  def this( exception: Exception ) =
+    this( exception, null )
+d1141 23
+d1165 4
+a1168 3
+   * Creates a new exception with the given message, and no
+   * exception.
+   * @@param message The message
+d1170 36
+a1205 3
+   def this( message: String ) =
+     this( message, null )
+       
+d1207 6
+a1212 3
+   * Gets the message of the underlying exception,
+   * and/or the message given to this
+   * @@return the underlying exception's message
+d1214 9
+a1222 8
+  override def getMessage() = {
+    if ( message != null &&
+	 exception.getMessage != null ) {
+      message + "; " + exception.getMessage
+    } else if ( message != null ) {
+      message
+    } else {
+      exception.getMessage
+d1225 1
+d1227 23
+d1251 5
+a1255 3
+   * Gets this as a string plus the underlying message
+   * as a string.
+   * @@return the underlying exception as a string
+d1257 11
+a1267 2
+  override def toString() = 
+    super.toString + "; " + exception.toString
+d1271 4
+a1274 3
+ * Contains code to perform various parameter conversions.
+ * Note that these match the default behavior of Param's
+ * conversion routines.
+d1277 1
+a1277 2
+object ParamConverter {
+  import ParamType._
+d1279 6
+a1284 13
+  /**
+   * Converts the given parameter to a string
+   * Returns the constant, or None if a conversion was impossible.
+   * @@param param The param to convert
+   * @@return The converted param, or None if conversion was impossible
+   */
+  def toSentString( param: Param ): Option[ SentString ] =
+    param match {
+      case p: SentString => Some( p )
+      case p: Variable => Some( new StringVariable( p.where ) )
+      case p: Data => Some( Constant( p.data ) )
+      case _ => None
+    }
+d1286 6
+a1291 29
+  /**
+   * Determines if the given param looks like a string.
+   * This means it either is one or can be converted to one.
+   * @@param param The param to check
+   * @@return true if it looks like a string, else false
+   */
+  def looksLikeSentString( param: Param ) =
+    toSentString( param ).isDefined
+
+  /**
+   * Attempts to convert the given item to an integer.
+   * If the item is already an integer, it is returned as is.
+   * Otherwise a new integer is returned.
+   * @@param param The param to convert
+   * @@return The converted parameter, or None if conversion was impossible
+   */
+  def toSentInt( param: Param ): Option[ SentInt ] =
+    param match {
+      case p: SentInt => Some( p )
+      case p: Variable => Some( new IntVariable( p.where ) )
+      case p: Data => {
+	try {
+	  Some( Constant( java.lang.Long.parseLong( p.data ) ) )
+	} catch {
+	  case _ => None
+	}
+      }
+      case _ => None
+    }
+d1293 15
+d1309 3
+a1311 3
+   * Determines if the given item looks like an integer.
+   * @@param param The param to check.
+   * @@return true if it looks like an integer, else false
+d1313 1
+a1313 2
+  def looksLikeSentInt( param: Param ) = 
+    toSentInt( param ).isDefined
+d1316 2
+a1317 5
+   * Attempts to convert the given item to a real number.
+   * Note that if the item is already a real number, then
+   * it will be returned as is.
+   * @@param The param to convert.
+   * @@return the converted param, or None if conversion was impossible
+d1319 3
+a1321 13
+  def toSentReal( param: Param ): Option[ SentReal ] =
+    param match {
+      case p: SentReal => Some( p )
+      case p: Variable => Some( new RealVariable( p.where ) )
+      case p: Data => {
+	try {
+	  Some( Constant( java.lang.Double.parseDouble( p.data ) ) )
+	} catch {
+	  case _ => None
+	}
+      }
+      case _ => None
+    }
+d1323 5
+d1329 5
+a1333 3
+   * Determines if the parameter looks like a real number.
+   * @@param param The param to check
+   * @@return true if it looks like a real number, else false
+d1335 2
+a1336 2
+  def looksLikeSentReal( param: Param ) =
+    toSentReal( param ).isDefined
+d1339 4
+a1342 6
+   * Converts the parameter to a char.
+   * If it already is one, it is returned as is.
+   * If a conversion is possible, then it will be returned.
+   * If a conversion is impossible, then None is returned
+   * @@param param The param to convert
+   * @@return The converted param, or None if conversion wasn't possible
+d1344 3
+a1346 13
+  def toSentChar( param: Param ): Option[ SentChar ] =
+    param match {
+      case p: SentChar => Some( p )
+      case p: Variable => Some( new CharVariable( p.where ) )
+      case p: Data => {
+	val data = p.data
+	if ( data.length == 1 )
+	  Some( Constant( data( 0 ) ) )
+	else None
+      }
+      case _ => None
+    }
+  
+d1348 4
+a1351 4
+   * Determines if the given parameter can be converted to
+   * a char.
+   * @@param param The param to check
+   * @@return true if it can be converted, else false
+d1353 2
+a1354 2
+  def looksLikeSentChar( param: Param ) =
+    toSentChar( param ).isDefined
+d1357 4
+a1360 3
+   * Converts the given parameter to a replacer.
+   * @@param param The param to convert
+   * @@return The parameter as a replacer
+d1362 2
+a1363 7
+  def toReplacer( param: Param ): Option[ Replacer ] =
+    param match {
+      case param: Replacer => Some( param )
+      case param: Variable => Some( new VariableReplacer( param ) )
+      case param: Data => Some( new VerbatimReplacer( param.data ) )
+      case _ => None 
+    }
+d1366 4
+a1369 4
+   * Determines if the given parameter can be converted to
+   * a replacer.
+   * @@param param The param to check
+   * @@return true if it can be converted, else false
+d1371 3
+a1373 2
+  def looksLikeReplacer( param: Param ) =
+    toReplacer( param ).isDefined
+d1375 11
+d1387 6
+a1392 3
+   * Converts the given parameter to a matcher.
+   * @@param param The param to convert
+   * @@return The converted param, of None if conversion was impossible
+d1394 1
+a1394 5
+  def toMatcher( param: Param ): Option[ Matcher ] =
+    param match {
+      case param: Matcher => Some( param )
+      case _ => None
+    }
+d1397 3
+a1399 4
+   * Determines if the given parameter can be converted to
+   * a matcher.
+   * @@param param The param to check
+   * @@return true if it can be converted, else false
+d1401 2
+a1402 2
+  def looksLikeMatcher( param: Param ) =
+    toMatcher( param ).isDefined
+d1405 2
+a1406 3
+   * Converts the given parameter to data.
+   * @@param param The param to convert
+   * @@return The converted param, or None if conversion was impossible
+d1408 3
+a1410 5
+  def toData( param: Param ): Option[ Data ] =
+    param match {
+      case param: Data => Some( param )
+      case _ => None
+    }
+d1412 8
+d1421 2
+a1422 3
+   * Converts the given data to a param.
+   * @@param param The param to convert
+   * @@return the data as a param, or None if conversion was impossible
+d1424 2
+a1425 14
+  def dataToParam( param: Option[ Data ] ): Option[ Param ] = {
+    if ( param.isDefined &&
+	 param.get.isInstanceOf[ Param ] )
+      Some( param.get.asInstanceOf[ Param ] )
+    else None
+  }
+      
+  /**
+   * Determines if the given param can be converted to data
+   * @@param param The param to check
+   * @@return true if it can be converted, else false
+   */
+  def looksLikeData( param: Param ) =
+    toData( param ).isDefined
+d1428 2
+a1429 7
+   * Given a value, attempts to determine what kind of parameter is
+   * <b>best</b> suited to storing it.  Most everything can be stored
+   * in a string constant, though that is not the best for most
+   * kinds of parameters.  Note that this will always return a constant
+   * type.
+   * @@param value The value for the parameter
+   * @@return The kind that it is best suited towards
+d1431 3
+a1433 7
+  def looksLike( value: String ): ParamType = {
+    val asParam = Constant( value )
+    if ( looksLikeSentInt( asParam ) ) IntType
+    else if ( looksLikeSentReal( asParam ) ) RealType
+    else if ( looksLikeSentChar( asParam ) ) CharType
+    else StringType
+  }
+d1435 6
+d1442 2
+a1443 5
+   * Given a parameter and a type to convert to, it will attempt to
+   * perform a conversion.
+   * @@param param The param to attempt to convert
+   * @@param toType The type to convert it to
+   * @@return The converted param, or None if conversion was impossible
+d1445 2
+a1446 11
+  def convert( param: Param, toType: ParamType ): Option[ Param ] =
+    toType match {
+      case StringType => toSentString( param )
+      case IntType => toSentInt( param )
+      case RealType => toSentReal( param )
+      case CharType => toSentChar( param )
+      case MatcherType => toMatcher( param )
+      case ReplacerType => toReplacer( param )
+      case DataType => dataToParam( toData( param ) )
+      case _ => None
+    }
+d1449 2
+@
+
+
+1.11
+log
+@Changed Int to Long in Replacer's implicit conversions.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.10 2010/06/25 03:17:51 kyledewey Exp kyledewey $
+d9 3
+d386 1
+a386 1
+trait Value[ T ] extends Param with Data {
+d415 8
+d437 8
+d459 8
+d481 11
+d785 11
+a795 2
+  implicit def integer2Data( integer: Long ): Data =
+    Constant( integer )
+@
+
+
+1.10
+log
+@Refactored so that variables have types.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.9 2010/06/23 03:10:20 kyledewey Exp kyledewey $
+d9 3
+d747 1
+a747 1
+  implicit def integer2Data( integer: Int ): Data =
+@
+
+
+1.9
+log
+@Added the sortParams() routine to ParamInfo.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.8 2010/06/20 23:36:55 kyledewey Exp kyledewey $
+d9 3
+d57 4
+a60 5
+  val StringConstantType, 
+      IntConstantType,
+      RealConstantType,
+      CharConstantType,
+      VariableType,
+d74 4
+a77 5
+  val paramToString = Map( StringConstantType -> STRING_STRING,
+			   IntConstantType -> INTEGER_STRING,
+			   RealConstantType -> REAL_STRING,
+			   CharConstantType -> CHARACTER_STRING,
+			   VariableType -> VARIABLE_STRING,
+a82 4
+  val constantTypes = Set( StringConstantType,
+			   IntConstantType,
+			   RealConstantType,
+			   CharConstantType )
+d88 17
+a104 59
+   * Determines if the given type is a constant type.
+   * @@param paramType The given type
+   * @@return true if it is a constant type, else false
+   */
+  def isConstantType( paramType: ParamType ): Boolean =
+    constantTypes( paramType )
+
+  /**
+   * Determines if the given type is a constant type.
+   * If the given string isn't recognized, this will return
+   * false.
+   * @@param paramType The type
+   * @@return true if it is a constant type, else false.  Also false
+   *         if the string is not recognized.
+   */
+  def isConstantType( paramType: String ): Boolean = {
+    val asType = stringToParam.get( paramType )
+    ( asType.isDefined &&
+      isConstantType( asType.get ) )
+  }
+  
+  /**
+   * Determines if the given type is a variable type.
+   * @@param paramType The given type
+   * @@return true if it is a variable type
+   */
+  def isVariableType( paramType: ParamType ): Boolean =
+    paramType == VariableType
+
+  /**
+   * Determines if the given string represents that of a variable
+   * type.  Returns false if the string isn't recognized.
+   * @@param paramType The given type
+   * @@return true if it is a variable type, or else false.  Also false
+   *         if the string isn't recognized.
+   */
+  def isVariableType( paramType: String ): Boolean =
+    paramType == VARIABLE_STRING
+
+  /**
+   * Determines if the given type is a instance type.
+   * @@param param The given type
+   * @@return true if it is a instance type, else false
+   */
+  def isInstanceType( param: ParamType ): Boolean =
+    instanceTypes( param )
+
+  /**
+   * Determines if the given type is a instance type, as
+   * a string.
+   * @@param param The param type
+   * @@return true if it is a instance type, else false.
+   *         Note that if the string wasn't recognized as a type,
+   *         it will return false.
+   */
+  def isInstanceType( param: String ): Boolean = {
+    val asType = stringToParam.get( param )
+    ( asType.isDefined &&
+      isInstanceType( asType.get ) )
+d221 1
+a221 1
+abstract class Param() {
+d236 1
+a236 1
+    ParamType.isInstanceType( getType )
+d245 1
+a245 1
+    ParamType.isConstantType( getType )
+d255 1
+a255 1
+    ParamType.isVariableType( getType )
+d265 1
+a265 1
+   * Converts this parameter to a string constant.
+d267 1
+a267 1
+   * @@return This param as a string constant
+d269 2
+a270 2
+  def toStringConstant(): Option[ StringConstant ] = 
+    ParamConverter.toStringConstant( this )
+d273 1
+a273 1
+   * Converts this parameter to an integer constant.
+d275 1
+a275 1
+   * @@return This param as an integer constant
+d277 2
+a278 2
+  def toIntConstant(): Option[ IntConstant ] = 
+    ParamConverter.toIntConstant( this )
+d281 1
+a281 1
+   * Converts this parameter to a floating-point constant.
+d283 1
+a283 1
+   * @@return This param as a real number constant
+d285 2
+a286 2
+  def toRealConstant(): Option[ RealConstant ] = 
+    ParamConverter.toRealConstant( this )
+d289 1
+a289 1
+   * Converts this parameter to a character constant.
+d291 1
+a291 1
+   * @@return This param as a character constant
+d293 2
+a294 10
+  def toCharConstant(): Option[ CharConstant ] = 
+    ParamConverter.toCharConstant( this )
+
+  /**
+   * Converts this parameter to a variable.
+   * If conversion is impossible, then it returns None
+   * @@return This param as a variable
+   */
+  def toVariable(): Option[ Variable ] = 
+    ParamConverter.toVariable( this )
+d331 4
+a334 5
+      case StringConstantType => toStringConstant
+      case IntConstantType => toIntConstant
+      case RealConstantType => toRealConstant
+      case CharConstantType => toCharConstant
+      case VariableType => toVariable
+d367 11
+a377 6
+ * Represents a constant.
+ * Constants have fixed types, and do not change after being
+ * set.  Note that they can be created at runtime.  One might
+ * like to think of them as primitive types, but that they
+ * are immutable.
+ * @@param value The value of the constant
+d380 1
+a380 1
+abstract class Constant[ T ]( val value: T ) extends Param with Data {
+d382 10
+a391 2
+   * Gets the value of the constant, as a string.
+   * @@return The value of the constant
+d398 2
+a399 3
+ * Represents a string constant.
+ * @@param value The value of the constant
+ * 
+d402 1
+a402 1
+class StringConstant( value: String ) extends Constant[ String ]( value ) {
+d404 2
+a405 2
+   * Gets that this is a constant.
+   * @@return that this is a constant
+d408 2
+a409 1
+    ParamType.StringConstantType
+d411 12
+d426 2
+a427 2
+ * Represents an integer constant.
+ * @@param value The value of the integer.
+d430 1
+a430 1
+class IntConstant( value: Int ) extends Constant[ Int ]( value ) {
+d432 2
+a433 2
+   * Gets that this is an integer.
+   * @@return that this is an integer
+d436 1
+a436 1
+    ParamType.IntConstantType
+d440 2
+a441 2
+ * Represents a floating point constant.
+ * @@param value The value of the number
+d444 1
+a444 1
+class RealConstant( value: Double ) extends Constant[ Double ]( value ) {
+d446 2
+a447 2
+   * Gets that this is a real constant.
+   * @@return That this is a constant representing a real number
+d450 1
+a450 1
+    ParamType.RealConstantType
+d454 11
+a464 2
+ * Represents a character.
+ * @@param value The value of the character.
+d467 17
+a483 1
+class CharConstant( value: Char ) extends Constant[ Char ]( value ) {
+d485 3
+a487 2
+   * Gets that this is a character constant
+   * @@return That this is a constant representing a character
+d489 10
+a498 2
+  override def getType() =
+    ParamType.CharConstantType
+d502 29
+d540 1
+a540 1
+class Variable( val where: String ) extends Param with Data {
+d542 3
+a544 4
+   * Gets the value of the variable
+   * TODO: this currently just gets where the variable is to point.
+   *
+   * @@return Where the variable is
+d546 3
+a548 1
+  override def data() = where
+d550 5
+d556 40
+a595 2
+   * Gets that this is a variable
+   * @@return That this is a constant representing a variable
+d597 71
+a667 2
+  override def getType() =
+    ParamType.VariableType
+d680 14
+a709 1
+   *
+d711 1
+d736 1
+a736 1
+    new StringConstant( string )
+d745 1
+a745 1
+    new IntConstant( integer )
+d754 1
+a754 1
+    new RealConstant( theDouble )
+d763 1
+a763 1
+    new CharConstant( theChar )
+a781 1
+   *
+d783 1
+d827 14
+d949 1
+a949 1
+   * Converts the given parameter to a string constant.
+a950 1
+   * Note that if it is already a constant, the parameter is returned unchanged
+d954 1
+a954 1
+  def toStringConstant( param: Param ): Option[ StringConstant ] =
+d956 3
+a958 3
+      case p: StringConstant => Some( p )
+      case p: Data => 
+	Some( new StringConstant( p.data ) )
+d963 2
+a964 3
+   * Determines if the given param looks like a string constant.
+   * It looks like a constant if it is a constant, or if it
+   * can be converted to a string.
+d966 1
+a966 1
+   * @@return true if it looks like a constant, else false
+d968 2
+a969 2
+  def looksLikeStringConstant( param: Param ) =
+    toStringConstant( param ).isDefined
+d978 1
+a978 1
+  def toIntConstant( param: Param ): Option[ IntConstant ] =
+d980 2
+a981 1
+      case p: IntConstant => Some( p )
+d984 1
+a984 1
+	  Some( new IntConstant( Integer.parseInt( p.data ) ) )
+d997 2
+a998 2
+  def looksLikeIntConstant( param: Param ) = 
+    toIntConstant( param ).isDefined
+d1007 1
+a1007 1
+  def toRealConstant( param: Param ): Option[ RealConstant ] =
+d1009 2
+a1010 1
+      case p: RealConstant => Some( p )
+d1013 1
+a1013 1
+	  Some( new RealConstant( java.lang.Double.parseDouble( p.data ) ) )
+d1026 2
+a1027 2
+  def looksLikeRealConstant( param: Param ) =
+    toRealConstant( param ).isDefined
+d1030 1
+a1030 1
+   * Converts the parameter to a char constant.
+d1037 1
+a1037 1
+  def toCharConstant( param: Param ): Option[ CharConstant ] =
+d1039 2
+a1040 1
+      case p: CharConstant => Some( p )
+d1044 1
+a1044 1
+	  Some( new CharConstant( data( 0 ) ) )
+d1052 1
+a1052 1
+   * a char constant.
+d1056 2
+a1057 2
+  def looksLikeCharConstant( param: Param ) =
+    toCharConstant( param ).isDefined
+d1067 1
+a1101 20
+   * Converts the given parameter to a variable.
+   * @@param param The param to convert
+   * @@return The converted param, or None if conversion is impossible
+   */
+  def toVariable( param: Param ): Option[ Variable ] =
+    param match {
+      case param: Variable => Some( param )
+      case _ => None
+    }
+
+  /**
+   * Determines if the given parameter can be converted to a
+   * variable.
+   * @@param param The param to check
+   * @@return true if it can be converted, else false
+   */
+  def looksLikeVariable( param: Param ) =
+    toVariable( param ).isDefined
+
+  /**
+d1142 5
+a1146 5
+    val asParam = new StringConstant( value )
+    if ( looksLikeIntConstant( asParam ) ) IntConstantType
+    else if ( looksLikeRealConstant( asParam ) ) RealConstantType
+    else if ( looksLikeCharConstant( asParam ) ) CharConstantType
+    else StringConstantType
+d1158 4
+a1161 5
+      case StringConstantType => toStringConstant( param )
+      case IntConstantType => toIntConstant( param )
+      case RealConstantType => toRealConstant( param )
+      case CharConstantType => toCharConstant( param )
+      case VariableType => toVariable( param )
+@
+
+
+1.8
+log
+@Added more implicit definitions to object Replacer.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.7 2010/06/20 23:28:52 kyledewey Exp kyledewey $
+d9 3
+d243 13
+@
+
+
+1.7
+log
+@Made replace() return type Data, and created
+string2Data() method,
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.6 2010/06/20 17:25:38 kyledewey Exp $
+d9 4
+d560 27
+@
+
+
+1.6
+log
+@Major refactor.  Added typed parameters, and code
+to allow for implicit conversions where neccessary.
+The language is now a hybrid statically/dynamically
+typed language, instead of a purely dynamically
+typed language.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.5 2010/06/18 19:35:31 kyledewey Exp kyledewey $
+d9 7
+d80 1
+a80 1
+		        ReplacerType )
+d542 16
+d577 1
+a577 1
+  def replace(): String
+d584 2
+a585 1
+  override def data() = replace
+d602 8
+a609 1
+class VerbatimReplacer( val toReturn: String ) extends Replacer {
+@
+
+
+1.5
+log
+@Added the to*() and convertTo methods to Param.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.4 2010/06/18 03:01:07 kyledewey Exp $
+d9 3
+d40 1
+a40 1
+  val ConstantType, 
+d50 1
+a50 1
+  val CONSTANT_STRING = "Constant"
+d58 1
+a58 1
+  val paramToString = Map( ConstantType -> CONSTANT_STRING,
+d68 6
+d77 41
+a117 1
+   * Determines if the given type is a class type.
+d119 1
+a119 1
+   * @@return true if it is a class type, else false
+d121 2
+a122 2
+  def isClassType( param: ParamType ): Boolean =
+    param == MatcherType || param == ReplacerType
+d125 1
+a125 1
+   * Determines if the given type is a class type, as
+d128 1
+a128 1
+   * @@return true if it is a class type, else false.
+d132 4
+a135 7
+  def isClassType( param: String ): Boolean = {
+    var retval = false
+    val asString = stringToParam.get( param )
+    if ( asString.isDefined ) {
+      retval = isClassType( asString.get )
+    }
+    retval
+d225 3
+a227 5
+			   Boolean ) ] ): Map[ String, ParamInfo ] = {
+    var retval: Map[ String, ParamInfo ] = Map()
+    infos.foreach( tuple =>
+      retval += tuple._1 -> new ParamInfo( tuple ) )
+    retval
+d232 4
+a235 2
+ * Represents a parameter.  This is from the viewpoint of a solid
+ * matcher/replacer.
+d249 3
+a251 3
+   * Determines if this is a class type.
+   * Class types can be created by users, and are flexible.
+   * @@return true if this is a class type
+d253 21
+a273 2
+  def isClassType() =
+    ParamType.isClassType( getType )
+d287 2
+a288 2
+  def toConstant(): Option[ Constant ] = 
+    ParamConverter.toConstant( this )
+d296 1
+a296 1
+    ParamConverter.toInteger( this )
+d304 1
+a304 1
+    ParamConverter.toReal( this )
+d312 1
+a312 1
+    ParamConverter.toChar( this )
+d357 1
+a357 1
+      case ConstantType => toConstant
+d372 4
+a375 1
+ * should not change.
+d394 5
+a398 3
+ * Represents a string constant.  Constants do not change
+ * after being set
+ *
+a399 1
+ * 
+d402 1
+a402 1
+class Constant( val value: String ) extends Param with Data {
+d404 1
+a404 2
+   * Gets the value of the constant.
+   *
+d407 3
+a409 1
+  override def data() = value
+d411 7
+d423 1
+a423 1
+    ParamType.ConstantType
+d428 1
+a428 1
+ * Represents an integer.
+d432 1
+a432 8
+class IntConstant( val value: Int ) extends Param with Data {
+  /**
+   * Gets the integer as a string.
+   * @@return The value of the integer.
+   */
+  override def data() = 
+    value.toString
+
+d442 1
+a442 1
+ * Represents a floating point number.
+d446 1
+a446 8
+class RealConstant( val value: Double ) extends Param with Data {
+  /**
+   * Gets the number as a string.
+   * @@return The number as a string
+   */
+  override def data() =
+    value.toString
+
+d460 1
+a460 8
+class CharConstant( val value: Char ) extends Param with Data {
+  /**
+   * Gets the character as a string.
+   * @@return The character as a string
+   */
+  override def data() =
+    value.toString
+
+d497 9
+d519 1
+a519 1
+abstract class Matcher extends Param {
+d545 1
+a545 1
+abstract class Replacer extends Param with Data {
+d696 1
+a696 1
+   * Converts the given parameter to a constant.
+d702 1
+a702 1
+  def toConstant( param: Param ): Option[ Constant ] =
+d704 1
+a704 1
+      case p: Constant => Some( p )
+d706 1
+a706 1
+	Some( new Constant( p.data ) )
+d711 1
+a711 1
+   * Determines if the given param looks like a constant.
+d717 2
+a718 2
+  def looksLikeConstant( param: Param ) =
+    toConstant( param ).isDefined
+d727 1
+a727 1
+  def toInteger( param: Param ): Option[ IntConstant ] =
+d745 2
+a746 2
+  def looksLikeInteger( param: Param ) = 
+    toInteger( param ).isDefined
+d755 1
+a755 1
+  def toReal( param: Param ): Option[ RealConstant ] =
+d773 2
+a774 2
+  def looksLikeReal( param: Param ) =
+    toReal( param ).isDefined
+d784 1
+a784 1
+  def toChar( param: Param ): Option[ CharConstant ] =
+d802 2
+a803 2
+  def looksLikeChar( param: Param ) =
+    toChar( param ).isDefined
+d898 17
+d923 4
+a926 4
+      case ConstantType => toConstant( param )
+      case IntConstantType => toInteger( param )
+      case RealConstantType => toReal( param )
+      case CharConstantType => toChar( param )
+@
+
+
+1.4
+log
+@Added routines to ParamType to better get the name
+of a param or type of a param.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.3 2010/06/16 00:58:54 kyledewey Exp kyledewey $
+d9 4
+d101 86
+d194 2
+d198 15
+a212 2
+   * Defaults to the class name.
+   * @@return The name of this type of param (class name)
+d215 87
+a301 1
+    this.getClass.getName
+d342 2
+a343 2
+   * Gets the name of this type
+   * @@return "Constant"
+d345 3
+a347 2
+  override def typeName() =
+    ParamType.CONSTANT_STRING
+d364 2
+a365 2
+   * Gets the name of this type.
+   * @@return "Integer"
+d367 2
+a368 2
+  override def typeName() =
+    ParamType.INTEGER_STRING
+d385 2
+a386 2
+   * Gets the name of this type.
+   * @@return "Real"
+d388 2
+a389 2
+  override def typeName() =
+    ParamType.REAL_STRING
+d406 2
+a407 2
+   * Gets the name of this type.
+   * @@return "Character"
+d409 2
+a410 2
+  override def typeName() =
+    ParamType.CHARACTER_STRING
+d433 2
+a434 2
+   * Gets the name of this type.
+   * @@return "Variable"
+d436 2
+a437 2
+  override def typeName() =
+    ParamType.VARIABLE_STRING
+d463 2
+a464 3
+   * Gets the name of the type of this param.
+   * Defaults to this class name.
+   * @@return "Matcher"
+d466 2
+a467 2
+  override def typeName() =
+    ParamType.MATCHER_STRING
+d499 2
+a500 2
+   * Gets the name of this type.
+   * @@return "Replacer"
+d502 2
+a503 2
+  override def typeName() =
+    ParamType.REPLACER_STRING
+a505 2
+import ParamType._
+
+d507 4
+a510 12
+ * Holds information about a parameter.  This is relevant
+ * to factories which wish to create matchers or replacers.
+ * Note that these are intended to represent actual parameters,
+ * which is why there is no Param within.  Also note that all
+ * parameters are named parameters.
+ * 
+ * @@param name The name of the parameter
+ * @@param desc A description of the parameter
+ * @@param paramType The type of the parameter
+ * @@param array Whether or not it is an array
+ * @@param required Whether or not it is required
+ *
+d513 1
+a513 5
+class ParamInfo( val name: String,
+		 val desc: String,
+		 val paramType: ParamType,
+		 val isArray: Boolean,
+		 val isRequired: Boolean ) extends Ordered[ ParamInfo ] {
+d515 2
+a516 25
+   * Creates a ParamInfo object from a tuple.
+   * This is done for convenience, as the constructor is a bit lengthy.
+   * @@param tuple tuple of name, description, param type, whether or
+   *        not the item is an array, and whether or not the item is
+   *        required
+   */
+  def this( tuple: Tuple5[ String, String, ParamType, Boolean, Boolean ] ) =
+    this( tuple._1,
+	  tuple._2,
+	  tuple._3,
+	  tuple._4,
+	  tuple._5 )
+
+  /**
+   * Compares this ParamInfo object to another.  The comparison
+   * is based on the name.
+   * @@param other The other ParamInfo object to compare to
+   * @@return this.name.compare( other.name )
+   */
+  override def compare( other: ParamInfo ) =
+    name.compare( other.name )
+
+  /**
+   * Converts this ParamInfo object to a string.
+   * @@return A string representing this ParamInfo object
+d518 2
+a519 7
+  override def toString() = {
+    "Name: " + name + "\n" +
+    "Description: " + desc + "\n" +
+    "Type: " + ParamType.toString( paramType  ) + "\n" +
+    "Can be array: " + isArray + "\n" +
+    "Is required: " + isRequired
+  }
+a522 28
+ * Contains helper methods for manipulating
+ * ParamInfo objects.
+ *
+ * @@author Kyle Dewey
+ */
+object ParamInfo {
+  /**
+   * Creates a map of ParamInfo objects, given a sequence
+   * of tuples of information about them.
+   * @@param infos A series of tuples describing elements of the resultant
+   *        map
+   * @@return A map, where there is one element for each item in the sequence.
+   *         The keys are the name of the param, and the values are ParamInfo
+   *         objects
+   */
+  def apply( infos: Seq[ ( String, 
+			   String, 
+			   ParamType, 
+			   Boolean, 
+			   Boolean ) ] ): Map[ String, ParamInfo ] = {
+    var retval: Map[ String, ParamInfo ] = Map()
+    infos.foreach( tuple =>
+      retval += tuple._1 -> new ParamInfo( tuple ) )
+    retval
+  }
+}
+    
+/**
+d623 2
+d628 2
+d739 112
+a852 1
+
+@
+
+
+1.3
+log
+@Fixed typo in name of ParameterizedInstantiationException;
+Changed getMessage and toString in the exception to provide
+more information.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.2 2010/06/15 23:58:19 kyledewey Exp kyledewey $
+d9 5
+d27 71
+d135 1
+a135 1
+ * Represents a constant.  Constants do not change
+d142 1
+a142 1
+class Constant( value: String ) extends Param with Data {
+d155 1
+a155 1
+    "Constant"
+d159 2
+a160 4
+ * A class to get singletons of constants.  This is intended
+ * to cut down on the use of memory; the same constant
+ * will return the same value under all conditions.  Since
+ * they have no state, there is no need for duplication.
+d163 7
+a169 2
+object Constant {
+  private var constants: Map[ String, Constant ] = Map()
+d172 2
+a173 4
+   * Gets the constant with the given name.  If one doesn't
+   * already exist, then it will return a new one and
+   * store it.
+   * @@param name The name of the constant
+d175 44
+a218 8
+  def apply( name: String ) = {
+    if ( constants.contains( name ) ) constants( name )
+    else {
+      val newConstant = new Constant( name )
+      constants += name -> newConstant
+      newConstant
+    }
+  }
+d220 1
+a220 1
+      
+d245 1
+a245 26
+    "Variable"
+}
+
+/**
+ * Gets variable singletons.  Variables themselves contain
+ * no state; it's the source they point to which has state.
+ * As such, it is safe to reuse them.
+ * @@author Kyle Dewey
+ */
+object Variable {
+  private var variables: Map[ String, Variable ] = Map()
+
+  /**
+   * Gets a variable pointing to the given location.
+   * If it doesn't already exist, a new one will be returned
+   * and its value made available for future calls.
+   * @@param where Where the variable is
+   */
+  def apply( where: String ) = {
+    if ( variables.contains( where ) ) variables( where )
+    else {
+      val newVar = new Variable( where )
+      variables += where -> newVar
+      newVar
+    }
+  }
+d276 1
+a276 1
+    "Matcher"
+d312 1
+a312 25
+    "Replacer"
+}
+
+/**
+ * Contains the types of parameters that are possible
+ *
+ * @@author Kyle Dewey
+ */
+object ParamType extends Enumeration {
+  type ParamType = Value
+  val ConstantType, VariableType, MatcherType, ReplacerType, DataType = Value
+
+  /**
+   * Given a parameter type, will convert it to a string
+   * @@param param The parameter type
+   * @@return A human-readable string representing this type
+   */
+  def toString( param: ParamType ): String = 
+    param match {
+      case ConstantType => "Constant"
+      case VariableType => "Variable"
+      case MatcherType => "Matcher"
+      case ReplacerType => "Replacer"
+      case DataType => "Data"
+    }
+d367 1
+a367 1
+    "Type: " + paramType + "\n" +
+d499 118
+@
+
+
+1.2
+log
+@Added typeName() method to Param;
+Added toString() to ParamType.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Parameters.scala,v 1.1 2010/06/15 17:53:40 kyledewey Exp kyledewey $
+d9 4
+d383 2
+a384 2
+case class ParameterizedInstantationException( val exception: Exception,
+					       message: String ) 
+d393 1
+a393 1
+
+d395 1
+a395 1
+   * Creates a new ParameterizedInstantationException with the given
+d404 10
+a413 1
+   * Gets the message of the underlying exception
+d416 10
+a425 2
+  override def getMessage() = 
+    exception.getMessage
+d428 2
+a429 1
+   * Gets the underlying exception as a string
+d433 1
+a433 1
+    exception.toString
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d23 9
+a31 1
+abstract class Param() {}
+d69 7
+d122 7
+d177 8
+d214 7
+d231 14
+@

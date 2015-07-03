@@ -1,0 +1,48 @@
+head	1.1;
+access;
+symbols;
+locks
+	kyledewey:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2010.07.11.05.54.17;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Makefile for sentinel.project.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#
+# Makefile
+#
+# Version:
+#     $Id$
+#
+# Revisions:
+#      $Log$
+#
+#
+#
+
+PACKAGE = sentinel.project
+
+SOURCE = \
+	ProjectHelpers.scala \
+	Project.scala \
+	Parser.scala \
+	Writer.scala \
+	ProjectActions.scala \
+
+include $(JAVA_DEV_ROOT)/Makefile
+
+@

@@ -1,0 +1,686 @@
+head	1.6;
+access;
+symbols;
+locks
+	kyledewey:1.6; strict;
+comment	@# @;
+
+
+1.6
+date	2011.06.08.04.26.15;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.06.07.08.17.44;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.05.25.20.14.58;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.06.28.18.43.38;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.06.26.16.36.29;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.06.26.04.05.40;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Replacers that perform operations on strings.
+@
+
+
+1.6
+log
+@Now conforms to the new Param interface.
+@
+text
+@/*
+ * String.scala
+ * 
+ * Version:
+ *     $Id: String.scala,v 1.5 2011/06/07 08:17:44 kyledewey Exp kyledewey $
+ *
+ * Revisions:
+ *      $Log: String.scala,v $
+ *      Revision 1.5  2011/06/07 08:17:44  kyledewey
+ *      Added replacer types to nonpolymorphic routines.
+ *
+ *      Revision 1.4  2011/05/25 20:14:58  kyledewey
+ *      Made it so the class name is also taken as a parameter.
+ *
+ *      Revision 1.3  2010/06/28 18:43:38  kyledewey
+ *      Changed comment for substring that we now end at the length
+ *      of the string by default.
+ *
+ *      Revision 1.2  2010/06/26 16:36:29  kyledewey
+ *      Made "first" for Substitution be passed as a matcher
+ *      as opposed an integer.
+ *
+ *      Revision 1.1  2010/06/26 04:05:40  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.model.replacer
+
+import sentinel.model._
+import sentinel.model.matcher.StringHelpers._
+import sentinel.model.InstanceFactory._
+import sentinel.model.Replacer._
+
+class StringMax( val className: String,
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+  private val strings = asArray( "strings", params )
+  override def replace() =
+    Replacer.max( toStrings( strings ) ).toString
+}
+
+class StringMin( val className: String,
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+  private val strings = asArray( "strings", params )
+  override def replace() =
+    Replacer.min( toStrings( strings ) ).toString
+}
+
+/**
+ * Gets an element of the given string.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to get the position of</li>
+ * <li>"position": The position of the desired character</li></ul>
+ * @@author Kyle Dewey
+ */
+class CharAt( val className: String,
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string", params )
+  private val pos = param( "position", params )
+
+  /**
+   * Gets the character at the given position.
+   * @@return The character at the given position
+   * @@throws ReplaceException If the index is invalid
+   */
+  override def replace() = {
+    try {
+      string.sentStringValue.charAt( pos.sentIntValue.asInstanceOf[ Int ] )
+    } catch {
+      case e: IndexOutOfBoundsException =>
+	throw new ReplaceException( "For string \"" + string.sentStringValue +
+				    "\", " + pos.sentIntValue + " is not a " +
+				    "valid index" )
+    }
+  }
+}
+
+/**
+ * Gets a substring of a string
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to get the substring of</li>
+ * <li>"start": optional start position; defaults to 0</li>
+ * <li>"end": optional end position; defaults to the length of the string.</li>
+ * </ul>
+ * @@author Kyle Dewey
+ */
+class SubString( val className: String,
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string", params )
+  private val start = 
+    opParam( "start", params ).getOrElse( Constant( 0 ) )
+  private val end = opParam( "end", params )
+
+  /**
+   * Gets a substring from the string
+   * @@return The substring
+   * @@throws ReplaceException If an index is invalid
+   */
+  override def replace() = {
+    lazy val stringValue = string.sentStringValue
+    val endPos = end.getOrElse( Constant( stringValue.length ) )
+    try {
+      stringValue.substring( start.sentIntValue.asInstanceOf[ Int ],
+		             endPos.sentIntValue.asInstanceOf[ Int ] )
+    } catch {
+      case e: IndexOutOfBoundsException =>
+	throw new ReplaceException( e.toString )
+    }
+  }
+}
+
+/**
+ * Gets the length of a string.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to get the length of</li></ul>
+ * @@author Kyle Dewey
+ */
+class Length( val className: String,
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string", params )
+  
+  /**
+   * Gets the length of the string.
+   * @@return The length of the string
+   */
+  override def replace() =
+    string.sentStringValue.length
+}
+
+/**
+ * Gets the reverse of the given string.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to get the reverse of</li></ul>
+ * @@author Kyle Dewey
+ */
+class Reverse( val className: String,
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string ", params )
+
+  /**
+   * Gets the reverse of the string
+   * @@return The reverse of the string
+   */
+  override def replace() =
+    string.sentStringValue.reverse.toString
+}
+
+/**
+ * Trims whitespace from the front and back of a string.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to drop the whitespace from the ends</li></ul>
+ * @@author Kyle Dewey
+ */
+class Trim( val className: String,
+	    val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string", params )
+
+  /**
+   * Trims off whitespace from either end of the string
+   * @@return The string without whitspace on the ends
+   */
+  override def replace() =
+    string.sentStringValue.trim
+}
+
+/**
+ * Trims whitespace from the lefthanded side of the string
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to drop the whitespace from the left</li></ul>
+ * @@author Kyle Dewey
+ */
+class LeftTrim( val className: String,
+	        val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string", params )
+
+  /**
+   * Trims whitespace off the left side of the string
+   * @@return The string without whitespace on the left side
+   */
+  override def replace() =
+    string.sentStringValue.dropWhile( Character.isWhitespace( _ ) ).mkString
+}
+
+/**
+ * Trims whitespace from the righthand side of the string
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to drop the whitespace from the right</li></ul>
+ * @@author Kyle Dewey
+ */
+class RightTrim( val className: String,
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string", params )
+
+  /**
+   * Trims whitespace from the righthand side of the string
+   * @@return The string without whitespace on the right side
+   */
+  override def replace() =
+    string.sentStringValue
+          .reverse
+          .dropWhile( Character.isWhitespace( _ ) )
+          .reverse
+	  .mkString
+}
+
+/**
+ * Makes the given string uppercase.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to make uppercase</li></ul>
+ * @@author Kyle Dewey
+ */
+class StringMakeUpperCase( val className: String,
+			   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string", params )
+
+  /**
+   * Makes the string uppercase
+   * @@return The string uppercased
+   */
+  override def replace() =
+    string.sentStringValue.toUpperCase
+}
+
+/**
+ * Makes the given string lowercase.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to make lowercase</li></ul>
+ * @@author Kyle Dewey
+ */
+class StringMakeLowerCase( val className: String,
+			   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string", params )
+
+  /**
+   * Makes the string lowercase
+   * @@return The string lowercased
+   */
+  override def replace() =
+    string.sentStringValue.toLowerCase
+}
+
+/**
+ * Capitalizes the given string.
+ * For instance, if given "this is a string", this will return
+ * "This Is A String".
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"string": The string to capitalize</li></ul>
+ * @@author Kyle Dewey
+ */
+class Capitalize( val className: String,
+		  val params: Seq[ NamedParam ] ) extends Replacer {
+  private val string = param( "string", params )
+
+  /**
+   * Capitalizes the given string
+   * @@return The capitalized string
+   */
+  override def replace() = {
+    var inString = false // true if we are in a string, as opposed to whitespace
+    var retval = ""
+
+    def push( item: Char ) {
+      retval += "" + item
+    }
+
+    for{ x <- string.sentStringValue } {
+      if ( Character.isWhitespace( x ) ) {
+	inString = false
+	push( x )
+      } else {
+	if ( !inString ) {
+	  // first character after whitespace
+	  inString = true
+	  push( Character.toUpperCase( x ) )
+	} else {
+	  // in the string; don't change the character
+	  push( x )
+	}
+      }
+    }
+
+    retval
+  }
+}
+
+/**
+ * Uses a regular expression to perform a substitution on the given string.
+ * @@param className The name of the class
+ * @@param params Parameters to the replacer
+ * <ul><li>"string": The string to perform replacements on</li>
+ * <li>"regex": The pattern to look for in the string</li>
+ * <li>"replacement": The replacement for each instance of the pattern</li>
+ * <li>"first": A matcher.  If it matches, then only the first item will
+ * be replaced.  Otherwise, all items will be replaced.  Defaults to false.
+ * </li><ul>
+ * @@author Kyle Dewey
+ */
+class Substitution( val className: String,
+		    val params: Seq[ NamedParam ] ) extends Replacer {
+  import java.util.regex._
+  import sentinel.model.matcher._
+  private val string = param( "string", params )
+  private val regex = param( "regex" , params )
+  private val replacement = param( "replacement", params )
+  private val first = 
+    opParam( "first", params ).getOrElse( new False ).matcherValue
+  
+  /**
+   * Performs regex substitutions.
+   * @@return The original strings, with all instances of the regex pattern
+   * replaced with the given replacement
+   * @@throws ReplaceException If the regex was invalid
+   */
+  override def replace() = {
+    try {
+      val compiled = regex.sentStringValue.r
+      if ( !first.matches ) {
+	// global replacements
+	compiled.replaceAllIn( string.sentStringValue, 
+			       replacement.sentStringValue )
+      } else {
+	// first replacement
+	compiled.replaceFirstIn( string.sentStringValue,
+				 replacement.sentStringValue )
+      }
+    } catch {
+      case e: PatternSyntaxException =>
+	throw new ReplaceException( e.toString )
+    }
+  }
+}
+@
+
+
+1.5
+log
+@Added replacer types to nonpolymorphic routines.
+@
+text
+@d5 1
+a5 1
+ *     $Id: String.scala,v 1.4 2011/05/25 20:14:58 kyledewey Exp $
+d9 3
+d32 1
+d37 2
+a38 2
+		 val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val strings = asArray[ SentString ]( "strings", params )
+d40 1
+a40 1
+    Replacer.max( strings )
+d44 2
+a45 2
+		 val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val strings = asArray[ SentString ]( "strings", params )
+d47 1
+a47 1
+    Replacer.min( strings )
+d59 3
+a61 3
+	      val params: Seq[ NamedParam ] ) extends SentCharReplacer {
+  private val string = param[ SentString ]( "string", params )
+  private val pos = param[ SentInt ]( "position", params )
+d70 1
+a70 1
+      string.value.charAt( pos.value.asInstanceOf[ Int ] )
+d73 2
+a74 2
+	throw new ReplaceException( "For string \"" + string.value +
+				    "\", " + pos.value + " is not a " +
+d91 2
+a92 2
+		 val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val string = param[ SentString ]( "string", params )
+d94 2
+a95 2
+    opParam[ SentInt ]( "start", params ).getOrElse( Constant( 0 ) )
+  private val end = opParam[ SentInt ]( "end", params )
+d103 2
+a104 1
+    val endPos = end.getOrElse( Constant( string.value.length ) )
+d106 2
+a107 2
+      string.value.substring( start.value.asInstanceOf[ Int ],
+		              endPos.value.asInstanceOf[ Int ] )
+d110 1
+a110 1
+	throw new ReplaceException( e.getMessage )
+d123 2
+a124 2
+	      val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val string = param[ SentString ]( "string", params )
+d131 1
+a131 1
+    string.value.length
+d142 2
+a143 2
+	       val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val string = param[ SentString ]( "string ", params )
+d150 1
+a150 1
+    string.value.reverse.toString
+d161 2
+a162 2
+	    val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val string = param[ SentString ]( "string", params )
+d169 1
+a169 1
+    string.value.trim
+d180 2
+a181 2
+	        val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val string = param[ SentString ]( "string", params )
+d188 1
+a188 1
+    string.value.dropWhile( Character.isWhitespace( _ ) ).mkString
+d199 2
+a200 2
+		 val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val string = param[ SentString ]( "string", params )
+d207 5
+a211 3
+    string.value.reverse
+                .dropWhile( Character.isWhitespace( _ ) )
+                .reverse.mkString
+d222 2
+a223 2
+			   val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val string = param[ SentString ]( "string", params )
+d230 1
+a230 1
+    string.value.toUpperCase
+d241 2
+a242 2
+			   val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val string = param[ SentString ]( "string", params )
+d249 1
+a249 1
+    string.value.toLowerCase
+d262 2
+a263 2
+		  val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+  private val string = param[ SentString ]( "string", params )
+d277 1
+a277 1
+    for{ x <- string.value } {
+d310 1
+a310 1
+		    val params: Seq[ NamedParam ] ) extends SentStringReplacer {
+d313 3
+a315 3
+  private val string = param[ SentString ]( "string", params )
+  private val regex = param[ SentString ]( "regex" , params )
+  private val replacement = param[ SentString ]( "replacement", params )
+d317 1
+a317 1
+    opParam[ sentinel.model.Matcher ]( "first", params ).getOrElse( new False )
+d327 1
+a327 1
+      val compiled = regex.value.r
+d330 2
+a331 1
+	compiled.replaceAllIn( string.value, replacement.value )
+d334 2
+a335 1
+	compiled.replaceFirstIn( string.value, replacement.value )
+d339 1
+a339 1
+	throw new ReplaceException( "Invalid regex string: " + e.getMessage )
+@
+
+
+1.4
+log
+@Made it so the class name is also taken as a parameter.
+@
+text
+@d5 1
+a5 1
+ *     $Id: String.scala,v 1.3 2010/06/28 18:43:38 kyledewey Exp $
+d9 3
+d33 1
+a33 1
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+d40 1
+a40 1
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+d55 1
+a55 1
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+d87 1
+a87 1
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+d118 1
+a118 1
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+d137 1
+a137 1
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+d156 1
+a156 1
+	    val params: Seq[ NamedParam ] ) extends Replacer {
+d175 1
+a175 1
+	        val params: Seq[ NamedParam ] ) extends Replacer {
+d194 1
+a194 1
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+d215 1
+a215 1
+			   val params: Seq[ NamedParam ] ) extends Replacer {
+d234 1
+a234 1
+			   val params: Seq[ NamedParam ] ) extends Replacer {
+d255 1
+a255 1
+		  val params: Seq[ NamedParam ] ) extends Replacer {
+d303 1
+a303 1
+		    val params: Seq[ NamedParam ] ) extends Replacer {
+@
+
+
+1.3
+log
+@Changed comment for substring that we now end at the length
+of the string by default.
+@
+text
+@d5 1
+a5 1
+ *     $Id: String.scala,v 1.2 2010/06/26 16:36:29 kyledewey Exp kyledewey $
+d9 4
+d29 2
+a30 1
+class StringMax( params: Seq[ NamedParam ] ) extends Replacer {
+d36 2
+a37 1
+class StringMin( params: Seq[ NamedParam ] ) extends Replacer {
+d45 1
+d51 2
+a52 1
+class CharAt( params: Seq[ NamedParam ] ) extends Replacer {
+d75 1
+d83 2
+a84 1
+class SubString( params: Seq[ NamedParam ] ) extends Replacer {
+d109 1
+d114 2
+a115 1
+class Length( params: Seq[ NamedParam ] ) extends Replacer {
+d128 1
+d133 2
+a134 1
+class Reverse( params: Seq[ NamedParam ] ) extends Replacer {
+d147 1
+d152 2
+a153 1
+class Trim( params: Seq[ NamedParam ] ) extends Replacer {
+d166 1
+d171 2
+a172 1
+class LeftTrim( params: Seq[ NamedParam ] ) extends Replacer {
+d185 1
+d190 2
+a191 1
+class RightTrim( params: Seq[ NamedParam ] ) extends Replacer {
+d206 1
+d211 2
+a212 1
+class StringMakeUpperCase( params: Seq[ NamedParam ] ) extends Replacer {
+d225 1
+d230 2
+a231 1
+class StringMakeLowerCase( params: Seq[ NamedParam ] ) extends Replacer {
+d246 1
+d251 2
+a252 1
+class Capitalize( params: Seq[ NamedParam ] ) extends Replacer {
+d289 1
+d299 2
+a300 1
+class Substitution( params: Seq[ NamedParam ] ) extends Replacer {
+@
+
+
+1.2
+log
+@Made "first" for Substitution be passed as a matcher
+as opposed an integer.
+@
+text
+@d5 1
+a5 1
+ *     $Id: String.scala,v 1.1 2010/06/26 04:05:40 kyledewey Exp kyledewey $
+d9 4
+d70 2
+a71 1
+ * <li>"end": optional end position; defaults to 0</li></ul>
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d262 3
+a264 3
+ * <li>"first": If it's nonzero, then it means to only replace the first
+ * occurrance of the pattern.  If 0, it means to replace all occurrances.  
+ * Defaults to all occurrances.</li></ul>
+d269 1
+d274 1
+a274 1
+    opParam[ SentInt ]( "first", params ).getOrElse( Constant( 0 ) )
+d285 1
+a285 1
+      if ( first.value == 0 ) {
+@

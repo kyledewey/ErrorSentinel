@@ -1,0 +1,1777 @@
+head	1.21;
+access;
+symbols;
+locks
+	kyledewey:1.21; strict;
+comment	@# @;
+
+
+1.21
+date	2011.06.21.17.02.07;	author kyledewey;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2011.06.20.22.19.56;	author kyledewey;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2011.06.19.20.07.40;	author kyledewey;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2011.06.18.03.32.12;	author kyledewey;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2011.06.08.04.33.12;	author kyledewey;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2011.06.07.08.18.37;	author kyledewey;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2011.06.01.04.05.11;	author kyledewey;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2011.05.25.20.21.03;	author kyledewey;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2011.04.01.03.24.44;	author kyledewey;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2011.02.27.22.33.07;	author kyledewey;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2011.02.27.20.42.54;	author kyledewey;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.02.27.07.48.53;	author kyledewey;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2011.02.27.05.28.34;	author kyledewey;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2011.02.27.04.29.17;	author kyledewey;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2011.02.26.04.14.03;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.02.25.20.56.03;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.01.30.05.24.32;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.01.28.18.06.20;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2011.01.28.04.27.27;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2011.01.28.02.06.38;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2011.01.27.15.52.20;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Represents a node in the VPL.
+@
+
+
+1.21
+log
+@Now uses printableValueUnsafe instead of printableValue.
+Certain exceptions were being masked before.
+@
+text
+@/*
+ * Node.scala
+ *
+ * Version:
+ *     $Id: Node.scala,v 1.20 2011/06/20 22:19:56 kyledewey Exp $
+ *
+ * Revisions:
+ *      $Log: Node.scala,v $
+ *      Revision 1.20  2011/06/20 22:19:56  kyledewey
+ *      Removed comments that were not applicable to the
+ *      current revision.
+ *
+ *      Revision 1.19  2011/06/19 20:07:40  kyledewey
+ *      Added the parseTreeNode() method.
+ *
+ *      Revision 1.18  2011/06/18 03:32:12  kyledewey
+ *      Set to not use optimizations.
+ *      There is no real need in the VPL, and it simplifies
+ *      everything when the underlying parse trees look exactly like
+ *      VPL code.
+ *
+ *      Revision 1.17  2011/06/08 04:33:12  kyledewey
+ *      Now conforms to the new interface for simple variables.
+ *
+ *      Revision 1.16  2011/06/07 08:18:37  kyledewey
+ *      Minor indentation fix.
+ *
+ *      Revision 1.15  2011/06/01 04:05:11  kyledewey
+ *      Matchers passed to debuggers now show the appropriate
+ *      error instead of throwing an unchecked exception.
+ *
+ *      Revision 1.14  2011/05/25 20:21:03  kyledewey
+ *      Added code to deal with debugging edge cases.
+ *
+ *      Revision 1.13  2011/04/01 03:24:44  kyledewey
+ *      Added the ancestors( nodes ) method.
+ *
+ *      Revision 1.12  2011/02/27 22:33:07  kyledewey
+ *      Minor code cleanup.
+ *
+ *      Revision 1.11  2011/02/27 20:42:54  kyledewey
+ *      Refactored so that everything pertaining to descriptions
+ *      is in InstanceFactory.
+ *
+ *      Revision 1.10  2011/02/27 07:48:53  kyledewey
+ *      Moved toString to Param.  Functionality is now in
+ *      the printableVersion() method
+ *
+ *      Revision 1.9  2011/02/27 05:28:34  kyledewey
+ *      Now uses paramOrder instead of getSortedParamNames
+ *
+ *      Revision 1.8  2011/02/27 04:29:17  kyledewey
+ *      Refactored for use with debuggers.
+ *
+ *      Revision 1.7  2011/02/26 04:14:03  kyledewey
+ *      Moved the width and height methods here.
+ *
+ *      Revision 1.6  2011/02/25 20:56:03  kyledewey
+ *      Renamed methods so none start with get.
+ *
+ *      Revision 1.5  2011/01/30 05:24:32  kyledewey
+ *      Now T must extend AnyRef.
+ *      Changed it so multiple inputs are in a Seq instead
+ *      of a Set; important for things like Int-.
+ *
+ *      Revision 1.4  2011/01/28 18:06:20  kyledewey
+ *      Major cleanup of connection/disconnection code.
+ *      Nodes can now accept multiple inputs to the same line (as in arrays).
+ *
+ *      Revision 1.3  2011/01/28 04:27:27  kyledewey
+ *      Added code to perform cycle detection.
+ *
+ *      Revision 1.2  2011/01/28 02:06:38  kyledewey
+ *      Changed header and detailed description information to
+ *      use Arrays instead of Seqs.
+ *
+ *      Revision 1.1  2011/01/27 15:52:20  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.vpl
+
+import sentinel.model._
+import java.awt.Color
+
+/**
+ * Holds constants for nodes
+ * @@author Kyle Dewey
+ */
+object Node {
+  // special string representing the output of a node
+  val OUTPUT_LINE = "output"
+
+  // colors for nodes
+  val CONNECTED_INPUT_COLOR = Color.GREEN
+  val UNCONNECTED_INPUT_COLOR = Color.RED
+  val CONNECTED_OUTPUT_COLOR = Color.BLACK
+  val UNCONNECTED_OUTPUT_COLOR = Color.BLACK
+
+  // error for when the user attempts to make a cycle
+  val CYCLE_ERROR = "Given connection would form a cycle."
+
+  val DEFAULT_NODE_HEIGHT = 22 // node height
+  val DEFAULT_NODE_WIDTH_PER = 40 // node width per input
+}
+
+/**
+ * Holds constants for nodes in sentinel.
+ * @@author Kyle Dewey
+ */
+object SentinelNode {
+  // additional colors
+  val UNCONNECTED_OPTIONAL_INPUT_COLOR = Color.BLACK
+
+  // debugger class name
+  val DEBUGGER_CLASS = "sentinel.model.replacer.Debugger"
+
+  /**
+   * Determines if the given instance factory is a debugger.
+   * @@param factory The factory to check
+   * @@return true if it is a debugger, else false
+   */
+  def isDebugger( factory: InstanceFactory[ _ ] ) =
+    factory match {
+      case f: ReflectionFactory[ _ ] if ( f.JVMClassName == DEBUGGER_CLASS ) => true
+      case _ => false
+    }
+
+  /**
+   * Creates a new sentinel node.
+   * Needed since debuggers are a special case.
+   * @@param factory The factory for the node
+   * @@return A new sentinel node, it's actual type dependent upon
+   * the factory given
+   */
+  def apply( factory: InstanceFactory[ _ ] ) =
+    if ( isDebugger( factory ) ) {
+      new SentinelDebuggingNode( factory )
+    } else {
+      new SentinelNode( factory )
+    }
+
+  /**
+   * Converts the given boolean value to "Yes" or "No", depending on
+   * whether it is true or false.
+   * @@param value The boolean value to convert
+   * @@return "Yes" for true, or "No" for false
+   */
+  def toYesNo( value: Boolean ) =
+    if ( value ) "Yes" else "No"
+
+  /**
+   * Given a factory, returns the number for each input, as determined
+   * by paramOrder
+   * @@param factory The factory to get the input numbers of
+   * @@return A mapping of input names to their numbers
+   */
+  def inputNameToNumber( factory: InstanceFactory[ _ ] ) =
+    Map() ++ 0.until( factory.paramOrder.length )
+              .map( num => Pair( factory.paramOrder( num ), num ) )
+}
+
+/**
+ * Exception thrown when an attempt is made to connect incompatible nodes.
+ * @@param message A message describing why the connection is invalid
+ * @@author Kyle Dewey
+ */
+case class InvalidNodeConnectionException( message: String ) extends Exception( message ) {}
+
+/**
+ * Exception thrown when an attempt is made to manipulate a node we
+ * don't recognize.
+ * @@param message A message describing the problem
+ * @@author Kyle Dewey
+ */
+case class UnknownNodeException( message: String ) extends Exception( message ) {}
+
+/**
+ * Exception thrown when an input value to a node isn't valid.
+ * @@param message A message to show the user
+ * @@param input The input that was invalid
+ * @@param node The node that triggered the error
+ * @@author Kyle Dewey
+ */
+case class InputException[ T <: AnyRef, U ]( message: String, 
+					     val input: String,
+					     val node: Node[ T, U ] ) extends Exception( message ) {
+  /**
+   * Creates an input exception based on another exception.
+   * Merely uses the message of the other exception.
+   * @@param exception The underlying exception
+   * @@param input The name of the input
+   * @@param node The node that couldn't instantiate
+   */
+  def this( exception: Exception, input: String, node: Node[ T, U ] ) =
+    this( exception.getMessage, input, node )
+}
+
+/**
+ * Represents a node in the graph.
+ * Nodes can be connected to other nodes.  Input and output types are based
+ * upon the given instance factory.
+ *
+ * <p>Note that these are only loosely tied to the rest of sentinel.  Nodes
+ * assume that there are 0-n names inputs on components, along with a single
+ * output.  They allow for connection of outputs to inputs, and can understand
+ * configurable rules for other connections (i.e. real number outputs can
+ * only be connected to real number inputs).  The intention is that this can
+ * be used outside of sentinel in the development for other VPLs.</p>
+ *
+ * <p>Nodes hold components, which can be anything.  It is intended that components
+ * are somewhat related to the given node.  inputConnections maps input names
+ * to nodes.  output gets what node we are connected to.</p>
+ *
+ * <p>Note that it is intended that the keys of <code>inputConnections</code> will never
+ * change, although the values might.</p>
+ *
+ * @@param component A component to hold on the node
+ * @@param inputConnections A mapping of input names to nodes that they
+ * are connected to
+ * @@param inputNumber A mapping of input names to which numbers they are.
+ * The numbers should be of the form 0, 1, 2, ..., n.
+ * @@param output What node our output is connected to, along with the name
+ * of the input that we are connected to 
+ * @@author Kyle Dewey
+ */
+abstract class Node[ T <: AnyRef, U ]( val component: T,
+				       var inputConnections: Map[ String, Seq[ Node[ T, U ] ] ],
+				       val inputNumber: Map[ String, Int ],
+				       var output: Option[ Pair[ String, Node[ T, U ] ] ] ) extends Describable {
+  val inputNumberToName = Map() ++ inputNumber.map( 
+    ( pair: Pair[ String, Int ] ) => Pair( pair._2, pair._1 ) )
+
+  /**
+   * Creates a new node that isn't connected to anything, with the given
+   * mapping of input names to their input numbers
+   * @@param component The component to use
+   * @@param names The names of all the inputs, and their mapping to integers
+   */
+  def this( component: T, names: Map[ String, Int ] ) =
+    this( component,
+	  Map() ++ names.keys.toList.map( Pair( _, Seq[ Node[ T, U ] ]() ) ),
+	  names,
+	  None )
+
+  /**
+   * Gets the width of this node
+   * @@return The width of this node
+   */
+  def width() = {
+    val num = 
+      if ( numInputs == 0 ) 1 else numInputs
+    num * Node.DEFAULT_NODE_WIDTH_PER
+  }
+
+  /**
+   * Gets the height of this node
+   * @@return the height of this node
+   */
+  def height() =
+    Node.DEFAULT_NODE_HEIGHT
+
+  /**
+   * Gets the number of inputs that are connected.  For example, if we have two
+   * inputs, and three things are attached to the first one and none on the
+   * other, then this returns 1, signifying that one of the inputs lines is
+   * connected.
+   * @@return The number of inputs that are connected
+   */
+  def numConnectedInputs() =
+    inputNames.map( ( name: String ) => 
+      if ( inputConnected( name ) ) 1 else 0 )
+              .reduceLeft( _ + _ )
+
+  /**
+   * Gets the input with the given number
+   * @@param num The number of the input
+   * @@return The input, or None if it's not connected
+   * @@throws UnknownInputException If an input with the given number wouldn't
+   * exist anyway
+   */
+  def input( num: Int ) = {
+    verifyInputNum( num )
+    inputConnections( inputNumberToName( num ) )
+  }
+
+  /**
+   * Gets the names of all the inputs.
+   * @@return The names of all the inputs
+   */
+  def inputNames(): Seq[ String ] =
+    inputConnections.keys.toList
+
+  /**
+   * Gets the number of inputs that are on this node
+   * @@return The number of inputs on this node
+   */
+  def numInputs() =
+    inputConnections.size
+
+  /**
+   * Determines if the given name is understood to be an input name
+   * @@param name The name of the input
+   * @@return true if we understand this as an input name
+   */
+  def isInputName( name: String ) =
+    inputConnections.contains( name )
+
+  /**
+   * Determines if the given input is connected
+   * @@param name the name of the input
+   * @@return true if the input is connected, else false
+   * @@throws UnknownInputException If the given input name isn't recognized
+   */
+  def inputConnected( name: String ): Boolean = {
+    verifyInputName( name )
+    !inputConnections( name ).isEmpty
+  }
+
+  /**
+   * Determines if the given line is connected
+   * @@param The name of the line (or OUTPUT_LINE )
+   * @@return true if the line is connected, else false
+   */
+  def lineConnected( name: String ) =
+    if ( name.eq( Node.OUTPUT_LINE ) ) {
+      outputConnected
+    } else {
+      inputConnected( name )
+    }
+  
+  /**
+   * Gets the color of this node
+   * @@return The color of this node
+   */
+  def color() =
+    Color.LIGHT_GRAY
+
+  /**
+   * Gets the color of the given input
+   * @@param num The number of the input
+   * @@return The color of the given input
+   * @@throws UnknownInputException If the given input number isn't recognized
+   */
+  def inputColor( num: Int ): Color = {
+    verifyInputNum( num )
+    if ( inputConnected( num ) ) {
+      Node.CONNECTED_INPUT_COLOR
+    } else {
+      Node.UNCONNECTED_INPUT_COLOR
+    }
+  }
+
+  /**
+   * Gets the color of the output
+   * @@return The color of the output
+   */
+  def outputColor() = 
+    if ( outputConnected ) {
+      Node.CONNECTED_OUTPUT_COLOR
+    } else {
+      Node.UNCONNECTED_OUTPUT_COLOR
+    }
+
+  /**
+   * Determines if the given input is connected
+   * @@param num The number of the input
+   * @@return true if the input is connected
+   * @@throws UnknownInputException If the given input number isn't recognized
+   */
+  def inputConnected( num: Int ): Boolean = {
+    verifyInputNum( num )
+    inputConnected( inputNumberToName( num ) )
+  }
+
+  /**
+   * Gets all the ancestor nodes of the given node, traversing input lines.
+   * Note that this will cause infinite recursion if there is a cycle in
+   * the graph.  Also note that this includes <code>this</code> in the set
+   * of nodes returned.
+   * @@pre There isn't a cycle in the graph
+   * @@return All the ancestor nodes of this node, via input lines
+   */
+  protected def internalAncestors(): Set[ Node[ T, U ] ] = 
+    inputConnections.filterKeys( inputConnected( _ ) ) // get connected inputs
+		    .values // get their sets
+                    .foldLeft( Set[ Node[ T, U ] ]() )( _ ++ _ ) // into one set
+                    .map( _.internalAncestors ) // get the ancestors of those
+                    .foldLeft( Set( this ) )( _ ++ _ ) // concat it all
+  
+  /**
+   * Gets all ancestors nodes of the given node, traversing input lines.
+   * Note that this will cause infinite recursion if there is a cycle in
+   * the graph.
+   * @@pre There isn't a cycle in the graph
+   * @@return All the ancestor nodes of this node, via input lines
+   */
+  def ancestors(): Set[ Node[ T, U ] ] =
+    internalAncestors - this
+
+  /**
+   * Determines whether or not all the given nodes are ancestors of this
+   * node.
+   * @@param nodes The nodes to test
+   * @@return true if they are all ancestors of this node, else false
+   */
+  def ancestors( nodes: Seq[ Node[ T, U ] ] ): Boolean = {
+    val ancest = ancestors
+    nodes.forall( ancest.contains( _ ) )
+  }
+
+  /**
+   * Gets all child nodes of the given node, traversing output lines
+   * Note that this will cause infinite recursion if there is a cycle in
+   * the graph.  (Unlike ancestors, this is tail-recursive, so don't
+   * expect a stack overflow exception.)
+   * @@pre There isn't a cycle in the graph
+   * @@return All the child nodes of this node, via output lines
+   */
+  def children(): Set[ Node[ T, U ] ] = {
+    var retval: Set[ Node[ T, U ] ] = Set()
+
+    def children( node: Node[ T, U ] ) {
+      if ( node.output.isDefined ) {
+	val current = node.output.get._2
+	retval += current
+	children( current )
+      }
+    }
+
+    children( this )
+    retval
+  }
+
+  /**
+   * Gets the last child in the path of this node.
+   * If this returns <code>this</code>, then this node is the last one.
+   * @@return The last child in this node's path
+   */
+  def lastChild(): Node[ T, U ] = {
+    def lastChild( node: Node[ T, U ] ): Node[ T, U ] =
+      if ( node.output.isEmpty ) {
+	node
+      } else {
+	lastChild( node.output.get._2 )
+      }
+    lastChild( this )
+  }
+	
+  /**
+   * Determines if adding the given node would introduce a cycle.
+   * This means that the given node is already amonst our ancestors
+   * @@param node The node to try to add
+   * @@return true if adding the node would introduce a cycle, else false
+   */
+  def wouldIntroduceCycle( node: Node[ T, U ] ) =
+    node.eq( this ) || ( ancestors ++ children ).contains( node )
+
+  /**
+   * Verifies the given connection.  Throws an exception if the given
+   * connection is invalid.
+   * @@param node The node to connect
+   * @@param input The name of the input
+   * @@throws InvalidNodeConnectionException If the given nodes cannot be
+   * connected
+   * @@throws UnknownInputException If the given input name is unrecognized
+   */
+  def validConnection( node: Node[ T, U ], input: String ) {
+    verifyInputName( input )
+
+    if ( wouldIntroduceCycle( node ) ) {
+      throw new InvalidNodeConnectionException( Node.CYCLE_ERROR )
+    }
+  }
+
+  /**
+   * Verifies that the given node is connected to the given input
+   * @@param node The node
+   * @@param input The name of the input
+   * @@throws UnknownInputException If the given input name is unrecognized
+   * @@throws UnknownNodeException If the given node isn't connected to the
+   * given input
+   */
+  def verifyConnected( node: Node[ T, U ], input: String ) {
+    verifyInputName( input )
+    if ( !inputConnections( input ).contains( node ) ) {
+      throw new UnknownNodeException( "Given node not connected to " + input )
+    }
+  }
+
+  /**
+   * Disconnects all inputs.
+   */
+  def disconnectInput() {
+    inputConnections.keys.toList.foreach( disconnectInput( _ ) )
+  }
+
+  /**
+   * Disconnects all nodes from the given input.
+   * A no-op if there are no nodes connected on this input
+   * @@param input The name of the input
+   * @@throws UnknownInputException If the given input name is unrecognized
+   */
+  def disconnectInput( input: String ) {
+    verifyInputName( input )
+    if ( inputConnected( input ) ) {
+      inputConnections( input ).elements
+                               .foreach( disconnectInput( _, input ) )
+    }
+  }
+
+  /**
+   * Disconnects the given node from the given input.
+   * @@param node The node to disconnect
+   * @@param input The name of the input
+   * @@throws UnknownInputException If the given input name is unrecognized
+   * @@throws UnknownNodeException If the given node isn't connected to the
+   * given input
+   */
+  def disconnectInput( node: Node[ T, U ], input: String ) {
+    verifyConnected( node, input )
+    node.output = None
+    inputConnections += Pair( input,
+			      inputConnections( input ).filter( !_.eq( node ) ) )
+  }
+
+  /**
+   * Disconnects the output node
+   */
+  def disconnectOutput() {
+    if ( output.isDefined ) {
+      // node that disconnectInput ends up setting output to None
+      output.get._2.disconnectInput( this, output.get._1 )
+    }
+  }
+
+  /**
+   * Disconnects the given line.
+   * @@param line The name of the line to disconnect (an input name or
+   * OUTPUT_LINE)
+   */
+  def disconnectLine( line: String ) {
+    if ( line.eq( Node.OUTPUT_LINE ) ) {
+      disconnectOutput()
+    } else {
+      disconnectInput( line )
+    }
+  }
+
+  /**
+   * Synonym for disconnectLine.
+   * @@param line The name of the line to disconnect
+   */
+  def disconnect( line: String ) {
+    disconnectLine( line )
+  }
+
+  /**
+   * Disconnects this node from the rest of the nodes.
+   * That is, it disconnects both inputs and the output
+   */
+  def disconnect() {
+    disconnectInput()
+    disconnectOutput()
+  }
+
+  /**
+   * Connects the given node's output to the given input
+   * @@param node The node to connect
+   * @@param input The name of the input to connect to
+   * @@throws InvalidNodeConnectionException If the given nodes cannot
+   * be connected
+   */
+  def connect( node: Node[ T, U ], input: String ) {
+    validConnection( node, input )
+
+    // add the new input connection
+    inputConnections += Pair( input,
+			      inputConnections( input ) ++ Seq( node ) )
+
+    // set the node's output
+    node.disconnectOutput()
+    node.output = Some( Pair( input, this ) )
+  }
+
+  /**
+   * Determines if the output is connected to anything.
+   * @@return <code>output.isDefined</code>
+   */
+  def outputConnected() =
+    output.isDefined
+
+  /**
+   * Verifies that the given input name is known
+   * @@param input The name of the input to verify
+   * @@throws UnknownInputException If the given input name is unrecognized
+   */
+  def verifyInputName( input: String ) {
+    if ( !inputConnections.contains( input ) ) {
+      throw new UnknownInputException( "Unrecognized input name: " + input )
+    }
+  }
+
+  /**
+   * Verifies that the given input number is known
+   * @@param num The number of the input to verify
+   * @@throws UnknownInputException If the given input number is unrecognized
+   */
+  def verifyInputNum( num: Int ) {
+    if ( !inputNumberToName.contains( num ) ) {
+      throw new UnknownInputException( "Unrecognized input number: " + num )
+    }
+  }
+
+  /**
+   * Gets what the return value of this node is.
+   * By default, this always returns None.
+   * @@return The value of this node.  Returns None if we cannot
+   * generate a value for whatever reason.
+   */
+  def returnValue(): Option[ U ] = None
+}
+
+/**
+ * Represents a node whoose component is in and of itself
+ * describable.  Will use that component as the description item.
+ * @@param component A component to hold on the node
+ * @@param inputConnections A mapping of input names to nodes that they
+ * are connected to
+ * @@param inputNumber A mapping of input names to which numbers they are.
+ * The numbers should be of the form 0, 1, 2, ..., n.
+ * @@param output What node our output is connected to, along with the name
+ * of the input that we are connected to 
+ * @@author Kyle Dewey
+ */
+class DescribableNode[ T <: Describable, U ]( component: T,
+					      inputConnections: Map[ String, Seq[ Node[ T, U ] ] ],
+					      inputNumber: Map[ String, Int ],
+					      output: Option[ Pair[ String, Node[ T, U ] ] ] ) 
+extends Node[ T, U ]( component, inputConnections, inputNumber, output ) {
+  /**
+   * Creates a new node that isn't connected to anything, with the given
+   * mapping of input names to their input numbers
+   * @@param component The component to use
+   * @@param names The names of all the inputs, and their mapping to integers
+   */
+  def this( component: T, names: Map[ String, Int ] ) =
+    this( component,
+	  Map() ++ names.keys.toList.map( Pair( _, Seq[ Node[ T, U ] ]() ) ),
+	  names,
+	  None )
+  
+  /**
+   * Gets the component, which can be used to describe the node.
+   * @@return <code>component</code>.
+   */
+  def describer() =
+    component.describer
+}
+								    
+/**
+ * A node that is specific to sentinel.
+ * Merely overrides the description methods with more useful and specific vairants.
+ * @@param factory The matcher/replacer factory behind the given node
+ * @@author Kyle Dewey
+ */
+class SentinelNode( val factory: InstanceFactory[ _ ] )
+extends DescribableNode[ InstanceFactory[ _ ], Param ]( factory, SentinelNode.inputNameToNumber( factory ) ) {
+  val inputRequired = 
+    factory.paramOrder.map( factory.validParams( _ ).isRequired )
+                      .toArray
+
+  /**
+   * Converts this node to a parse tree node.
+   * @@param name The name of the internal node
+   * @@return An internal node representation
+   */
+  def parseTreeNode( name: String ): ParseNode =
+    new InternalNode( name, factory )
+
+  /**
+   * Names all parameters with the given name.
+   * @@param name The name of the parameter.
+   * @@return parameters correlating to the name.  If there are none, then
+   * the given input doesn't exist, or it's not a SentinelNode, or it's None.
+   * Otherwise, it returns a named param for each input.
+   * @@throws InputException If an input isn't valid
+   */
+  def nameParams( name: String ): Seq[ NamedParam ] =
+    if ( !inputConnections.contains( name ) ) {
+      Seq[ NamedParam ]()
+    } else {
+      inputConnections( name ).filter( _.isInstanceOf[ SentinelNode ] )
+                              .map( _.asInstanceOf[ SentinelNode ].returnValue )
+                              .filter( _.isDefined )
+                              .map( ( p: Option[ Param ] ) => 
+				new NamedParam( name, p.get ) )
+    }
+  
+  /**
+   * Applies names to all parameters.
+   * @@return a sequence of named parameters, correlating to our input
+   * connections.  Note that input nodes that are not SentinelNodes are
+   * ignored, as are SentinalNodes with None as a return value.
+   */
+  def nameParams(): Seq[ NamedParam ] = 
+    inputConnections.keys.map( nameParams( _ ) )
+                         .foldLeft( Seq[ NamedParam ]() )( _ ++ _ )
+
+  /**
+   * Gets the return value of this node without checking to see if
+   * it's possible.
+   * Since the check needs to be performed only once, it is wasteful to
+   * do it for all nodes.
+   * @@return The value of this node
+   * @@throws InputException If an input is invalid
+   */
+  protected def returnValueNoCheck(): Option[ Param ] =
+    // grr...this is type safe
+    // Scala isn't smart enough to see that the constraint on
+    // instantiate that the return value must be a Param means that
+    // the return value will be at least a Param
+    try {
+      Some( factory.instantiate( nameParams, false ).asInstanceOf[ Param ] )
+    } catch {
+      case e: ParameterTypeException => 
+	throw new InputException( e, e.param.name, this )
+    }
+  
+
+  /**
+   * Gets the return value of this node.
+   * If all the required parameters are in place, then it will try to make
+   * a return value.  If not, then it will return none.
+   * @@return The value of this node, or None if we couldn't make a value
+   * @@throws InputException If an input is invalid
+   */
+  override def returnValue() = 
+    if ( !returnValuePossible ) 
+      None
+    else 
+      returnValueNoCheck
+    
+  /**
+   * Gets whether or not all required inputs have been connected
+   * for this particular node.
+   * @@return true if all required inputs are connected, else false
+   */
+  def requiredInputsConnected() =
+    0.until( numInputs ).filter( inputRequired( _ ) )
+                        .forall( inputConnected( _ ) )
+
+  /**
+   * Gets whether all required inputs have been connected in the entire
+   * tree of ancestors.
+   * @@return true if all required inputs for ancestors are connected
+   */
+  def requiredInputsConnectedAncestors() =
+    ancestors.filter( _.isInstanceOf[ SentinelNode ] )
+             .map( _.asInstanceOf[ SentinelNode ] )
+             .forall( _.requiredInputsConnected )
+
+  /**
+   * Gets whether or not it's possible to get a return value for this node
+   * This means that all required inputs from this node above have
+   * been connected.
+   * @@return true if it's possible to get a return value, else false
+   */
+  def returnValuePossible() =
+    requiredInputsConnected && requiredInputsConnectedAncestors
+
+  /**
+   * Gets the color of the given input.
+   * @@param num The number of the input
+   * @@throws UnknownInputException If the given input number isn't recognized
+   */
+  override def inputColor( num: Int ): Color = {
+    verifyInputNum( num )
+    if ( !inputRequired( num ) && !inputConnected( num ) ) {
+      SentinelNode.UNCONNECTED_OPTIONAL_INPUT_COLOR
+    } else {
+      super.inputColor( num )
+    }
+  }
+
+  /**
+   * Gets if the given node can be connected to this node's input.
+   * In addition to performing the superclass' checks, this also checks
+   * to see if an element is an array.  If it's not, then it will only
+   * allow one connection.
+   * @@param node The node to try to connect
+   * @@param input The name of the input to connect to
+   * @@throws InvalidNodeConnectionException If the given nodes cannot be
+   * connected
+   * @@throws UnknownInputException If the given input name is unrecognized
+   */
+  override def validConnection( node: Node[ InstanceFactory[ _ ], Param ], 
+			        input: String ) {
+    super.validConnection( node, input )
+
+    if ( inputConnected( input ) &&
+	 !factory.validParams( input ).isArray ) {
+      throw new InvalidNodeConnectionException( "Given input does not accept " +
+					        "mulitple inputs (isn't an " +
+					        "array)" )
+    }
+  }
+
+  /**
+   * Simple toString method, used for debugging.
+   * @@return A string holding what the value of this node is
+   */
+  override def toString() = {
+    var retval = super.toString
+    val value = returnValue
+
+    if ( returnValue.isDefined ) {
+      val print = returnValue.get.printableValue
+      retval += ": " + print.toString
+    }
+    retval
+  }
+}
+
+/**
+ * Contains helper routines for <code>SentinelDebuggingNode</code>.
+ * @@author Kyle Dewey
+ */
+object SentinelDebuggingNode {
+  val DEFAULT_VARIABLE_VALUE = ""
+  val INPUT_NAME = "input"
+}
+
+/**
+ * A debugging node in sentinel.
+ * Granted, this breaks a lot of the flow of things, but debuggers rarely
+ * play by the rules.
+ * @@param factory The debugging factory that backs the node
+ * @@param variable Variable to use for updating the GUI.  This class will
+ * change the value of the variable if we have an input and returnValue()
+ * is called on us.  If we don't have a value and return value is called
+ * on us, then we merely pass the value along without changing it.
+ * @@author Kyle Dewey
+ */
+class SentinelDebuggingNode( factory: InstanceFactory[ _ ],
+			     val variable: SimpleStringVariable ) 
+extends SentinelNode( factory ) {
+  /**
+   * Creates a new node, along with a new variable.
+   * The variable's initial value is <code>DEFAULT_VARIABLE_VALUE</code>.
+   * @@param factory The debugging factory that backs the code.
+   */
+  def this( factory: InstanceFactory[ _ ] ) =
+    this( factory,
+	  new SimpleStringVariable( SentinelDebuggingNode.DEFAULT_VARIABLE_VALUE ) )
+
+  /**
+   * Gets the return value of this node.  If we have an input, it merely
+   * passes along that value.  It will change the value of the variable to
+   * reflect the new value.  If we don't have an input, it will use the
+   * value of the variable as an output.  In this case, it won't change the
+   * value of the variable.
+   * @@return The return value of the node, as described above
+   */
+   override def returnValueNoCheck() = {
+     try {
+       var retval: Option[ Param ] = None
+       if ( !inputConnected( SentinelDebuggingNode.INPUT_NAME ) ) {
+	 // used to pass along value
+	 retval = Some( variable )
+       } else {
+	 // we need to show something
+	 val params = nameParams
+	 if ( params.isEmpty ) {
+	   // input is invalid
+	   variable.variable = SentinelDebuggingNode.DEFAULT_VARIABLE_VALUE
+	   retval = Some( variable )
+	 } else {
+	   retval = Some( factory.instantiate( params, false ).asInstanceOf[ Param ] )
+	   variable.variable = retval.get.printableValueUnsafe
+	 }
+       }
+       retval
+     } catch {
+       case e: ParameterTypeException => 
+	 throw new InputException( e, e.param.name, this )
+     }
+   }
+}
+
+
+@
+
+
+1.20
+log
+@Removed comments that were not applicable to the
+current revision.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.19 2011/06/19 20:07:40 kyledewey Exp kyledewey $
+d9 4
+d882 1
+a882 2
+	   variable.variable = 
+	     retval.get.printableValue.getOrElse( SentinelDebuggingNode.DEFAULT_VARIABLE_VALUE )
+@
+
+
+1.19
+log
+@Added the parseTreeNode() method.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.18 2011/06/18 03:32:12 kyledewey Exp kyledewey $
+d9 3
+a662 4
+ * @@param inputConnections A mapping of input names to nodes that they
+ * are connected to
+ * @@param output What node our output is connected to, along with the name
+ * of the input that we are connected to 
+@
+
+
+1.18
+log
+@Set to not use optimizations.
+There is no real need in the VPL, and it simplifies
+everything when the underlying parse trees look exactly like
+VPL code.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.17 2011/06/08 04:33:12 kyledewey Exp $
+d9 6
+d673 8
+d855 1
+a855 1
+  
+@
+
+
+1.17
+log
+@Now conforms to the new interface for simple variables.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.16 2011/06/07 08:18:37 kyledewey Exp kyledewey $
+d9 3
+d709 1
+a709 1
+      Some( factory.instantiate( nameParams ).asInstanceOf[ Param ] )
+d864 1
+a864 1
+	   retval = Some( factory.instantiate( params ).asInstanceOf[ Param ] )
+@
+
+
+1.16
+log
+@Minor indentation fix.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.15 2011/06/01 04:05:11 kyledewey Exp $
+d9 3
+d858 1
+a858 1
+	   variable.cellValue = SentinelDebuggingNode.DEFAULT_VARIABLE_VALUE
+d862 1
+a862 1
+	   variable.cellValue = 
+@
+
+
+1.15
+log
+@Matchers passed to debuggers now show the appropriate
+error instead of throwing an unchecked exception.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.14 2011/05/25 20:21:03 kyledewey Exp $
+d9 4
+d866 1
+a866 1
+	throw new InputException( e, e.param.name, this )
+@
+
+
+1.14
+log
+@Added code to deal with debugging edge cases.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.13 2011/04/01 03:24:44 kyledewey Exp $
+d9 3
+d686 2
+a687 1
+   * Gets the return value of this node without checking to see if it's possible.
+d693 1
+a693 1
+  protected def returnValueNoCheck() =
+d840 5
+a844 12
+   override def returnValue() = {
+     var retval: Option[ Param ] = None
+
+     if ( !inputConnected( SentinelDebuggingNode.INPUT_NAME ) ) {
+       // used to pass along value
+       retval = Some( variable )
+     } else {
+       // we need to show something
+       val params = nameParams
+       if ( params.isEmpty ) {
+	 // input is invalid
+	 variable.cellValue = SentinelDebuggingNode.DEFAULT_VARIABLE_VALUE
+d847 11
+a857 3
+	 retval = Some( factory.instantiate( params ).asInstanceOf[ Param ] )
+	 variable.cellValue = 
+	   retval.get.printableValue.getOrElse( SentinelDebuggingNode.DEFAULT_VARIABLE_VALUE )
+d859 4
+a863 2
+
+     retval
+@
+
+
+1.13
+log
+@Added the ancestors( nodes ) method.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.12 2011/02/27 22:33:07 kyledewey Exp $
+d9 3
+d683 20
+d710 1
+a710 1
+    if ( !requiredInputsConnected ) {
+d712 2
+a713 12
+    } else {
+      // grr...this is type safe
+      // Scala isn't smart enough to see that the constraint on
+      // instantiate that the return value must be a Param means that
+      // the return value will be at least a Param
+      try {
+	Some( factory.instantiate( nameParams ).asInstanceOf[ Param ] )
+      } catch {
+	case e: ParameterTypeException => 
+	  throw new InputException( e, e.param.name, this )
+      }
+    }
+d717 1
+d723 20
+a742 1
+  
+@
+
+
+1.12
+log
+@Minor code cleanup.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.11 2011/02/27 20:42:54 kyledewey Exp kyledewey $
+d9 3
+d371 1
+a371 1
+  def ancestors() =
+d375 11
+d746 15
+@
+
+
+1.11
+log
+@Refactored so that everything pertaining to descriptions
+is in InstanceFactory.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.10 2011/02/27 07:48:53 kyledewey Exp kyledewey $
+d9 4
+d61 3
+d291 12
+d459 1
+d465 4
+a468 2
+    inputConnections( input ).elements
+                             .foreach( disconnectInput( _, input ) )
+d497 21
+d740 1
+d775 1
+a775 1
+     val params = nameParams
+d777 3
+a779 2
+     if ( params.isEmpty ) {
+       Some( variable )
+d781 11
+a791 4
+       val retval = factory.instantiate( params ).asInstanceOf[ Param ]
+       variable.cellValue = 
+	 retval.printableValue.getOrElse( SentinelDebuggingNode.DEFAULT_VARIABLE_VALUE )
+       Some( retval )
+d793 2
+@
+
+
+1.10
+log
+@Moved toString to Param.  Functionality is now in
+the printableVersion() method
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.9 2011/02/27 05:28:34 kyledewey Exp kyledewey $
+d9 4
+d49 1
+a56 3
+  // default header information for node inputs
+  val HEADER = Array( "Name", "Description" )
+
+a74 5
+  import sentinel.model._
+
+  // header information for sentinel node inputs
+  val HEADER = Array( "Name", "Description", "Type", "Array?", "Required?" )
+
+a126 7
+ * Exception thrown when the given input name is unrecognized.
+ * @@param message A message to show the user
+ * @@author Kyle Dewey
+ */
+case class UnknownInputException( message: String ) extends Exception( message ) {}
+
+/**
+d190 4
+a193 4
+class Node[ T <:AnyRef, U ]( val component: T,
+			     var inputConnections: Map[ String, Seq[ Node[ T, U ] ] ],
+			     val inputNumber: Map[ String, Int ],
+			     var output: Option[ Pair[ String, Node[ T, U ] ] ] ) {
+a509 27
+   * Gets the name of the node.  By default, this returns
+   * the given component's <code>toString</code>
+   * @@return the name of the given node
+   */
+  def name() =
+    component.toString
+
+  /**
+   * Gets a description of the node.  By default, this just returns the name
+   * as defined by <code>name()</code>
+   * @@return a desription of the node
+   */
+  def description() =
+    name
+
+  /**
+   * Gets header information for parameter information for this node.
+   * Note that this header information should be the same for all nodes
+   * of the same kind.  For instance, in sentinel, this information is
+   * the following: ( name, description, type, array?, required? ).  By
+   * default, this returns ( name, description )
+   * @@return header information for this node type
+   */
+  def inputHeader() =
+    Node.HEADER
+
+  /**
+d532 4
+a535 5
+   * Gets a description of the given input.
+   * By default, this returns a null string
+   * @@param input The name of the input to get a description of
+   * @@return A description of the given input
+   * @@throws UnknownInputException If the given input name is unrecognized
+d537 2
+a538 4
+  def inputDescription( input: String ) = {
+    verifyInputName( input )
+    ""
+  }
+d540 17
+d558 4
+a561 7
+   * Gets a detailed description of the given input
+   * Assumes that the number of elements in this line is the same as
+   * the number of elements returned by <code>inputHeader</code>, and that
+   * the descriptions from <code>inputHeader</code> match what this returns.
+   * @@param input The name of the input to get a detailed description of
+   * @@return A detailed sequence of information describing the given input.
+   * By default, this returns the name and description of the input
+d563 5
+a567 13
+  def detailedDescription( input: String ): Array[ String ] =
+    Array( input,
+	   inputDescription( input ) )
+  
+  /**
+   * Gets a detailed description of all inputs.
+   * The inputs descriptions are returned in their numerical order
+   * @@return A detailed bunch of information about all inputs.
+   */
+  def detailedDescription(): Array[ Array[ String ] ] =
+    0.until( numInputs ).map( ( num: Int ) => 
+      detailedDescription( inputNumberToName( num ) ) )
+                        .toArray
+d570 2
+a571 11
+   * Gets a description of the output
+   * By default, this returns a null string
+   * @@return a description of the output
+   */
+  def outputDescription() = ""
+
+  /**
+   * Gets what the return value of this node is.
+   * By default, this always returns None.
+   * @@return The value of this node.  Returns None if we cannot
+   * generate a value for whatever reason.
+d573 2
+a574 1
+  def returnValue(): Option[ U ] = None
+d576 1
+a576 3
+
+import sentinel.model._
+
+d588 1
+a588 1
+extends Node[ InstanceFactory[ _ ], Param ]( factory, SentinelNode.inputNameToNumber( factory ) ) {
+a667 49
+   * Gets the name of the factory
+   * @@return The name of the factory
+   */
+  override def name() =
+    factory.name
+
+  /**
+   * Gets the description of the factory
+   * @@return the description of the factory
+   */
+  override def description() =
+    factory.desc
+
+  /**
+   * Gets a header for a detailed description of inputs.
+   * @@return A header for a detailed input description
+   */
+  override def inputHeader() =
+    SentinelNode.HEADER
+
+  /**
+   * Gets a description of the given input, based on the factory
+   * @@param name The name of the input to get a description of
+   * @@return A description of the given input
+   * @@throws UnknownInputException If the given input name is unrecognized
+   */
+  override def inputDescription( name: String ) = {
+    verifyInputName( name )
+    factory.validParams( name ).desc
+  }
+
+  /**
+   * Gets a detailed description of the given input.
+   * This information is the same as that seen in the header
+   * @@param input The name of the input to get a detailed description of
+   * @@return A detailed description of the input that conforms to <code>inputHeader</code>
+   * @@throws UnknownInputException If the given input name is unrecognized
+   */
+  override def detailedDescription( input: String ) = {
+    verifyInputName( input )
+    val paramInfo = factory.validParams( input )
+    Array( paramInfo.name,
+	   paramInfo.desc,
+	   ParamType.toString( paramInfo.paramType ),
+	   SentinelNode.toYesNo( paramInfo.isArray ),
+	   SentinelNode.toYesNo( paramInfo.isRequired ) )
+  }
+
+  /**
+@
+
+
+1.9
+log
+@Now uses paramOrder instead of getSortedParamNames
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.8 2011/02/27 04:29:17 kyledewey Exp kyledewey $
+d9 3
+d152 21
+d643 1
+d671 1
+a671 9
+   * @@throws ParameterNameException If one of the parameters has a name
+   * that we don't recognize
+   * @@throws ParameterTypeException If the expected types and actual types
+   * of the param differ
+   * @@throws ParamererRequirementException If a neccessary param is missing
+   * @@throws ParameterArrayException If our expectation of an array or not
+   * is different from the given param
+   * @@throws ParameterizedInstantiationException If the params were ok but
+   * the object could not otherwise be instantiated
+d681 6
+a686 1
+      Some( factory.instantiate( nameParams ).asInstanceOf[ Param ] )
+a789 12
+
+  /**
+   * Converts the given parameter to a string.
+   * @@param param The parameter
+   * @@return The parameter, as a string
+   */
+  def toString( param: Param ) =
+    param match {
+      case d: Data => d.data
+      case m: Matcher => if ( m.matches ) "true" else "false"
+      case _ => "UNDEF" // shouldn't be possible
+    }
+d830 2
+a831 1
+       variable.cellValue = SentinelDebuggingNode.toString( retval )
+@
+
+
+1.8
+log
+@Refactored for use with debuggers.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.7 2011/02/26 04:14:03 kyledewey Exp kyledewey $
+d9 3
+d117 1
+a117 1
+   * by <code>getSortedParamNames</code>.
+d121 3
+a123 5
+  def inputNameToNumber( factory: InstanceFactory[ _ ] ) = {
+    val sorted = factory.getSortedParamNames
+    Map() ++ List.map2( sorted.toList,
+		        0.until( sorted.length ).toList )( Pair( _, _ ) )
+  }
+d610 2
+a611 2
+    factory.getSortedParamNames.map( factory.validParams( _ ).isRequired )
+                               .toArray
+d627 2
+a628 1
+                              .map( ( p: Option[ Param ] ) => new NamedParam( name, p.get ) )
+@
+
+
+1.7
+log
+@Moved the width and height methods here.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.6 2011/02/25 20:56:03 kyledewey Exp kyledewey $
+d9 3
+d75 28
+d175 4
+a178 4
+class Node[ T <:AnyRef ]( val component: T,
+			  var inputConnections: Map[ String, Seq[ Node[ T ] ] ],
+			  val inputNumber: Map[ String, Int ],
+			  var output: Option[ Pair[ String, Node[ T ] ] ] ) {
+d190 1
+a190 1
+	  Map() ++ names.keys.toList.map( Pair( _, Seq[ Node[ T ] ]() ) ),
+d198 5
+a202 2
+  def width() =
+    numInputs * Node.DEFAULT_NODE_WIDTH_PER
+d320 1
+a320 1
+  protected def internalAncestors(): Set[ Node[ T ] ] = 
+d323 1
+a323 1
+                    .foldLeft( Set[ Node[ T ] ]() )( _ ++ _ ) // into one set
+d345 2
+a346 2
+  def children(): Set[ Node[ T ] ] = {
+    var retval: Set[ Node[ T ] ] = Set()
+d348 1
+a348 1
+    def children( node: Node[ T ] ) {
+d361 15
+d381 1
+a381 1
+  def wouldIntroduceCycle( node: Node[ T ] ) =
+d393 1
+a393 1
+  def validConnection( node: Node[ T ], input: String ) {
+d409 1
+a409 1
+  def verifyConnected( node: Node[ T ], input: String ) {
+d442 1
+a442 1
+  def disconnectInput( node: Node[ T ], input: String ) {
+d475 1
+a475 1
+  def connect( node: Node[ T ], input: String ) {
+d584 8
+d607 1
+a607 1
+extends Node[ InstanceFactory[ _ ] ]( factory, SentinelNode.inputNameToNumber( factory ) ) {
+d613 53
+d747 1
+a747 1
+  override def validConnection( node: Node[ InstanceFactory[ _ ] ], 
+d759 66
+@
+
+
+1.6
+log
+@Renamed methods so none start with get.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.5 2011/01/30 05:24:32 kyledewey Exp $
+d9 3
+d54 3
+d164 14
+@
+
+
+1.5
+log
+@Now T must extend AnyRef.
+Changed it so multiple inputs are in a Seq instead
+of a Set; important for things like Int-.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.4 2011/01/28 18:06:20 kyledewey Exp $
+d9 5
+d158 12
+d176 1
+a176 1
+  def getInput( num: Int ) = {
+d185 1
+a185 1
+  def getInputNames(): Seq[ String ] =
+d218 1
+a218 1
+  def getColor() =
+d534 8
+@
+
+
+1.4
+log
+@Major cleanup of connection/disconnection code.
+Nodes can now accept multiple inputs to the same line (as in arrays).
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.3 2011/01/28 04:27:27 kyledewey Exp kyledewey $
+d9 4
+d133 4
+a136 4
+class Node[ T ]( val component: T,
+		 var inputConnections: Map[ String, Set[ Node[ T ] ] ],
+		 val inputNumber: Map[ String, Int ],
+		 var output: Option[ Pair[ String, Node[ T ] ] ] ) {
+d148 1
+a148 1
+	  Map() ++ names.keys.toList.map( Pair( _, Set[ Node[ T ] ]() ) ),
+d360 1
+a360 1
+			      inputConnections( input ) - node )
+d394 1
+a394 1
+			      inputConnections( input ) + node )
+@
+
+
+1.3
+log
+@Added code to perform cycle detection.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.2 2011/01/28 02:06:38 kyledewey Exp kyledewey $
+d9 3
+d94 8
+d123 2
+a124 2
+ * @@param inputNumber A mapping of input names to which numbers they are.  The numbers
+ * should be of the form 0, 1, 2, ..., n.
+d130 1
+a130 1
+		 var inputConnections: Map[ String, Option[ Node[ T ] ] ],
+d144 1
+a144 1
+	  Map() ++ names.keys.toList.map( Pair( _, None ) ),
+d190 1
+a190 1
+    inputConnections( name ).isDefined
+d234 1
+a234 1
+    inputConnections( inputNumberToName( num ) ).isDefined
+d246 5
+a250 3
+    inputConnections.values.filter( _.isDefined ) // get connected inputs
+                           .map( _.get.internalAncestors ) // their ancestors
+                           .foldLeft( Set( this ) )( _ ++ _ ) // concatenate
+d312 67
+d388 3
+a390 5
+    // disconnect the old input
+    val inputNode = inputConnections( input )
+    if ( inputNode.isDefined ) {
+      inputNode.get.output = None 
+    }
+d392 2
+a393 5
+    // connect the new input
+    if ( node.output.isDefined ) {
+      node.output.get._2.inputConnections += Pair( node.output.get._1, None )
+    }
+    inputConnections += Pair( input, Some( node ) ) // connect this one
+a404 21
+   * Disconnects this node from the rest of the nodes
+   */
+  def disconnect() {
+    // disconnect the inputs
+    // the whole elements.collect is so we avoid modifying the structure while
+    // we iterate over it
+    inputConnections.elements.collect.foreach( ( pair: Pair[ String, Option[ Node[ T ] ] ] ) => {
+      if ( pair._2.isDefined ) {
+	pair._2.get.output = None
+	inputConnections += Pair( pair._1, None )
+      }
+    })
+
+    // disconnect the output
+    if ( output.isDefined ) {
+      output.get._2.inputConnections += Pair( output.get._1, None )
+      output = None
+    }
+  }
+
+  /**
+d576 23
+@
+
+
+1.2
+log
+@Changed header and detailed description information to
+use Arrays instead of Seqs.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Node.scala,v 1.1 2011/01/27 15:52:20 kyledewey Exp kyledewey $
+d9 4
+d36 3
+d227 50
+a276 4
+   * Determines if the given node can be connected to this node
+   * @@param node The node to connect
+   * @@param input The name of the input to connect to
+   * @@return true as long as we have an input with the given name
+d278 2
+a279 2
+  def connectable( node: Node[ T ], name: String ) =
+    isInputName( name )
+d292 3
+a294 3
+    if ( !connectable( node, input ) ) {
+      throw new InvalidNodeConnectionException( "Given node connection is " +
+					        "not valid." )
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d25 1
+a25 1
+  val HEADER = Seq( "Name", "Description" )
+d42 1
+a42 1
+  val HEADER = Seq( "Name", "Description", "Type", "array?", "required?" )
+d367 13
+a379 3
+  def detailedDescription( input: String ) =
+    Seq( input,
+	 inputDescription( input ) )
+d462 6
+a467 6
+    val paramInfo = factory.validParams( name )
+    Seq( paramInfo.name,
+	 paramInfo.desc,
+	 ParamType.toString( paramInfo.paramType ),
+	 SentinelNode.toYesNo( paramInfo.isArray ),
+	 SentinelNode.toYesNo( paramInfo.isRequired ) )
+a468 8
+
+  /**
+   * Gets a description of the output.  This ends up being the same as
+   * a description of the factory.
+   * @@return a description of the factory
+   */
+  override def outputDescription() =
+    description
+@

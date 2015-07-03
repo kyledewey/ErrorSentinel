@@ -1,0 +1,894 @@
+head	1.10;
+access;
+symbols;
+locks
+	kyledewey:1.10; strict;
+comment	@# @;
+
+
+1.10
+date	2011.06.01.04.02.34;	author kyledewey;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2011.05.30.04.01.23;	author kyledewey;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2011.05.29.22.14.40;	author kyledewey;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2011.05.29.15.18.34;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.05.28.19.57.18;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.05.28.14.19.31;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.05.27.18.49.24;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2011.05.27.01.34.03;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2011.05.25.20.16.07;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.07.11.05.54.17;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Contains container classes for representing a
+single spreadsheet project.
+@
+
+
+1.10
+log
+@Spreadsheet registration is now parameterized.
+@
+text
+@/*
+ * Project.scala
+ *
+ * Version:
+ *     $Id: Project.scala,v 1.9 2011/05/30 04:01:23 kyledewey Exp $
+ *
+ * Revisions:
+ *      $Log: Project.scala,v $
+ *      Revision 1.9  2011/05/30 04:01:23  kyledewey
+ *      Moved Sheet to ProjectHelpers.scala.
+ *
+ *      Revision 1.8  2011/05/29 22:14:40  kyledewey
+ *      Added support for adding and removing rows.
+ *
+ *      Revision 1.7  2011/05/29 15:18:34  kyledewey
+ *      Can now do piecewise loading.
+ *
+ *      Revision 1.6  2011/05/28 19:57:18  kyledewey
+ *      Added the ProjectFileChooser object.
+ *
+ *      Revision 1.5  2011/05/28 14:19:31  kyledewey
+ *      Added the foreachSpreadsheet() method.
+ *
+ *      Revision 1.4  2011/05/27 18:49:24  kyledewey
+ *      Moved the multiMap() method to sentinel.model.SentinelHelpers.
+ *
+ *      Revision 1.3  2011/05/27 01:34:03  kyledewey
+ *      Refactored so that the routine used to transform
+ *      vanilla spreadsheets into a custom version is passed
+ *      as a parameter instead of being hardcoded.
+ *
+ *      Revision 1.2  2011/05/25 20:16:07  kyledewey
+ *      Refactored so spreadsheet variables can be passed directly
+ *      in the XML file.  Helps to decouple code from the sheet.
+ *
+ *      Revision 1.1  2010/07/11 05:54:17  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.project
+
+import sentinel.model._
+
+/**
+ * Conatins helper functions for Associations
+ * @@author Kyle Dewey
+ */
+object Associations {
+  /**
+   * If the given sheet name is a replacer spreadsheet, it
+   * will call the given function with the corresponding
+   * replacer spreadsheet.  Otherwise it will do nothing.
+   * @@param sheetName The name of the spreadsheet
+   * @@param function The function to call with the replacer spreadsheet
+   * if the given sheetName corresponds to a replacer spreadsheet.  Otherwise
+   * does nothing.
+   */
+  def ifReplacerSpreadsheet( sheetName: String,
+			     function: ReplacerSpreadsheet => Unit ) {
+    val sheet = ReplacerSpreadsheet.getSpreadsheet( sheetName )
+    if ( sheet.isDefined ) {
+      function( sheet.get )
+    }
+  }
+
+  /**
+   * Filters for items holding cell ranges.
+   * @@param items The items holding cell ranges
+   * @@param toCellRange Function to convert an item to a cell range
+   * @@param predicate Predicate to test the cell range with
+   * @@return The items that held cell ranges that matched the predicate.
+   */
+  def filterCellRanges[ T ]( items: Seq[ T ], toCellRange: T => CellRange, predicate: CellRange => Boolean ): Seq[ T ] = 
+    items.filter( ( item: T ) => 
+      predicate( toCellRange( item ) ) )
+
+  /**
+   * Filters either the good data matchers or error correction pairs based
+   * on their cell ranges.
+   * @@param items Which one to filter
+   * @@param predicate The predicate to filter with
+   * @@return items that match
+   */
+  def filterCellRanges[ T ]( items: Seq[ Pair[ T, CellRange ] ], predicate: CellRange => Boolean ): Seq[ Pair[ T, CellRange ] ] =
+    filterCellRanges( items, 
+		      ( item: Pair[ T , CellRange ] ) => item._2, 
+		      predicate )
+
+  /**
+   * Gets all the items that are relevant to the given cell.
+   * @@param items Which one to filter
+   * @@param sheet The spreadsheet the cell is in
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   * @@return The items that are relevant to the given cell.
+   */
+  def relevantToCell[ T ]( items: Seq[ Pair[ T, CellRange ] ], 
+			   sheet: Spreadsheet,  
+			   row: Int,
+			   column: Int ) = {
+    filterCellRanges( items, _.inRange( sheet, row, column ) )
+  }
+
+  /**
+   * Gets all the items that have a defined row that is > the given row.
+   * If a shift down occurs at the given row, these must be changed.
+   * @@param items Which one to filter
+   * @@param row The row to compare against
+   * @@return All items which have a defined row that is >= the given row
+   */
+  def relevantToRowInsert[ T ]( items: Seq[ Pair[ T, CellRange ] ], row: Int ) =
+    filterCellRanges( items, range =>
+      range.row.isDefined && range.row.get > row )
+
+  /**
+   * Like <code>relevantToRowInsert</code>, but it's for columns.
+   * @@param items Which items to filter
+   * @@param column The column to compare against
+   * @@return All items which have a defined column that is > the given column
+   */
+  def relevantToColumnInsert[ T ]( items: Seq[ Pair[ T, CellRange ] ], column: Int ) =
+    filterCellRanges( items, range =>
+      range.column.isDefined && range.column.get > column )
+}
+
+/**
+ * Container for spreadsheet associations.
+ * Associations associate good data matchers with a given cell range,
+ * and they also associate error correction matcher/replacer pairs
+ * to a given cell range
+ * @@param _goodDataMatchers The good data matchers, along with the
+ * ranges that each matcher is a part of
+ * @@param _errorCorrectionPairs The error correction pairs, featuring a
+ * matcher whose match will trigger the replacer in the pair.  Also
+ * holds the cell range that it applies to
+ * @@author Kyle Dewey
+ */
+class Associations( private var _goodDataMatchers: Seq[ Pair[ Matcher, CellRange ] ],
+		    private var _errorCorrectionPairs: Seq[ Pair[ Pair[ Matcher, Replacer ], CellRange ] ] ) {
+  import Associations._
+
+  /**
+   * Gets the good data matchers
+   * @@return The good data matchers
+   */
+  def goodDataMatchers() =
+    _goodDataMatchers
+
+  /**
+   * Gets the error correction pairs
+   * @@return The error correction pairs
+   */
+  def errorCorrectionPairs() =
+    _errorCorrectionPairs
+
+  /**
+   * Clears a cell.
+   * This simply removes all good data matchers and error correction pairs
+   * at the given cell.
+   * @@param sheet The sheet the cell is in
+   * @@param row The row the cell is in
+   * @@param column The column the cell is in
+   */
+  def clearCell( sheet: ReplacerSpreadsheet, row: Int, column: Int ) {
+    sheet.clearGoodData( row, column )
+    sheet.clearErrorCorrectionPairs( row, column )
+  }
+  
+  /**
+   * Reloads a given cell.
+   * This simply clears it and runs <code>cellAdded</code>
+   * @@param sheet The sheet the cell is in
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   */
+  def reloadCell( sheet: ReplacerSpreadsheet, row: Int, column: Int ) {
+    clearCell( sheet, row, column )
+    loadCell( sheet, row, column )
+  }
+
+  /**
+   * Reloads the given row.
+   * @@param sheet The sheet holding the row
+   * @@param row The row to reload
+   */
+  def reloadRow( sheet: ReplacerSpreadsheet, row: Int ) {
+    0.until( sheet.getColumnCount ).foreach( column =>
+      reloadCell( sheet, row, column ) )
+  }
+
+  /**
+   * Reloads the given column.
+   * @@param sheet The sheet holding the column
+   * @@param column The column to reload
+   */
+  def reloadColumn( sheet: ReplacerSpreadsheet, column: Int ) {
+    0.until( sheet.getRowCount ).foreach( row =>
+      reloadCell( sheet, row, column ) )
+  }
+
+  /**
+   * Reloads all columns > the given column.
+   * @@param sheet The sheet holding the columns
+   * @@param column The last column NOT to reload
+   */
+  def reloadColumnsAfter( sheet: ReplacerSpreadsheet, column: Int ) {
+    ( column + 1 ).until( sheet.getColumnCount ).foreach( column =>
+      reloadColumn( sheet, column ) )
+  }
+
+  /**
+   * Reloads all rows > the given row.
+   * @@param sheet The sheet holding the rows
+   * @@param row The last row NOT to reload
+   */
+  def reloadRowsBelow( sheet: ReplacerSpreadsheet, row: Int ) {
+    ( row + 1 ).until( sheet.getRowCount ).foreach( row =>
+      reloadRow( sheet, row ) )
+  }
+						 
+  /**
+   * Loads good data matchers and error correction pairs
+   * appropriately for the cell.  Note that this does not handle
+   * any shifting resulting from insertions, etc.
+   * @@param sheet The replacer spreadsheet
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   */
+  def loadCell( sheet: ReplacerSpreadsheet,
+	        row: Int,
+	        column: Int ) {
+    relevantToCell( goodDataMatchers, sheet, row, column ).foreach(
+      ( goodData: Pair[ Matcher, CellRange ] ) =>
+	sheet.addGoodDataMatcher( row, column, goodData._1 ) )
+    relevantToCell( errorCorrectionPairs, sheet, row, column ).foreach(
+      ( errorCorrection: Pair[ Pair[ Matcher, Replacer ], CellRange ] ) =>
+	sheet.addErrorCorrectionPair( row, column, errorCorrection._1 ) )
+  }
+
+  /**
+   * Reloads all rows at or below the given row.
+   * @@param sheet The sheet to do the reload on
+   * @@param row The row for which all rows >= this row will be reloaded
+   */
+  def reloadRowAtAndBelow( sheet: ReplacerSpreadsheet, row: Int ) {
+    reloadRow( sheet, row )
+    reloadRowsBelow( sheet, row )
+  }
+
+  /**
+   * Informs us that the given row has been added to the given sheet.
+   * If this is relevant to any of the goodDataMatchers or
+   * errorCorrection pairs, then they will be put in the sheet.
+   * @@param sheet The replacer spreadsheet
+   * @@param row The number of the row
+   */
+  def rowAdded( sheet: ReplacerSpreadsheet, row: Int ) {
+    reloadRowAtAndBelow( sheet, row )
+  }
+  
+  /**
+   * Informs us that the given row has been removed.
+   * Note that this assumes that the row has already been removed.
+   * @@param sheet The spreadsheet which had a row removed
+   * @@param row The row that was removed
+   */
+  def rowRemoved( sheet: ReplacerSpreadsheet, row: Int ) {
+    if ( sheet.getRowCount > row ) {
+      reloadRowAtAndBelow( sheet, row )
+    }
+  }
+
+  /**
+   * Reloads all columns at and after the given column.
+   * @@param sheet The spreadsheet
+   * @@param column The starting column to reload
+   */
+  def reloadColumnsAtAndAfter( sheet: ReplacerSpreadsheet, column: Int ) {
+    reloadColumn( sheet, column )
+    reloadColumnsAfter( sheet, column )
+  }
+
+  /**
+   * Informs us that the given column has been added to the given sheet.
+   * Loads in good data matchers and error correction pairs
+   * appropriately.
+   * @@param sheet The replacer spreadsheet
+   * @@param column The number of the column
+   */
+  def columnAdded( sheet: ReplacerSpreadsheet, column: Int ) {
+    reloadColumnsAtAndAfter( sheet, column )
+  }
+
+  /**
+   * Loads in all good data matchers
+   * @@pre All cells are clear
+   */
+  def loadGoodDataMatchers() {
+    goodDataMatchers.foreach( goodData => 
+      goodData._2.foreach( ( sheetName, row, column ) => 
+	ifReplacerSpreadsheet( sheetName,
+			       _.addGoodDataMatcher( row, column, goodData._1 ) ) ) )
+  }
+
+  /**
+   * Loads in all error correction pairs.
+   * @@pre All cells are clear
+   */
+  def loadErrorCorrectionPairs() {
+    errorCorrectionPairs.foreach( pair =>
+      pair._2.foreach( ( sheetName, row, column ) =>
+	ifReplacerSpreadsheet( sheetName,
+			       _.addErrorCorrectionPair( row, column, pair._1 ) ) ) )
+  }
+
+  /**
+   * Loads in the given associations.
+   * Should be called only once - project initialization time.
+   * @@pre All spreadsheets have been loaded in
+   * @@pre All cells in all spreadsheets are clear of Sentinel language
+   */
+  def loadAssociations() {
+    loadGoodDataMatchers()
+    loadErrorCorrectionPairs()
+  }
+}
+
+/**
+ * Container for a project
+ * @@param sheets The sheets associated with this project.  The name is
+ * used as a key and the value is the sheet itself.
+ * @@param langs The languages associated with this project
+ * @@param associations The associations made between cells in a spreadsheet
+ * and parts of the language
+ * @@param spreadsheetFactory Used to convert the normal spreadsheet
+ * implementation to a desired implementation.  Takes the spreadsheet,
+ * the project (<code>this</code>), 
+ * and whether or not the resulting spreadsheet should be registered.
+ * @@param register Whether or not to register the spreadsheets
+ * @@throws ParameterizedInstantiationException If we could not instantiate
+ * a replacer
+ * @@throws SpreadsheetReadException If there was an error in the underlying
+ * format
+ * @@throws FileNotFoundException If the file could not be found
+ * @@throws SpreadsheetNameException If the name of a spreadsheet is invalid
+ * @@throws IOException If some other reading error occurred
+ * @@author Kyle Dewey
+ */
+class Project[ T <: Spreadsheet ]( var sheets: Map[ String, Sheet ],
+				   var langs: Seq[ Language ],
+				   val associations: Associations,
+				   val spreadsheetFactory: ( Spreadsheet, Project[ T ], Boolean ) => T,
+				   val register: Boolean ) {
+  // begin constructor
+  var spreadsheets = loadSpreadsheets()
+  associations.loadAssociations()
+  // end constructor
+
+  /**
+   * Merely passes false for register
+   * @@param sheets The sheets to use for the project
+   * @@param langs The languages associated with this project
+   * @@param associations The associations made between cells in a spreadsheet
+   * and parts of the language
+   * @@param spreadsheetFactory Used to convert the normal spreadsheet
+   * implementation to a desired implementation.  Takes the spreadsheet,
+   * the project (<code>this</code>), 
+   * and whether or not the resulting spreadsheet should be registered.
+   */
+  def this( sheets: Map[ String, Sheet ],
+	    langs: Seq[ Language ],
+	    associations: Associations,
+	    spreadsheetFactory: ( Spreadsheet, Project[ T ], Boolean ) => T ) =
+	      this( sheets, langs, associations, spreadsheetFactory, false )
+  
+  /**
+   * Runs the given function against all spreadsheets.
+   * @@param function The function to run against all spreadsheets
+   */
+  def foreachSpreadsheet( function: T => Unit ) {
+    spreadsheets.values.foreach( function( _ ) )
+  }
+
+  /**
+   * Loads in the given sheet.
+   * @@param sheet The sheet to load in
+   * @@return The loaded in spreadsheet
+   * @@throws SpreadsheetReadException If there was an error in the underlying
+   * format.
+   * @@throws FileNotFoundException If the file could not be found
+   * @@throws SpreadsheetNameException If the name of a spreadsheet is invalid
+   * @@throws IOException If some other reading error occurred
+   */
+  def loadSpreadsheet( sheet: Sheet ) = {
+    val retval =
+      spreadsheetFactory( SheetReader.readSpreadsheet( sheet.name,
+						       true,
+						       sheet.fileName,
+						       sheet.fileType ), 
+		          this, 
+		          register )
+    if ( register ) {
+      Spreadsheet.registerSpreadsheet( retval )
+    }
+    retval
+  }
+
+  /**
+   * Loads in all sheets associated with the project.
+   * Note that it is expected that calling code will perform error correction.
+   * Only data is loaded in; no replacers are set.
+   * @@return All the spreadsheets that are associated with this project.  The
+   * name is the key and the value is the sheet itself
+   * @@throws SpreadsheetReadException If there was an error in the underlying
+   * format.
+   * @@throws FileNotFoundException If the file could not be found
+   * @@throws SpreadsheetNameException If the name of a spreadsheet is invalid
+   * @@throws IOException If some other reading error occurred
+   */
+  def loadSpreadsheets(): Map[ String, T ] =
+    Map() ++ sheets.values.map( sheet =>
+      Pair( sheet.name, loadSpreadsheet( sheet ) ) )
+}
+
+import javax.swing._
+import javax.swing.filechooser._
+import java.io._
+
+/**
+ * A file chooser that recognizes project files.
+ * @@author Kyle Dewey
+ */
+object ProjectFileChooser extends javax.swing.filechooser.FileFilter {
+  /**
+   * Matches any files with an xml extension.
+   * @@param file The file to check
+   * @@return true if the file has an XML extension, else false
+   */
+  def accept( file: File ) =
+    file.getName.toLowerCase.endsWith( ".xml" )
+  
+  /**
+   * Returns a description string for projects.
+   * @@return "Project Files"
+   */
+  def getDescription() =
+    "Project Files"
+}
+@
+
+
+1.9
+log
+@Moved Sheet to ProjectHelpers.scala.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Project.scala,v 1.8 2011/05/29 22:14:40 kyledewey Exp $
+d9 3
+a46 9
+ * Container for a language definition
+ * @@param fileName The file associated with the language definition
+ * @@param fileType The type of the file
+ * @@author Kyle Dewey
+ */
+class Language( val fileName: String,
+	        val fileType: String ) {}
+
+/**
+d341 1
+d354 3
+a356 1
+				   val spreadsheetFactory: ( Spreadsheet, Project[ T ], Boolean ) => T ) {
+d359 1
+d362 17
+d396 13
+a408 5
+  def loadSpreadsheet( sheet: Sheet ) =
+    spreadsheetFactory( SheetReader.readSpreadsheet( sheet.name,
+						     true,
+						     sheet.fileName,
+						     sheet.fileType ), this, true )
+@
+
+
+1.8
+log
+@Added support for adding and removing rows.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Project.scala,v 1.7 2011/05/29 15:18:34 kyledewey Exp kyledewey $
+d9 3
+a43 11
+ * Container for a sheet.
+ * @@param name The name of the sheet
+ * @@param fileName The file associated with the sheet
+ * @@param fileType The type of the sheet
+ * @@author Kyle Dewey
+ */
+class Sheet( val name: String,
+	     val fileName: String,
+	     val fileType: String ) {}
+
+/**
+@
+
+
+1.7
+log
+@Can now do piecewise loading.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Project.scala,v 1.6 2011/05/28 19:57:18 kyledewey Exp kyledewey $
+d9 3
+d81 59
+d173 16
+a188 3
+   * Gets all good data matcher pairs that are relevant to
+   * the given cell
+   * @@param sheet The spreadsheet
+a190 1
+   * @@return All good data matcher pairs relevant to the cell.
+d192 4
+a195 2
+  def goodDataRelevantToCell( sheet: Spreadsheet, row: Int, column: Int ) =
+    goodDataMatchers.filter( _._2.inRange( sheet, row, column ) )
+d198 3
+a200 6
+   * Gets all error correction pairs that are relevant
+   * to the given cell.
+   * @@param sheet The spreadsheet
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   * @@return All error correction pairs that are relevant to the given cell
+d202 4
+a205 2
+  def errorCorrectionRelevantToCell( sheet: Spreadsheet, row: Int, column: Int ) =
+    errorCorrectionPairs.filter( _._2.inRange( sheet, row, column ) )
+d208 30
+a237 1
+   * Informs us that the given cell has been added to the given sheet.
+d239 2
+a240 1
+   * appropriately
+d245 4
+a248 4
+  def cellAdded( sheet: ReplacerSpreadsheet,
+		 row: Int,
+		 column: Int ) {
+    goodDataRelevantToCell( sheet, row, column ).foreach( 
+d251 1
+a251 1
+    errorCorrectionRelevantToCell( sheet, row, column ).foreach(
+d253 11
+a263 1
+      sheet.addErrorCorrectionPair( row, column, errorCorrection._1 ) )
+d274 23
+a296 2
+    0.until( sheet.getColumnCount ).foreach( column =>
+      cellAdded( sheet, row, column ) )
+d307 1
+a307 2
+    0.until( sheet.getRowCount ).foreach( row =>
+      cellAdded( sheet, row, column ) )
+d312 1
+d323 1
+d336 1
+@
+
+
+1.6
+log
+@Added the ProjectFileChooser object.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Project.scala,v 1.5 2011/05/28 14:19:31 kyledewey Exp $
+d9 3
+d85 1
+a85 1
+ * @@param goodDataMatchers The good data matchers, along with the
+d87 1
+a87 1
+ * @@param errorCorrectionPairs The error correction pairs, featuring a
+d92 83
+a174 2
+class Associations( val goodDataMatchers: Seq[ Pair[ Matcher, CellRange ] ],
+		    val errorCorrectionPairs: Seq[ Pair[ Pair[ Matcher, Replacer ], CellRange ] ] ) {
+d176 1
+a176 2
+   * Loads in the given associations.
+   * @@pre All spreadsheets have been loaded in
+d178 1
+a178 1
+  def loadAssociations() {
+d181 8
+a188 2
+	Associations.ifReplacerSpreadsheet( sheetName,
+					    _.addGoodDataMatcher( row, column, goodData._1 ) ) ) )
+d191 12
+a202 2
+	Associations.ifReplacerSpreadsheet( sheetName,
+					    _.addErrorCorrectionPair( row, column, pair._1 ) ) ) )
+d214 2
+a215 1
+ * implementation to a desired implementation.  Takes the spreadsheet
+d228 3
+a230 3
+				   var associations: Associations,
+				   val spreadsheetFactory: ( Spreadsheet, Boolean ) => T ) {
+  var spreadsheets = loadSpreadsheets( spreadsheetFactory )
+d242 16
+a260 1
+   * @@param spreadsheetFactory Converts spreadsheets to a desired representation
+d269 3
+a271 7
+  def loadSpreadsheets( spreadsheetFactory: ( Spreadsheet, Boolean ) => T ): Map[ String, T ] =
+    Map() ++ sheets.map( pair => 
+      pair._1 ->
+	spreadsheetFactory( SheetReader.readSpreadsheet( pair._1,
+						         true,
+						         pair._2.fileName,
+						         pair._2.fileType ), true ) )
+@
+
+
+1.5
+log
+@Added the foreachSpreadsheet() method.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Project.scala,v 1.4 2011/05/27 18:49:24 kyledewey Exp $
+d9 3
+d163 24
+@
+
+
+1.4
+log
+@Moved the multiMap() method to sentinel.model.SentinelHelpers.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Project.scala,v 1.3 2011/05/27 01:34:03 kyledewey Exp kyledewey $
+d9 3
+d131 8
+@
+
+
+1.3
+log
+@Refactored so that the routine used to transform
+vanilla spreadsheets into a custom version is passed
+as a parameter instead of being hardcoded.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Project.scala,v 1.2 2011/05/25 20:16:07 kyledewey Exp $
+d9 5
+a53 25
+   * Given a bunch of objects, it will generate a map.
+   * Multiple values may be included with the same key
+   * @@param objects The sequence of objects
+   * @@param key Function used to get a key for an object
+   * @@param value Function use to get a value for an object
+   * @@return A mapping generated from the given objects
+   */
+  def multiMap[ O, K, V ]( objects: Seq[ O ],
+			   key: O => K,
+			   value: O => V ) = {
+    var retval: Map[ K, List[ V ] ] = Map()
+    objects.foreach( current => {
+      val currentKey = key( current )
+      val currentValue = value( current )
+      val baseList =
+	if ( retval.contains( currentKey ) ) retval( currentKey )
+	else List[ V ]()
+      retval += Pair( currentKey, 
+		      currentValue :: baseList )
+    } )
+    retval.transform( ( key, list ) =>
+      list.reverse.toSeq )
+  }
+
+  /**
+@
+
+
+1.2
+log
+@Refactored so spreadsheet variables can be passed directly
+in the XML file.  Helps to decouple code from the sheet.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Project.scala,v 1.1 2010/07/11 05:54:17 kyledewey Exp $
+d9 4
+d128 3
+d140 5
+a144 4
+class Project( var sheets: Map[ String, Sheet ],
+	       var langs: Seq[ Language ],
+	       var associations: Associations ) {
+  var spreadsheets = loadSpreadsheets()
+d151 1
+d160 1
+a160 1
+  def loadSpreadsheets(): Map[ String, ReplacerSpreadsheet ] =
+d163 4
+a166 4
+	ReplacerSpreadsheet( SheetReader.readSpreadsheet( pair._1,
+						          true,
+						          pair._2.fileName,
+						          pair._2.fileType ), true ) )
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a0 1
+
+d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d26 3
+a28 3
+case class Sheet( val name: String,
+		  val fileName: String,
+		  val fileType: String ) {}
+d36 2
+a37 2
+case class Language( val fileName: String,
+	             val fileType: String ) {}
+d40 1
+a40 5
+ * An exception thrown when the given replacer factory is not
+ * appropriate for an association.  It is a requirement that associations
+ * take no parameters.  This way, they can be created at load time and
+ * saved to files without a loss of information (the params).
+ * @@param message A message to show the user
+d43 43
+a85 2
+case class InvalidAssociationException( message: String ) 
+     extends Exception( message ) {}
+d88 9
+a96 11
+ * Container for a spreadsheet association.
+ * This means that a replacer created by the given replacer factory
+ * is used to correct the given range of cells.  Note that the
+ * replacer must not take any params, so that it can be loaded, created,
+ * and saved without needing any params which would otherwise be
+ * unavailable.
+ * @@param range The range of cells that the replacer applies to
+ * @@param replacer The factory that can create a replacer that applies
+ * to this range of cells
+ * @@throws InvalidAssociationException If the factory needed parameters
+ * to function properly
+d99 15
+a113 5
+case class Association( val range: CellRange,
+		        val replacer: ReplacerFactory ) {
+  if ( !replacer.validParams.isEmpty ) {
+    throw new InvalidAssociationException( "Replacers for associations " +
+					   "must not take any parameters" )
+d135 1
+a135 1
+	       var associations: Seq[ Association ] ) {
+d137 1
+a137 1
+  loadAssociations()
+d157 1
+a157 32
+						          pair._2.fileType ) ) )
+
+  /**
+   * Loads in all language associations.
+   * @@throws ParameterizedInstantiationException If we could not instantiate
+   * a replacer
+   */
+  def loadAssociations() {
+    associations.foreach( asc => {
+      val sheets  =
+	if ( asc.range.sheet.isEmpty ) spreadsheets.values.toList
+        else List( spreadsheets( asc.range.sheet.get ) )
+      val replacer = asc.replacer.instantiate()
+      sheets.foreach( sheet => {
+	if ( asc.range.row.isEmpty &&
+	     asc.range.column.isEmpty ) {
+	  sheet.setSheetReplacer( replacer )
+	} else if ( asc.range.row.isEmpty ) {
+	  sheet.setColumnReplacer( asc.range.column.get, 
+				   replacer )
+	} else if ( asc.range.column.isEmpty ) {
+	  sheet.setRowReplacer( asc.range.row.get, 
+			        replacer )
+	} else {
+	  sheet.setReplacerAt( asc.range.row.get,
+			       asc.range.column.get,
+			       replacer )
+	}
+      } )
+    } )
+  }
+	
+@

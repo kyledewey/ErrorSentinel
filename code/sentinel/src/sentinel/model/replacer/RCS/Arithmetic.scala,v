@@ -1,0 +1,1213 @@
+head	1.7;
+access;
+symbols;
+locks
+	kyledewey:1.7; strict;
+comment	@# @;
+
+
+1.7
+date	2011.06.17.20.49.05;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.06.08.04.26.15;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.06.07.08.17.44;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.05.25.20.14.58;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.06.28.18.48.59;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.06.28.18.43.38;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.06.26.04.05.40;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Replacers that perform operations on numbers.
+@
+
+
+1.7
+log
+@Set that the Random replacer is not pure.
+@
+text
+@/*
+ * Arithmetic.scala
+ * 
+ * Version:
+ *     $Id: Arithmetic.scala,v 1.6 2011/06/08 04:26:15 kyledewey Exp $
+ *
+ * Revisions:
+ *      $Log: Arithmetic.scala,v $
+ *      Revision 1.6  2011/06/08 04:26:15  kyledewey
+ *      Now conforms to the new Param interface.
+ *
+ *      Revision 1.5  2011/06/07 08:17:44  kyledewey
+ *      Added replacer types to nonpolymorphic routines.
+ *
+ *      Revision 1.4  2011/05/25 20:14:58  kyledewey
+ *      Made it so the class name is also taken as a parameter.
+ *
+ *      Revision 1.3  2010/06/28 18:48:59  kyledewey
+ *      Fixed typo.
+ *
+ *      Revision 1.2  2010/06/28 18:43:38  kyledewey
+ *      Changed "base" to "num" for Pow.
+ *
+ *      Revision 1.1  2010/06/26 04:05:40  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.model.replacer
+
+import sentinel.model._
+import sentinel.model.Replacer._
+import sentinel.model.InstanceFactory._
+
+/**
+ * Contains helper methods relevant to all arithmetic operations.
+ * @@author Kyle Dewey
+ */
+object Arithmetic {
+  // note that this will get a tail recursion optimization,
+  // so it uses a constant (tiny) amount of stack space
+  final def gcd( a: Long, b: Long ): Long = {
+    if ( b == 0 ) a
+    else gcd( b, a % b )
+  }
+
+  // THESE ARE DIFFERENT FROM MATCHER'S!
+  def toInts( params: Seq[ Param ] ) =
+    params.map( _.sentIntValue )
+  def toReals( params: Seq[ Param ] ) =
+    params.map( _.sentRealValue )
+}
+
+import Arithmetic._
+
+/**
+ * Adds a bunch of integers together.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"integers": One or more integers to add together.</li></ul>
+ * @@author Kyle Dewey
+ */
+class IntAdd( val className: String,
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+  private val nums = asArray( "integers", params )
+
+  /**
+   * Adds all the given integers together.
+   * @@returns The result of adding all the integers together
+   */
+  override def replace() =
+    toInts( nums ).reduceLeft( _ + _ )
+}
+
+/**
+ * Adds a bunch of reals together.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"reals": One or more reals to add together.</li></ul>
+ * @@author Kyle Dewey
+ */
+class RealAdd( val className: String,
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+  private val nums = asArray( "reals", params )
+
+  /**
+   * Adds all the given reals together.
+   * @@returns The result of adding all the reals together
+   */
+  override def replace() =
+    toReals( nums ).reduceLeft( _ + _ )
+}
+
+/**
+ * Subtracts a bunch of integers.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"integers": One or more integers to subtract.</li></ul>
+ * @@author Kyle Dewey
+ */
+class IntSubtract( val className: String,
+		   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val nums = asArray( "integers", params )
+
+  /**
+   * Subtracts all the given integers.
+   * For instance, given 1, 2, 3, it returns 1 - 2 - 3
+   * @@returns The result of subtracting all the integers from each other
+   */
+  override def replace() =
+    toInts( nums ).reduceLeft( _ - _ )
+}
+
+/**
+ * Subtracts a bunch of reals.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"reals": One or more reals to subtract.</li></ul>
+ * @@author Kyle Dewey
+ */
+class RealSubtract( val className: String,
+		    val params: Seq[ NamedParam ] ) extends Replacer {
+  private val nums = asArray( "reals", params )
+
+  /**
+   * Subtracts all the given reals.
+   * For instance, given 1, 2, 3, it returns 1 - 2 - 3
+   * @@returns The result of subtracting all the reals from each other
+   */
+  override def replace() =
+    toReals( nums ).reduceLeft( _ - _ )
+}
+
+/**
+ * Gets the product of a bunch of integers.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"integers": One or more integers to get the product of.</li></ul>
+ * @@author Kyle Dewey
+ */
+class IntMultiply( val className: String,
+		   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val nums = asArray( "integers", params )
+
+  /**
+   * Multiplys all the given integers.
+   * For instance, given 1, 2, 3, it returns 1 * 2 * 3
+   * @@returns The result of multiplying all the integers
+   */
+  override def replace() =
+    toInts( nums ).reduceLeft( _ * _ )
+}
+
+/**
+ * Gets the product of a bunch of reals.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"integers": One or more reals to get the product of.</li></ul>
+ * @@author Kyle Dewey
+ */
+class RealMultiply( val className: String,
+		    val params: Seq[ NamedParam ] ) extends Replacer {
+  private val nums = asArray( "reals", params )
+
+  /**
+   * Multiplys all the given integers.
+   * For instance, given 1, 2, 3, it returns 1 * 2 * 3
+   * @@returns The result of multiplying all the reals
+   */
+  override def replace() =
+    toReals( nums ).reduceLeft( _ * _ )
+}
+
+/**
+ * Divides a bunch of integers
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"integers": One or more integers to divide, in sequence.</li></ul>
+ * @@author Kyle Dewey
+ */
+class IntDivide( val className: String,
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+  private val nums = asArray( "integers", params )
+
+  /**
+   * Divides all the given integers.
+   * For instance, given 1, 2, 3, it returns 1 / 2 / 3
+   * @@returns The result of dividing all the integers
+   * @@throws ReplaceException If an attempt was made to divide by zero
+   */
+  override def replace() = {
+    try {
+      toInts( nums ).reduceLeft( _ / _ )
+    } catch {
+      case e: ArithmeticException =>
+	throw new ReplaceException( e.toString )
+    }
+  }
+}
+
+/**
+ * Divides a bunch of reals
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"integers": One or more reals to divide, in sequence.</li></ul>
+ * @@author Kyle Dewey
+ */
+class RealDivide( val className: String,
+		  val params: Seq[ NamedParam ] ) extends Replacer {
+  private val nums = asArray( "reals", params )
+
+  /**
+   * Divides all the given reals.
+   * For instance, given 1, 2, 3, it returns 1 / 2 / 3
+   * @@returns The result of dividing all the reals
+   * @@throws ReplaceException If an attempt was made to divide by zero
+   */
+  override def replace() = {
+    try {
+      toReals( nums ).reduceLeft( _ / _ )
+    } catch {
+      case e: ArithmeticException =>
+	throw new ReplaceException( e.getMessage )
+    }
+  }
+}
+
+/**
+ * Gets the greatest common divisor of two integers.
+ * Note that the implementation is borrowed from:
+ * http://snippets.dzone.com/posts/show/2574
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num1": The first integer</li>
+ * <li>"num2": The second integer</li></ul>
+ * @@author Kyle Dewey
+ */
+class GCD( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num1 = param( "num1", params )
+  private val num2 = param( "num2", params )
+
+  /**
+   * Gets the gcd of the two numbers.
+   * This is the number that can divide both evenly.
+   * @@returns The gcd of the two numbers
+   */
+  override def replace() =
+    gcd( num1.sentIntValue, num2.sentIntValue )
+}
+
+/**
+ * Gets the least common multiple if two integers.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num1": The first integer</li>
+ * <li>"num2": The second integer</li></ul>
+ * @@author Kyle Dewey
+ */
+class LCM( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num1 = param( "num1", params )
+  private val num2 = param( "num2", params )
+
+  /**
+   * Gets the LCM of two numbers
+   * @@return The LCM of the two numbers
+   * @@throws ReplaceException If the GCD was 0, which results in a divide
+   * by zero
+   */
+  override def replace() = {
+    val num1Value = num1.sentIntValue
+    val num2Value = num2.sentIntValue
+    try {
+      Math.abs( num1Value * 
+	        num2Value ) / gcd( num1Value,
+				   num2Value )
+    } catch {
+      case e: ArithmeticException =>
+	throw new ReplaceException( "Since the GCD is 0, there is no LCM" )
+    }
+  }
+}
+
+/**
+ * Gets the floor of the given real number.
+ * This is the greatest integer that is less than
+ * or equal to the number.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to get the floor of</li></ul>
+ * @@author Kyle Dewey
+ */
+class Floor( val className: String,
+	     val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Gets the floor of the given number.
+   * @@return The floor
+   */
+  override def replace() =
+    // note that floor returns a double, and we want to
+    // return an integer, so we need to convert it
+    Math.floor( num.sentRealValue ).asInstanceOf[ Long ]
+}
+
+/**
+ * Gets the ceiling of the given real number.
+ * This is the smallest integer that is greater than or
+ * equal to the number.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to get the floor of</li></ul>
+ * @@author Kyle Dewey
+ */
+class Ceiling( val className: String,
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Gets the ceiling of the number.
+   * @@return The ceiling of the number
+   */
+  override def replace() =
+    Math.ceil( num.sentRealValue ).asInstanceOf[ Long ]
+}
+
+/**
+ * Truncates the given real number to an integer.
+ * For instance, 3.5 => 3.
+ * This is equivalent of casting a double to an int.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to truncate</li></ul>
+ * @@author Kyle Dewey
+ */
+class Truncate( val className: String,
+	        val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Truncates the number
+   * @@return The truncated number
+   */
+  override def replace() =
+    num.sentRealValue.asInstanceOf[ Long ]
+}
+
+/**
+ * Rounds the given real number to an integer.
+ * For instance, 3.5 => 4
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to round</li></ul>
+ * @@author Kyle Dewey
+ */
+class Round( val className: String,
+	     val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Rounds the number
+   * @@return The rounded number
+   */
+  override def replace() =
+    Math.round( num.sentRealValue )
+}
+
+/**
+ * Gets the modulus of the given numbers.
+ * For instance, if given 1, 2, 3, this will return
+ * 1, since 1 % 2 == 1, and 1 % 3 == 1.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"integers": The numbers to get the modulus of</li></ul>
+ * @@author Kyle Dewey
+ */
+class Mod( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val integers = asArray( "integers", params )
+
+  /**
+   * Gets the modulus of the numbers.
+   * @@return The modulus
+   */
+  override def replace() =
+    toInts( integers ).reduceLeft( _ % _ )
+}
+
+class IntMax( val className: String,
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+  private val integers = asArray( "integers", params )
+  override def replace() =
+    Replacer.max( sentinel.model.matcher.Arithmetic.toInts( integers ) ).longValue
+}
+
+class IntMin( val className: String,
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+  private val integers = asArray( "integers", params )
+  override def replace() =
+    Replacer.min( sentinel.model.matcher.Arithmetic.toInts( integers ) ).longValue
+}
+
+class RealMax( val className: String,
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+  private val reals = asArray( "reals", params )
+  override def replace() =
+    Replacer.max( sentinel.model.matcher.Arithmetic.toReals( reals ) ).doubleValue
+}
+
+class RealMin( val className: String,
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+  private val reals = asArray( "reals", params )
+  override def replace() =
+    Replacer.min( sentinel.model.matcher.Arithmetic.toReals( reals ) ).doubleValue
+}
+
+/**
+ * Generates random reals between 0 and 1
+ * @@param className The name of the class
+ * @@param params Params to the replacer (doesn't take any)
+ * @@author Kyle Dewey
+ */
+class Random( val className: String,
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+  private val random = new scala.util.Random
+  /**
+   * Returns a random number between 0 and 1.
+   * @@return a random number beteen 0 and 1
+   */
+  override def replace() =
+    random.nextDouble
+
+  /**
+   * Sets that this isn't pure.
+   * @@return false
+   */
+  override def isPure() = false
+}
+
+/**
+ * Gets Euler's number e^num
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"exponent": The exponent for e</li></ul>
+ * @@author Kyle Dewey
+ */
+class Exp( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val exp = param( "exponent", params )
+
+  /**
+   * Gets e^num
+   * @@return e^num
+   */
+  override def replace() =
+    Math.exp( exp.sentRealValue )
+}
+
+/**
+ * Gets the given number to a given power
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The base number to raise by an exponent</li>
+ * <li>"exponent": The exponent to put on the base number</li></ul>
+ * @@author Kyle Dewey
+ */
+class Pow( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+  private val exp = param( "exponent", params )
+
+  /**
+   * Gets base^exponent
+   * @@return The base number raised to the exponent
+   */
+  override def replace() =
+    Math.pow( num.sentRealValue,
+	      exp.sentRealValue )
+}
+
+/**
+ * Gets the logarithm of the given number
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to get the logarithm of<li>
+ * <li>"base": The base for the number.  Without one, it will return
+ * the natural logarithm of the number</li></ul>
+ * @@author Kyle Dewey
+ */
+class Log( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+  private val base = opParam( "base", params )
+  private val getBase: () => Double =
+    if ( base.isDefined ) {
+      () => Math.log( num.sentRealValue ) / Math.log( base.get.sentRealValue )
+    } else {
+      () => Math.log( num.sentRealValue )
+    }
+
+  /**
+   * Gets the natural logarithm of the number
+   * @@return The natural logarithm of the number
+   */
+  override def replace() =
+    getBase()
+}
+
+/**
+ * Gets the square root of the given number
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to get the square root of</li></ul>
+ * @@author Kyle Dewey
+ */
+class Sqrt( val className: String,
+	    val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Gets the square root of the given number.
+   * @@return The square root of the number
+   */
+  override def replace() =
+    Math.sqrt( num.sentRealValue )
+}
+
+/**
+ * Gets the sine of the given number.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to get the sine of</li></ul>
+ * @@author Kyle Dewey
+ */
+class Sin( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Gets the sine of the given number
+   * @@return the sine
+   */
+  override def replace() =
+    Math.sin( num.sentRealValue )
+}
+
+/**
+ * Gets the cosine of the given number
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to get the cosine of</li><ul>
+ * @@author Kyle Dewey
+ */
+class Cos( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Gets the cosine of the given number
+   * @@return The cosine
+   */
+  override def replace() =
+    Math.cos( num.sentRealValue )
+}
+
+/**
+ * Gets the tangent of the given number
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num" The number to get the tangent of</li><ul>
+ * @@author Kyle Dewey
+ */
+class Tan( val className: String,
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Gets the tangent of the given number
+   * @@return the tangent
+   */
+  override def replace() =
+    Math.tan( num.sentRealValue )
+}
+
+/**
+ * Gets the arc sine of the given number.
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to get the arc sine of</li></ul>
+ * @@author Kyle Dewey
+ */
+class ArcSin( val className: String,
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Gets the arc sine of the given number
+   * @@return the arc sine
+   */
+  override def replace() =
+    Math.asin( num.sentRealValue )
+}
+
+/**
+ * Gets the arc cosine of the given number
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num": The number to get the arc cosine of</li><ul>
+ * @@author Kyle Dewey
+ */
+class ArcCos( val className: String,
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Gets the arc cosine of the given number
+   * @@return The arc cosine
+   */
+  override def replace() =
+    Math.acos( num.sentRealValue )
+}
+
+/**
+ * Gets the arc tangent of the given number
+ * @@param className The name of the class
+ * @@param params Params to the replacer
+ * <ul><li>"num" The number to get the arc tangent of</li><ul>
+ * @@author Kyle Dewey
+ */
+class ArcTan( val className: String,
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+  private val num = param( "num", params )
+
+  /**
+   * Gets the arc tangent of the given number
+   * @@return the arc tangent
+   */
+  override def replace() =
+    Math.atan( num.sentRealValue )
+}
+@
+
+
+1.6
+log
+@Now conforms to the new Param interface.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Arithmetic.scala,v 1.5 2011/06/07 08:17:44 kyledewey Exp kyledewey $
+d9 3
+d435 6
+@
+
+
+1.5
+log
+@Added replacer types to nonpolymorphic routines.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Arithmetic.scala,v 1.4 2011/05/25 20:14:58 kyledewey Exp $
+d9 3
+d44 6
+d52 2
+d62 2
+a63 2
+	      val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val nums = asArray[ SentInt ]( "integers", params )
+d70 1
+a70 1
+    nums.map( _.value ).reduceLeft( _ + _ )
+d81 2
+a82 2
+	       val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val nums = asArray[ SentReal ]( "reals", params )
+d89 1
+a89 1
+    nums.map( _.value ).reduceLeft( _ + _ )
+d100 2
+a101 2
+		   val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val nums = asArray[ SentInt ]( "integers", params )
+d109 1
+a109 1
+    nums.map( _.value ).reduceLeft( _ - _ )
+d120 2
+a121 2
+		    val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val nums = asArray[ SentReal ]( "reals", params )
+d129 1
+a129 1
+    nums.map( _.value ).reduceLeft( _ - _ )
+d140 2
+a141 2
+		   val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val nums = asArray[ SentInt ]( "integers", params )
+d149 1
+a149 1
+    nums.map( _.value ).reduceLeft( _ * _ )
+d160 2
+a161 2
+		    val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val nums = asArray[ SentReal ]( "reals", params )
+d169 1
+a169 1
+    nums.map( _.value ).reduceLeft( _ * _ )
+d180 2
+a181 2
+		 val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val nums = asArray[ SentInt ]( "integers", params )
+d191 1
+a191 1
+      nums.map( _.value ).reduceLeft( _ / _ )
+d194 1
+a194 1
+	throw new ReplaceException( e.getMessage )
+d207 2
+a208 2
+		  val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val nums = asArray[ SentReal ]( "reals", params )
+d218 1
+a218 1
+      nums.map( _.value ).reduceLeft( _ / _ )
+d237 3
+a239 3
+	   val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val num1 = param[ SentInt ]( "num1", params )
+  private val num2 = param[ SentInt ]( "num2", params )
+d246 2
+a247 3
+  override def replace() = 
+    Arithmetic.gcd( num1.value,
+		    num2.value )
+d259 3
+a261 3
+	   val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val num1 = param[ SentInt ]( "num1", params )
+  private val num2 = param[ SentInt ]( "num2", params )
+d270 2
+d273 3
+a275 3
+      Math.abs( num1.value * 
+	        num2.value ) / Arithmetic.gcd( num1.value,
+					       num2.value )
+d293 2
+a294 2
+	     val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d303 1
+a303 1
+    Math.floor( num.value ).asInstanceOf[ Long ]
+d316 2
+a317 2
+	       val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d324 1
+a324 1
+    Math.ceil( num.value ).asInstanceOf[ Long ]
+d337 2
+a338 2
+	        val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d345 1
+a345 1
+    num.value.asInstanceOf[ Long ]
+d357 2
+a358 2
+	     val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d365 1
+a365 1
+    Math.round( num.value )
+d378 2
+a379 2
+	   val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val integers = asArray[ SentInt ]( "integers", params )
+d386 1
+a386 1
+    integers.map( _.value ).reduceLeft( _ % _ )
+d390 2
+a391 2
+	      val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val integers = asArray[ SentInt ]( "integers", params )
+d393 1
+a393 1
+    Replacer.max( integers )
+d397 2
+a398 2
+	      val params: Seq[ NamedParam ] ) extends SentIntReplacer {
+  private val integers = asArray[ SentInt ]( "integers", params )
+d400 1
+a400 1
+    Replacer.min( integers )
+d404 2
+a405 2
+	       val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val reals = asArray[ SentReal ]( "reals", params )
+d407 1
+a407 1
+    Replacer.max( reals )
+d411 2
+a412 2
+	       val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val reals = asArray[ SentReal ]( "reals", params )
+d414 1
+a414 1
+    Replacer.min( reals )
+d424 1
+a424 1
+	      val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+d442 2
+a443 2
+	   val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val exp = param[ SentReal ]( "exponent", params )
+d450 1
+a450 1
+    Math.exp( exp.value )
+d462 3
+a464 3
+	   val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val num = param[ SentReal ]( "num", params )
+  private val exp = param[ SentReal ]( "exponent", params )
+d471 2
+a472 2
+    Math.pow( num.value,
+	      exp.value )
+d485 9
+a493 3
+	   val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val num = param[ SentReal ]( "num", params )
+  private val base = opParam[ SentReal ]( "base", params )
+d500 1
+a500 5
+    if ( base.isEmpty ){
+      Math.log( num.value )
+    } else {
+      Math.log( num.value ) / Math.log( base.get.value )
+    }
+d511 2
+a512 2
+	    val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d519 1
+a519 1
+    Math.sqrt( num.value )
+d530 2
+a531 2
+	   val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d538 1
+a538 1
+    Math.sin( num.value )
+d549 2
+a550 2
+	   val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d557 1
+a557 1
+    Math.cos( num.value )
+d568 2
+a569 2
+	   val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d576 1
+a576 1
+    Math.tan( num.value )
+d587 2
+a588 2
+	      val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d595 1
+a595 1
+    Math.asin( num.value )
+d606 2
+a607 2
+	      val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d614 1
+a614 1
+    Math.acos( num.value )
+d625 2
+a626 2
+	      val params: Seq[ NamedParam ] ) extends SentRealReplacer {
+  private val num = param[ SentReal ]( "num", params )
+d633 1
+a633 1
+    Math.atan( num.value )
+@
+
+
+1.4
+log
+@Made it so the class name is also taken as a parameter.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Arithmetic.scala,v 1.3 2010/06/28 18:48:59 kyledewey Exp $
+d9 3
+d51 1
+a51 1
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+d70 1
+a70 1
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+d89 1
+a89 1
+		   val params: Seq[ NamedParam ] ) extends Replacer {
+d109 1
+a109 1
+		    val params: Seq[ NamedParam ] ) extends Replacer {
+d129 1
+a129 1
+		   val params: Seq[ NamedParam ] ) extends Replacer {
+d149 1
+a149 1
+		    val params: Seq[ NamedParam ] ) extends Replacer {
+d169 1
+a169 1
+		 val params: Seq[ NamedParam ] ) extends Replacer {
+d196 1
+a196 1
+		  val params: Seq[ NamedParam ] ) extends Replacer {
+d226 1
+a226 1
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+d249 1
+a249 1
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+d281 1
+a281 1
+	     val params: Seq[ NamedParam ] ) extends Replacer {
+d304 1
+a304 1
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+d325 1
+a325 1
+	        val params: Seq[ NamedParam ] ) extends Replacer {
+d345 1
+a345 1
+	     val params: Seq[ NamedParam ] ) extends Replacer {
+d366 1
+a366 1
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+d378 1
+a378 1
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+d385 1
+a385 1
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+d392 1
+a392 1
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+d399 1
+a399 1
+	       val params: Seq[ NamedParam ] ) extends Replacer {
+d412 1
+a412 1
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+d430 1
+a430 1
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+d450 1
+a450 1
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+d473 1
+a473 1
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+d497 1
+a497 1
+	    val params: Seq[ NamedParam ] ) extends Replacer {
+d516 1
+a516 1
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+d535 1
+a535 1
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+d554 1
+a554 1
+	   val params: Seq[ NamedParam ] ) extends Replacer {
+d573 1
+a573 1
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+d592 1
+a592 1
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+d611 1
+a611 1
+	      val params: Seq[ NamedParam ] ) extends Replacer {
+@
+
+
+1.3
+log
+@Fixed typo.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Arithmetic.scala,v 1.2 2010/06/28 18:43:38 kyledewey Exp kyledewey $
+d9 3
+d42 1
+d47 2
+a48 1
+class IntAdd( params: Seq[ NamedParam ] ) extends Replacer {
+d61 1
+d66 2
+a67 1
+class RealAdd( params: Seq[ NamedParam ] ) extends Replacer {
+d80 1
+d85 2
+a86 1
+class IntSubtract( params: Seq[ NamedParam ] ) extends Replacer {
+d100 1
+d105 2
+a106 1
+class RealSubtract( params: Seq[ NamedParam ] ) extends Replacer {
+d120 1
+d125 2
+a126 1
+class IntMultiply( params: Seq[ NamedParam ] ) extends Replacer {
+d140 1
+d145 2
+a146 1
+class RealMultiply( params: Seq[ NamedParam ] ) extends Replacer {
+d160 1
+d165 2
+a166 1
+class IntDivide( params: Seq[ NamedParam ] ) extends Replacer {
+d187 1
+d192 2
+a193 1
+class RealDivide( params: Seq[ NamedParam ] ) extends Replacer {
+d216 1
+d222 2
+a223 1
+class GCD( params: Seq[ NamedParam ] ) extends Replacer {
+d239 1
+d245 2
+a246 1
+class LCM( params: Seq[ NamedParam ] ) extends Replacer {
+d272 1
+d277 2
+a278 1
+class Floor( params: Seq[ NamedParam ] ) extends Replacer {
+d295 1
+d300 2
+a301 1
+class Ceiling( params: Seq[ NamedParam ] ) extends Replacer {
+d316 1
+d321 2
+a322 1
+class Truncate( params: Seq[ NamedParam ] ) extends Replacer {
+d336 1
+d341 2
+a342 1
+class Round( params: Seq[ NamedParam ] ) extends Replacer {
+d357 1
+d362 2
+a363 1
+class Mod( params: Seq[ NamedParam ] ) extends Replacer {
+d374 2
+a375 1
+class IntMax( params: Seq[ NamedParam ] ) extends Replacer {
+d381 2
+a382 1
+class IntMin( params: Seq[ NamedParam ] ) extends Replacer {
+d388 2
+a389 1
+class RealMax( params: Seq[ NamedParam ] ) extends Replacer {
+d395 2
+a396 1
+class RealMin( params: Seq[ NamedParam ] ) extends Replacer {
+d404 1
+d408 2
+a409 1
+class Random( params: Seq[ NamedParam ] ) extends Replacer {
+d421 1
+d426 2
+a427 1
+class Exp( params: Seq[ NamedParam ] ) extends Replacer {
+d440 1
+d446 2
+a447 1
+class Pow( params: Seq[ NamedParam ] ) extends Replacer {
+d462 1
+d469 2
+a470 1
+class Log( params: Seq[ NamedParam ] ) extends Replacer {
+d488 1
+d493 2
+a494 1
+class Sqrt( params: Seq[ NamedParam ] ) extends Replacer {
+d507 1
+d512 2
+a513 1
+class Sin( params: Seq[ NamedParam ] ) extends Replacer {
+d526 1
+d531 2
+a532 1
+class Cos( params: Seq[ NamedParam ] ) extends Replacer {
+d545 1
+d550 2
+a551 1
+class Tan( params: Seq[ NamedParam ] ) extends Replacer {
+d564 1
+d569 2
+a570 1
+class ArcSin( params: Seq[ NamedParam ] ) extends Replacer {
+d583 1
+d588 2
+a589 1
+class ArcCos( params: Seq[ NamedParam ] ) extends Replacer {
+d602 1
+d607 2
+a608 1
+class ArcTan( params: Seq[ NamedParam ] ) extends Replacer {
+@
+
+
+1.2
+log
+@Changed "base" to "num" for Pow.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Arithmetic.scala,v 1.1 2010/06/26 04:05:40 kyledewey Exp $
+d9 3
+d413 1
+a413 1
+    Math.pow( base.value,
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d397 1
+a397 1
+ * <ul><li>"base": The base number</li>
+d402 1
+a402 1
+  private val base = param[ SentReal ]( "base", params )
+@

@@ -1,0 +1,998 @@
+head	1.13;
+access;
+symbols;
+locks
+	kyledewey:1.13; strict;
+comment	@# @;
+
+
+1.13
+date	2011.06.08.04.26.36;	author kyledewey;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2011.06.03.04.14.07;	author kyledewey;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2011.06.01.16.43.38;	author kyledewey;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.06.01.04.00.23;	author kyledewey;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2011.04.10.04.05.45;	author kyledewey;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2011.02.27.05.19.29;	author kyledewey;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.07.11.05.51.30;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.07.10.21.48.19;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.06.25.03.18.59;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.06.20.17.33.32;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.06.18.19.37.17;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.06.18.03.10.24;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.06.15.17.57.22;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Contains code for rules specified in XML.
+@
+
+
+1.13
+log
+@Conforms to the new interface for spreadsheet variables.
+@
+text
+@/*
+ * ParseXML.scala
+ *
+ * Version:
+ *     $Id: ParseXML.scala,v 1.12 2011/06/03 04:14:07 kyledewey Exp $
+ *
+ * Revisions:
+ *      $Log: ParseXML.scala,v $
+ *      Revision 1.12  2011/06/03 04:14:07  kyledewey
+ *      PreClass objects are now singletons with a single
+ *      point of access.  Needed in order to fix problem
+ *      where dependencies could not be resolved between files.
+ *
+ *      Revision 1.11  2011/06/01 16:43:38  kyledewey
+ *      Now uses toString instead of getMessage for forwarding
+ *      exceptions.
+ *
+ *      Revision 1.10  2011/06/01 04:00:23  kyledewey
+ *      Moved bulk of getNodes to XMLHelpers.
+ *      Conforms to the new parser interface that can
+ *      handle dependencies across files.
+ *
+ *      Revision 1.9  2011/04/10 04:05:45  kyledewey
+ *      Made vals public in XMLParser.
+ *
+ *      Revision 1.8  2011/02/27 05:19:29  kyledewey
+ *      Refactored to include parameter order.
+ *
+ *      Revision 1.7  2010/07/11 05:51:30  kyledewey
+ *      Fixed bug that caused only within-file dependencies
+ *      to be seen by classesInformation().
+ *
+ *      Revision 1.6  2010/07/10 21:48:19  kyledewey
+ *      Conforms to the new Parser interface, complete with routines
+ *      for getting information to generate a dependency graph.
+ *
+ *      Revision 1.5  2010/06/25 03:18:59  kyledewey
+ *      Refactored so that variables have types.
+ *
+ *      Revision 1.4  2010/06/20 17:33:32  kyledewey
+ *      Now uses InstanceFactory[ _ ] instead of
+ *      Either[ MatcherFactory, ReplacerFactory ].
+ *
+ *      Revision 1.3  2010/06/18 19:37:17  kyledewey
+ *      Made factories take a name and description.
+ *
+ *      Revision 1.2  2010/06/18 03:10:24  kyledewey
+ *      Added comment on usage of parseClasses()
+ *
+ *      Revision 1.1  2010/06/15 17:57:22  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.model.parser.xml
+
+import sentinel.model
+import sentinel.model.parser._
+import sentinel.model.matcher._
+import sentinel.model.replacer._
+import java.io._
+import scala.xml._
+
+/**
+ * Contains a number of helper routines for ParseXML.
+ * @@author Kyle Dewey
+ */
+object XMLParser {
+  import sentinel.model.ParamType._
+  import sentinel.model.InstanceFactory._
+  import sentinel.model.parser.ClassParser._
+
+  def getNodes( base: Node, tag: String ) =
+    XMLHelpers.getNodes( base, tag, ClassParseException( _ ) )
+
+  def getText( base: Node, tag: String ) =
+    XMLHelpers.getText( base, tag, ClassParseException( _ ) )
+
+  /**
+   * Given a formal parameter, parses it.
+   * @@param param the "FormalParameter" element
+   * @@return The formal parameter
+   * @@throws ClassParseException If a tag was missing, or if the
+   *         text of one of the tags was malformed
+   */
+  def parseFormalParam( param: Node ): ParamInfo = 
+    new ParamInfo( getText( param, "Name" ),
+		   getText( param, "Description" ),
+		   textToParamType( getText( param, "Type" ) ),
+		   textToBoolean( getText( param, "IsArray" ) ),
+		   textToBoolean( getText( param, "IsRequired" ) ) )
+
+  /**
+   * Given a listing of formal parameters, parses them into a map.
+   * @@param params the "FormalParameters" element
+   * @@return The class parameters, both in a map and in a sequence
+   * based on the order they are in.
+   * @@throws ClassParseException if a tag was missing or the text malformed
+   */
+  def parseFormalParams( params: Node ) = {
+    var map: Map[ String, ParamInfo ] = Map()
+    var seq: Seq[ String ] = Seq()
+
+    ( params \ "FormalParameter" ).foreach( param => {
+      val current = parseFormalParam( param )
+      map += Pair( current.name, current )
+      seq ++= Seq( current.name )
+    })
+
+    Pair( map, seq )
+  }
+
+  /**
+   * Parses a given parameter node.
+   * @@param given The XML node backing the given parameter
+   * @@return a parse tree node correlating to the given parameter
+   * @@throws ClassParseException If a tag was missing
+   */
+  def parseGivenParameter( given: Node ) =
+    new VariableNode( getText( given, "Name" ),
+		      getText( given, "MapsTo" ) )
+  
+  /**
+   * Parses a given constant parameter node.
+   * @@param constant The XML node backing the constant
+   * @@return A parse tree node correlating to the constant
+   * @@throws ClassParseException If a tag was missing, or if there was
+   *         a type mismatch
+   */
+  def parseConstantParameter( constant: Node ) = {
+    import sentinel.model.ParamType._
+    val typeText = getText( constant, "Type" )
+    val theType = stringToParam( typeText )
+    val value = getText( constant, "Value" )
+    try {
+      val actualConstant = new StringConstant( value ).convertTo( theType ).get
+      new TerminalNode( getText( constant, "Name" ), actualConstant )
+    } catch {
+      case e: NoSuchElementException => 
+	throw new ClassParseException( "Constant type mismatch: expected " +
+				       theType + "; found " +
+				       ParamType.toString( looksLike( value ) ) )
+    }
+  }
+
+  /**
+   * Parses a given variable parameter node.
+   * @@param variable The XML node backing the variable
+   * @@return A parse tree node correlating to the variable
+   * @@throws ClassParseException If a tag was missing
+   */
+  def parseVariableParameter( variable: Node ) = {
+    val varType = getText( variable, "Type" )
+    val theVar = 
+      new SpreadsheetVariable( textToSpreadsheet( getText( variable, "Sheet" ) ),
+			       textToRow( getText( variable, "Row" ) ),
+			       textToColumn( getText( variable, "Column" ) ) )
+    new TerminalNode( getText( variable, "Name" ), theVar )
+  }
+  
+  /**
+   * Given the type and class name, will return a factory
+   * correlating to the information.  If such a factory
+   * doesn't exist, then it will throw an exception
+   * @@param typeName The name of the type, either "Matcher" or "Replacer"
+   * @@param className The name of the class to create
+   * @@throws ClassParseException If the type or class name is invalid
+   */
+  def getFactory( typeName: String, className: String ) = {
+    if ( typeName == "Matcher" ) {
+      validateMatcher( className )
+      MatcherFactoryManager.getFactory( className ).get
+    } else if ( typeName == "Replacer" ) {
+      validateReplacer( className )
+      ReplacerFactoryManager.getFactory( className ).get
+    } else {
+      throw new ClassParseException( "Unknown instance type with name: \"" +
+				     typeName + "\"" )
+    }
+  }
+
+  /**
+   * Parses an instance node.  Note that it does so NON-RECURSIVELY.
+   * @@param instance XML node backing the instance
+   * @@return a parse tree node correlating to the instance
+   * @@throws ClassParseException If the type or class name is invalid,
+   *         or if a neccessary tag was missing
+   */
+  def parseInstanceParameter( instance: Node ) = {
+    val name = getText( instance, "Name" )
+    val myType = getText( instance, "Type" )
+    val className = getText( instance, "ClassName" )
+    val factory = getFactory( myType, className )
+    new InternalNode( name, factory )
+  }
+
+  /**
+   * Recursively parses any kind of parameter.  Terminates when
+   * there are no more sub parameters.
+   * @@param param XML node backing the parameter
+   * @@return A node representing the parameter.  Note that the node
+   *         will have child nodes representing sub parameters.
+   * @@throws ClassParseException If an error occurred during parsing
+   */
+  def parseParameter( param: Node ): ParseNode = 
+    param.label match {
+      // base cases
+      case "GivenParameter" => parseGivenParameter( param )
+      case "ConstantParameter" => parseConstantParameter( param )
+      case "VariableParameter" => parseVariableParameter( param )
+
+      // recursive case
+      // note that if there are no parameters to an instance,
+      // this also acts as a base case
+      case "InstanceParameter" => {
+	val node = parseInstanceParameter( param )
+	val currentParams = ( param \ "ActualParameters" ) \ "_"
+	currentParams.foreach( newParam =>
+	  node.attach( parseParameter( newParam ) ) )
+	node
+      }
+
+      // error case
+      case _ => 
+	throw new ClassParseException( "Unknown parameter kind: \"" +
+				       param.label + "\"" )
+    }
+  
+  /**
+   * Parses the structure of a class.  This is relevant to user-defined
+   * classes.
+   * @@param structure The XML element containing the structure
+   * @@param name The name of the factory
+   * @@param desc A description of the factory
+   * @@param paramsMap What parameters are valid for the underlying object
+   * @@param paramsOrder The order of params
+   * @@param myType The type of the resulting structure
+   * @@return A factory that can create an element with this structure
+   * @@throws ClassParseException If an error was discovered in the parse tree
+   */
+  def parseStructure( structure: Node, 
+		      name: String,
+		      desc: String,
+		      paramsMap: Map[ String, ParamInfo ],
+		      paramsOrder: Seq[ String ],
+		      myType: String ): InstanceFactory[ _ ] = {
+    val children = structure \ "_"
+    if ( children.size != 1 ) {
+      // because this needs a custom error message,
+      // getNodes() is not appropriate
+      throw new ClassParseException( "More than one parameter in structure" )
+    } 
+
+    val tree = parseParameter( children.first )
+    if ( myType == "Matcher" ) {
+      MatcherFactory( name,
+		      desc,
+		      paramsMap,
+		      paramsOrder,
+		      tree )
+    } else if ( myType == "Replacer" ) {
+      ReplacerFactory( name,
+		       desc,
+		       paramsMap,
+		       paramsOrder,
+		       tree )
+    } else {
+      throw new ClassParseException( "Unknown instance type with name: \"" +
+				     myType + "\"" )
+    }
+  }
+      
+  /**
+   * Parses a single class.
+   * @@param theClass XML element containing the whole class
+   * @@return The class
+   * @@throws ClassParseException if there was some error, such as a tag missing
+   *         or being of the inappropriate value
+   */
+  def parseClass( theClass: Node ): InstanceFactory[ _ ] = {
+    val name = getText( theClass, "Name" )
+
+    try {
+      val desc = getText( theClass, 
+			  "Description" )
+      val theType = getText( theClass, 
+			     "Type" )
+      val builtIn = textToBoolean( getText( theClass, 
+					    "BuiltIn" ) )
+      val ( paramsMap,
+	    paramsSeq ) = parseFormalParams( getNodes( theClass, 
+					               "FormalParameters" ).first )
+
+      if ( builtIn ) {
+	val className = getText( theClass, "JVMClassName" )
+	if ( theType == "Matcher" ) {
+	  MatcherFactory( name,
+			  desc,
+			  paramsMap,
+			  paramsSeq,
+			  className )
+	} else if ( theType == "Replacer" ) {
+	  ReplacerFactory( name,
+			   desc,
+			   paramsMap,
+			   paramsSeq,
+			   className )
+	} else {
+	  throw new ClassParseException( "Unknown instance type with name: \"" +
+					 theType + "\"" )
+	}
+      } else {
+	val structure = getNodes( theClass, "Structure" ).first
+	parseStructure( structure,
+		        name,
+		        desc,
+		        paramsMap,
+		        paramsSeq,
+		        theType )
+      }
+    } catch {
+      case e: Exception => 
+	throw new ClassParseException( "Error in class definition: " +
+				       "\"" + name + "\": " +
+				       e.toString )
+    }
+  } // parseClass
+
+  /**
+   * Given a class node, returns a pre class node that correlates to
+   * it.  Note that dependency information will not be included.
+   * @@param node The node correlating to the class
+   * @@param parser The parser that they came from
+   * @@return A pre-class node detailing this class, with the exception
+   * of dependencies
+   * @@throws ClassParseException If this information was missing or
+   * otherwise malformed
+   */
+  def toPreClass( node: Node, parser: ClassParser ) =
+    PreClass( getText( node, "Name" ),
+	      textToInstanceType( getText( node, "Type" ) ),
+	      parser,
+	      dependencies( node ) )
+  
+  /**
+   * Given a class node, returns the names and types of all the classes
+   * that this node depends on.  Note that only unique dependencies are
+   * listed
+   * @@param node The node correlating to the class
+   * @@return A sequence of pairs, where each pair is of the name and type
+   * of a dependency
+   * @@throws ClassParseException If some information was missing or malformed
+   */
+  def dependencies( node: Node ): Seq[ Pair[ String, ParamType ] ] =
+    ( Set() ++ ( node \\ "InstanceParameter" ).map( current =>
+      new Pair( getText( current, "ClassName" ),
+                textToInstanceType( getText( current, "Type" ) ) ) ) ).toSeq
+  
+  /**
+   * Given a bunch of classes nodes, returns a bunch of pre-class objects to
+   * which they correlate.
+   * @@param classes The classes nodes
+   * @@param parser The parser that they came from
+   * @@return A parallel sequence of pre-class objects
+   * @@throws ClassParseException If a format-level error is present
+   */
+  def parseForPreClasses( classes: Seq[ Node ],  parser: ClassParser ) =
+    classes.map( toPreClass( _, parser ) )
+} // XMLParser
+
+/**
+ * Parses an XML file.
+ * @@param fileName The name of the file
+ * @@throws FileNotFoundException If the given file could not be opened
+ * @@throws IOException If a read was unsuccessful
+ * @@author Kyle Dewey
+ */
+class XMLParser( fileName: String ) extends ClassParser( fileName ) {
+  import sentinel.model.ParamType._
+  val file = XML.loadFile( fileName )
+  val classes = file \ "Class"
+  // maps pre-class objects to nodes that contain class information
+  lazy val preClassToNode =
+    Map() ++ List.map2( XMLParser.parseForPreClasses( classes, this ).toList,
+		        classes.toList )( _ -> _ )
+  
+  /**
+   * Gets information about all classes within
+   * @@return PreClass information about all classes within
+   * @@throws ClassParseException If there was a format-level error
+   */
+  override def classesInformation() = 
+    preClassToNode.keys.toList
+
+  /**
+   * Parses in the given class
+   * @@param theClass The class to parse in
+   * @@throws ClassParseException If there was a format-level error, or the
+   * class doesn't exist
+   * @@throws IOException If an error occurred on reading
+   */
+  override def internalParseClass( theClass: PreClass ) = {
+    if ( preClassToNode.contains( theClass ) ) {
+      XMLParser.parseClass( preClassToNode( theClass ) )
+    } else {
+      throw new ClassParseException( "Unknown class: " + theClass )
+    }
+  }
+}
+@
+
+
+1.12
+log
+@PreClass objects are now singletons with a single
+point of access.  Needed in order to fix problem
+where dependencies could not be resolved between files.
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.11 2011/06/01 16:43:38 kyledewey Exp kyledewey $
+d9 5
+d132 1
+a132 1
+    import sentinel.model.ParamConverter._
+d155 5
+a159 11
+    val theVar = Variable( textToSpreadsheet( getText( variable, "Sheet" ) ),
+			   textToRow( getText( variable, "Row" ) ),
+			   textToColumn( getText( variable, "Column" ) ),
+			   varType )
+    if ( theVar.isDefined ) {
+      new TerminalNode( getText( variable, "Name" ),
+		        theVar.get.asInstanceOf[ Param ] )
+    } else {
+      throw new ClassParseException( "Unknown variable type: \"" +
+				     varType + "\"" )
+    }
+@
+
+
+1.11
+log
+@Now uses toString instead of getMessage for forwarding
+exceptions.
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.10 2011/06/01 04:00:23 kyledewey Exp kyledewey $
+d9 4
+d342 4
+a345 3
+    new PreClass( getText( node, "Name" ),
+		  textToInstanceType( getText( node, "Type" ) ),
+		  parser )
+a361 10
+   * Given a bunch of pre-classes, it will return a mapping from
+   * class name/type tuples to pre-classes
+   * @@param classes The pre-classes
+   * @@return A mapping from name/type pairs to pre-class objects
+   */
+  def preClassMap( classes: Seq[ PreClass ] ) =
+    Map() ++ classes.map( current => 
+      ( current.name, current.theType ) -> current )
+  
+  /**
+d363 1
+a363 3
+   * which they correlate.  Note that if a dependency is found that cannot
+   * be resolved within the file (i.e. it is a built in operation), then it
+   * will still be returned, but with no listed dependencies.
+d369 2
+a370 19
+  def parseForPreClasses( classes: Seq[ Node ], 
+			  parser: ClassParser ): Seq[ PreClass ] = {
+    val retval = classes.map( toPreClass( _, parser ) )
+    // maps names and types to pre-classes
+    val classMap = preClassMap( retval )
+
+    // for the given class node and its corresponding PreClass,
+    // processes its dependencies.  Note that only those dependencies
+    // that can be resolved in the file are added
+    def processDependencies( asNode: Node, asPreClass: PreClass ) {
+      val resolvable = dependencies( asNode ).filter( classMap.contains( _ ) )
+      asPreClass.dependencies ++= resolvable.map( pair => 
+	classMap( pair._1, pair._2 ) )
+    }
+
+    List.map2( classes.toList, retval.toList )( ( asNode, asPreClass ) => 
+      processDependencies( asNode, asPreClass ) )
+    retval
+  }
+@
+
+
+1.10
+log
+@Moved bulk of getNodes to XMLHelpers.
+Conforms to the new parser interface that can
+handle dependencies across files.
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.9 2011/04/10 04:05:45 kyledewey Exp $
+d9 5
+d320 1
+a320 1
+      case e: Exception =>
+d323 1
+a323 1
+				       e.getMessage )
+@
+
+
+1.9
+log
+@Made vals public in XMLParser.
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.8 2011/02/27 05:19:29 kyledewey Exp kyledewey $
+d9 3
+d60 2
+a61 25
+  // begin constants
+  val DEFAULT_EXPECTED_NUM = 1
+  // end constants
+
+  /**
+   * Given a node and the name of child nodes to look for, returns
+   * the child nodes.  Verifies that the number of child nodes is the
+   * same as what was expected.
+   * @@param node The root node to look under
+   * @@param tag The tag of interest
+   * @@param expectedNum The number of expected child nodes
+   * @@return Child nodes
+   * @@throws ClassParseException If the number of expected child nodes differs
+   */
+  def getNodes( node: Node, tag: String, expectedNum: Int ) = {
+    val children = node \ tag
+    val size = children.size
+    if ( children.size != expectedNum ) {
+      throw new ClassParseException( "Expected " + expectedNum +
+				     " tags under " + node.label +
+				     " with tag \"" + tag + 
+				     "\"; found " + size )
+    }
+    children
+  }
+d63 2
+a64 37
+  /**
+   * Like getNodes, but with the expected num as DEFAULT_EXPECTED_NUM.
+   * @@param node The root node to look under
+   * @@param tag The tag of interest
+   * @@return Child nodes
+   * @@throws ClassParseException If the number of expected child nodes differs
+   *         from DEFAULT_EXPECTED_NUM
+   */
+  def getNodes( node: Node, tag: String ): NodeSeq = 
+    getNodes( node, tag, DEFAULT_EXPECTED_NUM )
+
+  /**
+   * Given a node and the name of child nodes to look for, returns
+   * the text of the child nodes concatentated together.
+   * If the expected number of nodes differs from the number found,
+   * it throws an exception
+   * @@param node The root node to look under
+   * @@param tag The tag of interest
+   * @@param expectedNum The number of expected child nodes
+   * @@return The text of all the child nodes concatenated together
+   * @@throws ClassParseException If the number of expected child nodes differs
+   */
+  def getText( node: Node, tag: String, expectedNum: Int ): String = 
+    getNodes( node, tag, expectedNum ).text
+
+  /**
+   * Like getText, but with an expectedNum of
+   * DEFAULT_EXPECTED_NUM
+   * @@param node The root node to look under
+   * @@param tag The tag of interest
+   * @@return The text of all child nodes concatenated together
+   * @@throws ClassParseException If there were no tages by the
+   *         given name, or if the number of child nodes differs
+   *         from DEFAULT_EXPECTED_NUM
+   */
+  def getText( node: Node, tag: String ): String =
+    getText( node, tag, DEFAULT_EXPECTED_NUM )
+d326 1
+d332 1
+a332 1
+  def toPreClass( node: Node ) =
+d334 2
+a335 1
+		  textToInstanceType( getText( node, "Type" ) ) )
+d367 1
+d371 3
+a373 2
+  def parseForPreClasses( classes: Seq[ Node ] ): Seq[ PreClass ] = {
+    val retval = classes.map( toPreClass( _ ) )
+d405 1
+a405 1
+    Map() ++ List.map2( XMLParser.parseForPreClasses( classes ).toList,
+d423 1
+a423 1
+  override def parseClass( theClass: PreClass ) = {
+@
+
+
+1.8
+log
+@Refactored to include parameter order.
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.7 2010/07/11 05:51:30 kyledewey Exp kyledewey $
+d9 3
+d452 2
+a453 2
+  private val file = XML.loadFile( fileName )
+  private val classes = file \ "Class"
+d455 1
+a455 1
+  private lazy val preClassToNode =
+@
+
+
+1.7
+log
+@Fixed bug that caused only within-file dependencies
+to be seen by classesInformation().
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.6 2010/07/10 21:48:19 kyledewey Exp kyledewey $
+d9 4
+d133 1
+a133 1
+   * Given a listing of formal parameters, parses them
+d135 2
+a136 1
+   * @@return The class parameters
+d139 5
+a143 2
+  def parseFormalParams( params: Node ): Map[ String, ParamInfo ] = 
+    Map() ++ ( params \ "FormalParameter" ).map( param => {
+d145 6
+a150 2
+      current.name -> current 
+    } ) 
+d280 2
+a281 1
+   * @@param params What parameters are valid for the underlying object
+d289 2
+a290 1
+		      params: Map[ String, ParamInfo ],
+d303 2
+a304 1
+		      params,
+d309 2
+a310 1
+		       params,
+d335 3
+a337 2
+      val params = parseFormalParams( getNodes( theClass, 
+					        "FormalParameters" ).first )
+d344 2
+a345 1
+			  params,
+d350 2
+a351 1
+			   params,
+d362 2
+a363 1
+		        params,
+@
+
+
+1.6
+log
+@Conforms to the new Parser interface, complete with routines
+for getting information to generate a dependency graph.
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.5 2010/06/25 03:18:59 kyledewey Exp $
+d9 4
+d414 3
+a416 4
+    List.map2( classes.toList, retval.toList )( ( asNode, asPreClass ) => {
+      processDependencies( asNode, asPreClass ) 
+      asPreClass
+    } )
+@
+
+
+1.5
+log
+@Refactored so that variables have types.
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.4 2010/06/20 17:33:32 kyledewey Exp kyledewey $
+d9 3
+d177 3
+a179 1
+    val theVar = Variable( getText( variable, "Where" ),
+d349 66
+d426 7
+a432 1
+
+d434 20
+a453 14
+   * Reads in all the rules in the XML file.  Note that new matchers
+   * and replacers are automatically registered into their appropriate
+   * managers.
+   * @@return a sequence of tuples, where each item is one class.  Each tuple
+   *         contains the name, description, and class itself.
+   * @@throws ClassParseException If there was an error in the underlying
+   *         XML file
+   * @@throws IOException If there was an error on reading
+   */
+  override def parseClasses() = {
+    import XMLParser._
+    val file = XML.loadFile( fileName )
+    val classes = file \ "Class"
+    classes.map( parseClass( _ ) )
+@
+
+
+1.4
+log
+@Now uses InstanceFactory[ _ ] instead of
+Either[ MatcherFactory, ReplacerFactory ].
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.3 2010/06/18 19:37:17 kyledewey Exp kyledewey $
+d9 4
+a152 1
+    validateConstantType( typeText )
+d172 12
+a183 3
+  def parseVariableParameter( variable: Node ) =
+    new TerminalNode( getText( variable, "Name" ),
+		      new Variable( getText( variable, "Where" ) ) )
+a193 2
+    validateInstanceType( typeName )
+
+d197 1
+a197 1
+    } else {
+d200 3
+a275 2
+    validateInstanceType( myType )
+
+d282 1
+a282 1
+    } else {
+d287 3
+a307 1
+      validateInstanceType( theType )
+d320 1
+a320 1
+	} else {
+d325 3
+@
+
+
+1.3
+log
+@Made factories take a name and description.
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.2 2010/06/18 03:10:24 kyledewey Exp kyledewey $
+d9 3
+d36 1
+a36 1
+  import sentinel.model.ParameterizedObjectFactory._
+d143 2
+a144 1
+   * @@throws ClassParseException If a tag was missing
+d146 17
+a162 4
+  def parseConstantParameter( constant: Node ) =
+    new TerminalNode( getText( constant, "Name" ),
+		      new Constant( getText( constant, "Value" ) ) )
+  
+d182 1
+a182 1
+    validateClassType( typeName )
+d255 1
+a255 1
+		      myType: String ): Either[ MatcherFactory, ReplacerFactory ] = {
+d263 1
+a263 1
+    validateClassType( myType )
+d267 4
+a270 4
+      Left( new ParseTreeMatcherFactory( name,
+					 desc,
+					 params, 
+					 tree ) )
+d272 4
+a275 4
+      Right( new ParseTreeReplacerFactory( name,
+					   desc,
+					   params,
+					   tree ) )
+d286 1
+a286 1
+  def parseClass( theClass: Node ): Either[ MatcherFactory, ReplacerFactory ] = {
+d290 9
+a298 6
+      val desc = getText( theClass, "Description" )
+      val theType = getText( theClass, "Type" )
+      validateClassType( theType )
+      val builtIn = textToBoolean( getText( theClass, "BuiltIn" ) )
+      val params = parseFormalParams( getNodes( theClass, "FormalParameters" ).first )
+      var retval: Either[ MatcherFactory, ReplacerFactory ] = null
+d303 4
+a306 4
+	  retval = Left( new ReflectionMatcherFactory( name,
+						       desc,
+						       params,
+						       className ) )
+d308 4
+a311 4
+	  retval = Right( new ReflectionReplacerFactory( name,
+							 desc,
+							 params,
+						         className ) )
+d315 5
+a319 5
+	retval = parseStructure( structure,
+				 name,
+				 desc,
+				 params,
+				 theType )
+a320 2
+
+      retval
+@
+
+
+1.2
+log
+@Added comment on usage of parseClasses()
+@
+text
+@d5 1
+a5 1
+ *     $Id: ParseXML.scala,v 1.1 2010/06/15 17:57:22 kyledewey Exp $
+d9 3
+d227 2
+d235 2
+d250 4
+a253 1
+      Left( new ParseTreeMatcherFactory( tree, params ) )
+d255 4
+a258 1
+      Right( new ParseTreeReplacerFactory( tree, params ) )
+d265 1
+a265 1
+   * @@return the class name, class description, and the class itelf
+d269 1
+a269 4
+  def parseClass( theClass: Node ): ( String, 
+				      String,
+				      Either[ MatcherFactory,
+					      ReplacerFactory ] ) = {
+d283 4
+a286 2
+	  retval = Left( new ReflectionMatcherFactory( className,
+						       params ) )
+d288 4
+a291 2
+	  retval = Right( new ReflectionReplacerFactory( className,
+							 params ) )
+d296 2
+d301 2
+a302 4
+    
+      ( name,
+        desc,
+        retval )
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d312 2
+@

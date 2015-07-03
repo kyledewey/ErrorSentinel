@@ -1,0 +1,44 @@
+head	1.1;
+access;
+symbols;
+locks
+	kyledewey:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2010.06.18.03.00.42;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Makefile for writers.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#
+# Makefile
+#
+# Version:
+#     $Id$
+#
+# Revisions:
+#      $Log$
+#
+#
+
+PACKAGE = sentinel.model.writer
+
+SOURCE = \
+	Writer.scala \
+
+include $(JAVA_DEV_ROOT)/Makefile
+
+
+@

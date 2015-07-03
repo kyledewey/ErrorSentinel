@@ -1,0 +1,1764 @@
+head	1.13;
+access;
+symbols;
+locks
+	kyledewey:1.13; strict;
+comment	@# @;
+
+
+1.13
+date	2011.06.04.07.38.16;	author kyledewey;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2011.06.04.05.19.12;	author kyledewey;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2011.06.02.06.54.31;	author kyledewey;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.06.01.16.44.30;	author kyledewey;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2011.05.31.18.44.46;	author kyledewey;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2011.05.31.00.08.17;	author kyledewey;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2011.05.30.04.03.25;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.05.29.22.21.44;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.05.29.22.15.25;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.05.28.02.41.38;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2011.05.27.18.52.09;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2011.05.27.16.22.14;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2011.05.27.01.37.30;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Modified JTable specific to the interactive
+version of sentinel.
+@
+
+
+1.13
+log
+@Replaced call to setAndTryValueAt with call to
+setValueAt.  At best it was redundant, since setValueAt
+ultimately calls tryValueAt anyway.
+@
+text
+@/*
+ * SentinelTable.scala
+ * 
+ * Version:
+ *     $Id: SentinelTable.scala,v 1.12 2011/06/04 05:19:12 kyledewey Exp kyledewey $
+ *
+ * Revisions:
+ *      $Log: SentinelTable.scala,v $
+ *      Revision 1.12  2011/06/04 05:19:12  kyledewey
+ *      Moved makeTable() and related methods to SentinelHelpers.
+ *      Refactored some functionality into AssociationGraph.
+ *
+ *      Revision 1.11  2011/06/02 06:54:31  kyledewey
+ *      Sets of cell pointers are now used instead of intermediate
+ *      sets of cell ranges.  This avoids the need to get values
+ *      since the variables now dereference them on equals.
+ *      Showing colors of parameter cells now works correctly.
+ *
+ *      Revision 1.10  2011/06/01 16:44:30  kyledewey
+ *      Fixed bug where the cell color could be green but
+ *      the info text color could be red.
+ *
+ *      Revision 1.9  2011/05/31 18:44:46  kyledewey
+ *      Moved selection components and popup menu components
+ *      to SingleSelectionTable and ContextSensitivePopupTable.
+ *      Now implements ContextSensitivePopupTable.
+ *
+ *      Revision 1.8  2011/05/31 00:08:17  kyledewey
+ *      SentinelTable now conforms to the RowMover interface.
+ *      Added support for moving rows with mouse prsses.
+ *
+ *      Revision 1.7  2011/05/30 04:03:25  kyledewey
+ *      Added code to separate sheet names from commands that
+ *      hold sheet names.
+ *
+ *      Revision 1.6  2011/05/29 22:21:44  kyledewey
+ *      Fixed bug where rows were added on a double
+ *      down press regardless of which row is selected.
+ *
+ *      Revision 1.5  2011/05/29 22:15:25  kyledewey
+ *      Added context-sensitive popup menus.
+ *
+ *      Revision 1.4  2011/05/28 02:41:38  kyledewey
+ *      Added the makeTable() methods.
+ *      Added the showAllCellColors() and
+ *      showAllCellColorsWithParams() methods.
+ *
+ *      Revision 1.3  2011/05/27 18:52:09  kyledewey
+ *      Updates to cell colors can now go beyond
+ *      the table that triggered them.
+ *
+ *      Revision 1.2  2011/05/27 16:22:14  kyledewey
+ *      Cell editing now triggers color change processing.
+ *      Now uses anonymous classes instead of extending
+ *      a number of classes.
+ *
+ *      Revision 1.1  2011/05/27 01:37:30  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.utils.interactive
+
+import java.awt._
+import java.awt.event._
+import javax.swing._
+import javax.swing.event._
+import javax.swing.table._
+
+import sentinel.model._
+
+/**
+ * Holds constants and helper routines pertaining to SentinelTable.
+ * @@author Kyle Dewey
+ */
+object SentinelTable {
+  // colors for different kinds of cells
+  val CLEAN_COLOR = Color.GREEN
+  val CORRECTABLE_COLOR = Color.YELLOW
+  val ERROR_COLOR = Color.RED
+  val BACKGROUND_COLOR = Color.WHITE
+  val GRID_LINE_COLOR = Color.BLACK
+  val VALID_CELL_COLORS = Set( CLEAN_COLOR,
+			       CORRECTABLE_COLOR,
+			       ERROR_COLOR )
+
+  // text for different error conditions
+  val CLEAN_TEXT = "OK"
+  val UNKNOWN_ERROR_TEXT = "Unknown error in error correction language."
+
+  // text for different menu actions
+  val CORRECTION_PREFIX = "Correct to \""
+  val CORRECTION_POSTFIX = "\""
+  val ADD_ROW_ABOVE = "Add Row Above"
+  val ADD_ROW_BELOW = "Add Row Below"
+  val REMOVE_ROW = "Remove Row"
+
+  // number of millisenconds between key presses to generate a new row
+  val NUM_MILLIS_BETWEEN_NEW_ROW = 200
+
+  // registry of the open tables, by name
+  var openTables: Map[ String, SentinelTable ] = Map()
+
+  /**
+   * Calls the given function if the given name is that of a sheet.
+   * @@param name The name of the sheet
+   * @@param function The function to call with the sheet
+   * @@return Whatever the function returned, or None if the given sheet
+   * doesn't exist.
+   */
+  def callIfSheet[ T ]( name: String, function: SentinelTable => T ) = 
+    if ( openTables.contains( name ) ) {
+      Some( function( openTables( name ) ) )
+    } else {
+      None
+    }
+
+  /**
+   * Makes the given text look like a correction item
+   * @@param text The text to manipulate
+   * @@return The text looking like a correction item
+   */
+  def makeLookLikeCorrectionOption( text: String ) =
+    CORRECTION_PREFIX + text + CORRECTION_POSTFIX
+
+  /**
+   * Determines if the given text looks like a correction item
+   * @@param text The text to check
+   * @@return true if it looks like a correction item, else false
+   */
+  def looksLikeCorrectionOption( text: String ) =
+    hasPrefixPostfix( text, CORRECTION_PREFIX, CORRECTION_POSTFIX )
+
+  /**
+   * Gets whether or not the given text begins with the given prefix and
+   * ends with the given postfix.
+   * @@param text The text to check
+   * @@param prefix The prefix to check
+   * @@param postfix The postfix to check
+   * @@return True if it has the given prefix and postfix, else false.
+   */
+  def hasPrefixPostfix( text: String, prefix: String, postfix: String ) =
+    text.startsWith( prefix ) && text.endsWith( postfix )
+
+  /**
+   * Extracts the inner text out given a certain prefix and postfix.
+   * @@param text The text to extract from
+   * @@param prefix The prefix for the text
+   * @@param postfix The postfix for the text
+   * @@return The extracted text, or None if it didn't have the given prefix
+   * and postfix
+   */
+  def extractInner( text: String, prefix: String, postfix: String ) =
+    if ( hasPrefixPostfix( text, prefix, postfix ) ) {
+      Some( text.substring( prefix.length, text.length - postfix.length ) )
+    } else {
+      None
+    }
+
+  /**
+   * Gets the correction option text from something.
+   * @@param text The text to get the correction option text from
+   * @@return The text if it looks like a correction option, or None if
+   * it doesn't look like a correction option.
+   */
+  def correctionOptionCorrection( text: String ) =
+    extractInner( text, CORRECTION_PREFIX, CORRECTION_POSTFIX )
+
+  /**
+   * Makes a menu item with the given text that has the given
+   * action listener associated.
+   * @@param text The text of the menu item
+   * @@param listener The action listener that can listen for events from
+   * the item
+   * @@return A new menu item that shows the given text that has the given
+   * action listener attached
+   */
+  def menuItem( text: String, listener: ActionListener ) = {
+    val retval = new JMenuItem( text )
+    retval.addActionListener( listener )
+    retval
+  }
+
+  /**
+   * Gets the replacement text from the given instance result.
+   * @@param instanceResult The instance result
+   * @@return The text of the replacement, or None if there is no such text
+   */
+  def replacement( instanceResult: Option[ Option[ InstanceResult ] ] ) = 
+    if ( instanceResult.isDefined &&
+	 instanceResult.get.isDefined &&
+	 instanceResult.get.get.isInstanceOf[ InstanceFailureReplacement ] ) {
+      Some( instanceResult.get.get.asInstanceOf[ InstanceFailureReplacement ].replacement )
+    } else {
+      None
+    }
+
+  /**
+   * Gets the text and color of the text to use for the given instance
+   * result.
+   * @@param instanceResult The instance result
+   * @@return The text and the color of the text to use, in a pair
+   */
+  def getTextAndColor( instanceResult: Option[ Option[ InstanceResult ] ] ) = {
+    import sentinel.utils.noninteractive._
+    var text = UNKNOWN_ERROR_TEXT
+    var color = ERROR_COLOR
+
+    if ( instanceResult.isDefined ) {
+      val ( clean,
+	    unclean,
+	    whyUnclean ) = ProjectRunner.processCell( "", instanceResult.get )
+      if ( clean.isDefined ) {
+	val contents = clean.get
+	if ( contents == "" ) {
+	  // clean
+	  text = CLEAN_TEXT
+	  color = CLEAN_COLOR
+	} else {
+	  // have a replacemnt
+	  text = contents
+	  color = CORRECTABLE_COLOR
+	}
+      } else if ( unclean.isDefined &&
+	          whyUnclean.isDefined ) {
+	// uncorrectable error
+	text = whyUnclean.get
+	color = ERROR_COLOR
+      }
+    }
+  
+    Pair( text, color )
+  }
+
+  /**
+   * Registers the given table in the registry.
+   * Will overwrite any previous association
+   * @@param table The table to register
+   */
+  def registerTable( table: SentinelTable ) {
+    openTables += Pair( table.name, table )
+  }
+
+  /**
+   * Gets all open tables
+   * @@return all open tables
+   */
+  def tables() =
+    openTables.values.collect
+
+  /**
+   * Runs the given function for each table.
+   * @@param function The function to run
+   */
+  def foreachTable( function: SentinelTable => Unit ) {
+    tables.foreach( function( _ ) )
+  }
+
+  /**
+   * Gets the table with the given name.
+   * @@param name The name of the table
+   * @@return The table, or None if there is no table with the given name
+   */
+  def table( name: String ) =
+    openTables.get( name )
+
+  /**
+   * Sets the color of the given table at the given cell.
+   * If there is no such table, this is a no-op.
+   * @@param pointer The pointer to the cell
+   * @@param color The color to make the cell
+   */
+  def setColor( pointer: CellPointer, color: Color ) {
+    if ( openTables.contains( pointer.sheet ) ) {
+      openTables( pointer.sheet ).setCellColor( pointer.row,
+					        pointer.column,
+					        color )
+    }
+  }
+
+  /**
+   * Resets the cell colors of all tables.
+   */
+  def resetCellColors() {
+    foreachTable( _.resetCellColors() )
+  }
+
+  /**
+   * Makes all tables show cell colors based on the instance
+   * directly in a cell.
+   */
+  def showAllCellColors() {
+    foreachTable( _.showAllCellColors() )
+  }
+
+  /**
+   * Like <code>showAllCellColors</code>, except it factors
+   * in all parameters.
+   */
+  def showAllCellColorsWithParams() {
+    foreachTable( _.showAllCellColorsWithParams() )
+  }
+
+  /**
+   * Given cell pointers along with a color, it will set it
+   * so all the given cells will be that color.
+   * @@param pointers Pointers to cells in possibly more than one table
+   * @@param color The color to make the given cells in those tables.
+   */
+  def setColors( pointers: Set[ CellPointer ], color: Color ) {
+    // clear out all others
+    resetCellColors()
+
+    // individually set colors
+    pointers.foreach( setColor( _, color ) )
+  }
+
+  /**
+   * Chooses the "worst" color of a set of colors.
+   * This only is defined for CLEAN_COLOR, CORRECTABLE_COLOR, and
+   * ERROR_COLOR; other colors are removed beforehand
+   * @@param set The set of colors
+   * @@return The "worst" color in the set
+   */
+  def worstColor( set: Set[ Color ] ): Color = {
+    val intersect =  set ** VALID_CELL_COLORS
+    if ( intersect.contains( ERROR_COLOR ) )
+      ERROR_COLOR
+    else if ( intersect.contains( CORRECTABLE_COLOR ) )
+      CORRECTABLE_COLOR
+    else
+      CLEAN_COLOR
+  }
+
+  /**
+   * Determines if the first color is worse than the second color.
+   * @@param first The first color
+   * @@param second The second color
+   * @@return true if the first color is worse, else false.
+   */
+  def worseColor( first: Color, second: Color ) =
+    first != second && worstColor( Set( first, second ) ) == first
+
+}
+
+/**
+ * Represents the special JTable used for interactive spreadsheets.
+ * @@param model The underlying table model for the table
+ * @@author Kyle Dewey
+ */
+class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellContents ] ) extends JTable( model ) with ErrorShower with ContextSensitivePopupTable with RowMover with ActionListener {
+  import SentinelTable._
+
+  // begin instance variables
+  private var cellColors: Map[ Pair[ Int, Int ], Color ] = Map()
+  val tableCellRenderer = makeTableCellRenderer
+  val selectionListener = makeListSelectionListener
+  val editorListener = makeCellEditorListener
+  // end instance variables
+
+  // begin constructor
+  SentinelTable.registerTable( this )
+  setGridColor( SentinelTable.GRID_LINE_COLOR )
+  setShowGrid( true )
+  setShowHorizontalLines( true )
+  setShowVerticalLines( true )
+
+  // selection stuff
+  rsModel.addListSelectionListener( selectionListener )
+  csModel.addListSelectionListener( selectionListener )
+
+  // user input listener stuff
+  addKeyListener( makeKeyListener )
+
+  // rendering stuff
+  setDefaultRenderer( classOf[ String ], tableCellRenderer )
+  setDefaultRenderer( classOf[ Object ], tableCellRenderer )
+
+  // editing stuff
+  getDefaultEditor( classOf[ String ] ).addCellEditorListener( editorListener )
+  getDefaultEditor( classOf[ Object ] ).addCellEditorListener( editorListener )
+
+  model.resetGraph()
+  //model.addTableModelListener( model.makeAssociationGraphListener )
+  //model.addTableModelListener( model )
+  // end constructor
+
+  /**
+   * Returns the name of the underlying model.
+   * @@return The name of the underlying model
+   */
+  def name() =
+    model.name
+
+  /**
+   * Moves the given range of rows to the given position.
+   * Updates the selection accordingly.
+   * @@param start The start of the range
+   * @@param end The end of the range
+   * @@param to Where to put the rows.
+   */
+  def moveRows( start: Int, end: Int, to: Int ) {
+    if ( start != to ) {
+      model.moveRow( start, end, to )
+      updateSelection()
+    }
+  }
+
+  /**
+   * Makes a menu item with the given text that holds <code>this</code>
+   * as an <code>ActionListener</code>.
+   * @@param text The text of the menu item
+   * @@return The menu item with the given text holding <code>this</code>
+   * as an <code>ActionListener</code>
+   */
+  def menuItem( text: String ) =
+    SentinelTable.menuItem( text, this )
+
+  /**
+   * Gets the replacement for the instance result at the given
+   * row and column, or None if there isn't one.
+   * @@param row The row
+   * @@param column The column
+   * @@return The replacement for this row and column, or None
+   * if there isn't one.
+   */
+  def replacement( row: Int, column: Int ) = 
+    SentinelTable.replacement( instanceResult( row, column ) )
+
+  /**
+   * Adds a row above the currently selected row.
+   * If there isn't currently a selected row, this is a no-op.
+   */
+  def addRowAboveAction() {
+    callIfSelected( ( row, column ) => {
+      model.insertRow( row ) 
+      setSelectedCell( row + 1, column )
+      updateSelection()
+    } )
+  }
+
+  /**
+   * Adds a row below the currently selected row.
+   * If there isn't currently a selected row, this is a no-op.
+   */
+  def addRowBelowAction() {
+    callIfSelected( ( row, column ) => 
+      model.insertRow( row + 1 ) )
+  }
+
+  /**
+   * Removes the currently selected row.
+   * If there isn't a currently selected row, this is a no-op.
+   */
+  def removeRowAction() {
+    callIfSelected( ( row, column ) => {
+      model.removeRow( row )
+      val selectRow =
+	if ( row >= getRowCount ) {
+	  getRowCount - 1
+	} else {
+	  row
+	}
+      setSelectedCell( selectRow, column )
+      updateSelection()
+    } )
+  }
+  
+  /**
+   * Sets the currently selected row to the given value.
+   * If there isn't currently a value selected, this is a no-op.
+   * @@param value The value to change it to
+   */
+  def correctionAction( value: String ) {
+    callIfSelected( ( row, column ) => {
+      model.setValueAt( value, row, column )
+      updateSelection()
+    } )
+  }
+
+  /**
+   * Responds to popup menu commands
+   * @@param event The event that correlates to a menu command
+   */
+  def actionPerformed( event: ActionEvent ) {
+    event.getActionCommand match {
+      case ADD_ROW_ABOVE => addRowAboveAction()
+      case ADD_ROW_BELOW => addRowBelowAction()
+      case REMOVE_ROW => removeRowAction()
+      case s: String if ( looksLikeCorrectionOption( s ) ) => 
+	correctionAction( correctionOptionCorrection( s ).get )
+    }
+  }
+
+  /**
+   * Like <code>makePopupMenu</code>, but it works with a given cell.
+   * Note that this is guarenteed to return something.
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   * @@return A context-sensitive JPopupMenu
+   */
+  override def makePopupMenu( row: Int, column: Int ): Option[ JPopupMenu ] = {
+    val retval = new JPopupMenu()
+    val replace = replacement( row, column )
+    if ( replace.isDefined ) {
+      retval.add( menuItem( makeLookLikeCorrectionOption( replace.get ) ) )
+      retval.addSeparator()
+    }
+    retval.add( menuItem( REMOVE_ROW ) )
+    retval.addSeparator()
+    retval.add( menuItem( ADD_ROW_ABOVE ) )
+    retval.add( menuItem( ADD_ROW_BELOW ) )
+    Some( retval )
+  }
+
+  /**
+   * Makes a key listener for this table.
+   * When the user hits the down key in rapid succession, a new
+   * row is added to the table.
+   * @@return A new key listener fitting the above description
+   */
+  protected def makeKeyListener() = 
+    new KeyAdapter() {
+      var lastDown: Long = -1 // when down was last pressed
+      override def keyPressed( event: KeyEvent ) {
+	val selectedRow = getSelectedRow
+	if ( ( event.getKeyCode == KeyEvent.VK_KP_DOWN ||
+	       event.getKeyCode == KeyEvent.VK_DOWN ) &&
+	     selectedRow != -1 &&
+	     selectedRow == getRowCount - 1 ) {
+	  val when = event.getWhen
+	  if ( lastDown != -1 &&
+	       when - lastDown <= NUM_MILLIS_BETWEEN_NEW_ROW ) {
+	    model.addRow()
+	  }
+	  lastDown = when
+	}
+      }
+    }
+  
+  /**
+   * Makes a cell editor listener for this table.
+   * This is relevant for when the selection doesn't change but
+   * the contents of a cell have.
+   * @@return A cell editor listener that will update such changes
+   */
+  protected def makeCellEditorListener() =
+    new CellEditorListener() {
+      def editingCanceled( e: ChangeEvent ) {
+	// note that in this case data hasn't changed, so nothing
+	// needs to be updated
+      }
+      def editingStopped( e: ChangeEvent ) {
+	// data has changed
+	updateSelection()
+      }
+    }
+  
+  /**
+   * Makes the list selection listener for this table.
+   * @@return The list selection listener for this table
+   */
+  protected def makeListSelectionListener() =
+    new ListSelectionListener() {
+      def valueChanged( event: ListSelectionEvent ) {
+	updateSelection()
+      }
+    }
+
+  /**
+   * Makes the table cell renderer for this table.
+   * @@return The table cell renderer for this table.
+   */
+  protected def makeTableCellRenderer() =
+    new DefaultTableCellRenderer() {
+      /**
+       * Gets a renderer for the given cell.
+       * This is needed to determine the background color of cells.
+       * Note that it will use the default renderer for the base of components.
+       * @@param table The table that the rendering
+       * @@param value The value that we are putting in
+       * @@param isSelected Whether or not it is selected.  Note that with
+       * our selection models, interesting enough, it seems that isSelected
+       * is always false, even if we have something selected.
+       * @@param hasFocus If the component has focus
+       * @@param row The row the component is for
+       * @@param column The column the component is for
+       * @@return The component used to show the cell.
+       */
+      override def getTableCellRendererComponent( table: JTable,
+						  value: Object,
+						  isSelected: Boolean,
+						  hasFocus: Boolean,
+						  row: Int,
+						  column: Int ) = {
+	val asPair = Pair( row, column )
+	val baseComponent =
+	  super.getTableCellRendererComponent( table, 
+					       value,
+					       isSelected,
+ 					       hasFocus,
+					       row,
+					       column )
+	val color = 
+	  if ( cellColors.contains( asPair ) ) {
+	    cellColors( asPair )
+	  } else {
+	    SentinelTable.BACKGROUND_COLOR
+	  }
+	baseComponent.setBackground( color )
+	
+	baseComponent
+      }
+    }
+
+  /**
+   * Converts the given row, column pairs to cell pointers.
+   * The name of the pointer is this table.
+   * @@param pairs The row, column pairs
+   * @@return Cell pointers holding the same information
+   */
+  def pairsToPointers( pairs: Seq[ Pair[ Int, Int ] ] ) =
+    Set() ++ pairs.map( pair =>
+      new CellPointer( name, pair._1, pair._2 ) )
+
+  /**
+   * To be called when cell colors should have changed.
+   * This will make visible any changes.
+   * Note that changed can propagate beyond this sheet!
+   * Also note that colors are in relation to a given cell
+   * @@param row The row to change colors with respect to
+   * @@param column The column to change colors with respect to
+   */
+  def updateCellColors( row: Int, column: Int ) {
+    val ( pairs, 
+	  color ) = determineCellColors( row, column )
+    SentinelTable.setColors( pairsToPointers( pairs.toSeq ), color )
+  }
+
+  /**
+   * Updates the text in the information panel based on the
+   * instance at the given row and column
+   * @@param row The row that has been selected
+   * @@param column The column that has been selected
+   */
+  def updateInfoText( row: Int, column: Int ) {
+    val ( text,
+	  color ) = 
+	    SentinelTable.getTextAndColor( instanceResult( row, column ) )
+    SentinelInformationPanel.showText( text, color )
+  }
+
+  /**
+   * Updates data based on the given row and column being selected.
+   * @@param row The row of the selection
+   * @@param column The column of the selection
+   */
+  def updateSelection( row: Int, column: Int ) {
+    updateCellColors( row, column )
+    updateInfoText( row, column )
+  }
+   
+  /**
+   * To be called when the selection is believed to have changed.
+   * If there isn't currently a selected row or column, this
+   * won't do anything.
+   */
+  def updateSelection() {
+    if ( model.shouldRespond ) {
+      callIfSelected( updateSelection( _, _ ) )
+    }
+  }
+
+  /**
+   * Gets the instance result for the given row and column
+   * @@param row The row
+   * @@param column The column
+   * @@return The instance result here
+   */
+  def instanceResult( row: Int, column: Int ) =
+    model.getInstanceResult( row, column )
+
+  /**
+   * Determines the color of the given cell based on it's instance result
+   * @@param row The row
+   * @@param column The column
+   * @@return The color to use
+   */
+  def cellColor( row: Int, column: Int ) = {
+    val rawInstance = instanceResult( row, column )
+
+    if ( rawInstance.isDefined &&
+	 rawInstance.get.isDefined ) {
+      val instance = rawInstance.get.get
+      if ( instance.success ) {
+	SentinelTable.CLEAN_COLOR
+      } else if ( instance.isInstanceOf[ InstanceFailureReplacement ] ) {
+	SentinelTable.CORRECTABLE_COLOR
+      } else {
+	SentinelTable.ERROR_COLOR
+      }
+    } else {
+      SentinelTable.ERROR_COLOR
+    }
+  }
+
+  /**
+   * Determines the color of the given cell and all cells that are
+   * related to this cell.
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   * @@return A pair holding a set of pointers to modify, and the color
+   * to change them to
+   */
+  def determineCellColors( row: Int, column: Int ) = 
+    Pair( model.parameterCells( row, column ),
+	  cellColor( row, column ) )
+
+  /**
+   * Resets all the cell colors to be the same as the background color.
+   * This is needed to undo the last selection.  Note that this will force
+   * the render and will then clear the cell colors.
+   */
+  def resetCellColors() {
+    if ( !cellColors.isEmpty ) { // only for performance
+      cellColors = 
+	cellColors.transform( ( coord, color ) =>
+	  SentinelTable.BACKGROUND_COLOR )
+      forceRender()
+      cellColors = Map()
+    }
+  }
+
+  /**
+   * Forces all currently colored cells to be renderered.
+   * Without this, unselected cells whose color has changed will
+   * be updated only when their selection has changed (which in
+   * turn changes the color anyway!)
+   */
+  def forceRender() {
+    cellColors.keys.foreach( pair => 
+      forceRender( pair._1, pair._2 ) )
+  }
+
+  /**
+   * Forces the given cell to be renderered.
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   */
+  def forceRender( row: Int, column: Int ) {
+    model.forceRender( row, column )
+  }
+
+  /**
+   * Sets the given cell to be the given color.
+   * Note that this will force the given cell to be rendered.
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   * @@param color The color of the cell
+   */
+  def setCellColor( row: Int, column: Int, color: Color ) {
+    cellColors += Pair( Pair( row, column ), color )
+    forceRender( row, column )
+  }
+
+  /**
+   * Sets all the cell colors given a parallel table of cell colors.
+   * @@param colorTable The parallel table of cell colors
+   */
+  def setCellColors( table: Seq[ Seq[ Color ] ] ) {
+    model.foreachRowColumn( ( row, column ) =>
+      setCellColor( row, column,
+		    table( row )( column ) ) )
+  }
+
+  /**
+   * Makes a parallel table of the colors that each cell should be.
+   * This is without regard to parameters
+   * @@return A parallel table of cell colors, without regarding parameters
+   */
+  def colorTable() =
+    model.mapTable( cellColor( _, _ ) )
+
+  /**
+   * Like <code>colorTable</code>, but it includes parameters.
+   * @@return A parallel table of cell colors, regarding parameters
+   */
+  def colorTableWithParams = {
+    val table = colorTable
+    var changeMade = false
+
+    // determines if the given color is worse 
+
+    // sets the color of the given row and column
+    // ignores and association constraints
+    def setColor( row: Int, column: Int, color: Color ) {
+      val colorHere = table( row )( column )
+      if ( SentinelTable.worseColor( color, colorHere ) ) {
+	table( row )( column ) = color
+        changeMade = true
+      }
+    }
+
+    // gets the worst color at the given row and column, including
+    // associated colors
+    def worstColor( row: Int, column: Int ): Color =
+      SentinelTable.worstColor( Set() ++ model.relatedCells( row, column ).map( 
+	pair => table( pair._1 )( pair._2 ) ) )
+    
+    // sets the color of the given row and column
+    // obeys association constrains
+    def setAssociatedColors( row: Int, column: Int ) {
+      val worst = worstColor( row, column )
+      model.relatedCells( row, column ).foreach( pair =>
+	setColor( pair._1, pair._2, worst ) )
+    }
+
+    // does a single pass of the table
+    def setWorstColorsPass() {
+      model.foreachRowColumn( setAssociatedColors( _, _ ) )
+    }
+
+    do {
+      changeMade = false
+      setWorstColorsPass()
+    } while( changeMade );
+
+    table
+  } // colorTableWithParams
+      
+  /**
+   * Shows the color of each cell based on the instance results
+   * that are there.
+   */
+  def showAllCellColors() {
+    setCellColors( colorTable )
+  }
+
+  /**
+   * Shows all cell colors with parameters involved.
+   */
+  def showAllCellColorsWithParams() {
+    setCellColors( colorTableWithParams )
+  }
+}
+@
+
+
+1.12
+log
+@Moved makeTable() and related methods to SentinelHelpers.
+Refactored some functionality into AssociationGraph.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.11 2011/06/02 06:54:31 kyledewey Exp $
+d9 4
+d385 2
+d477 1
+a477 1
+      model.setAndTryValueAt( value, row, column ) 
+@
+
+
+1.11
+log
+@Sets of cell pointers are now used instead of intermediate
+sets of cell ranges.  This avoids the need to get values
+since the variables now dereference them on equals.
+Showing colors of parameter cells now works correctly.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.10 2011/06/01 16:44:30 kyledewey Exp kyledewey $
+d9 6
+a181 41
+   * Makes a table of the given width and height.
+   * Each cell is initialized with the result of a given function.
+   * @@param numRows The number of rows in the table
+   * @@param numColumns The number of columns in the table
+   * @@param initializer Creates the initial element for each cell.  Takes
+   * the row and column as a param
+   * @@return A table of the given width and height initialized for
+   * each cell with the given initializer
+   */
+  def makeTable[ T ]( numRows: Int, numColumns: Int, initializer: ( Int, Int ) => T ) = {
+    val retval: Array[ Array[ T ] ] = new Array( numRows, numColumns )
+    0.until( numRows ).foreach( row =>
+      0.until( numColumns ).foreach( column =>
+	retval( row )( column ) = initializer( row, column ) ) )
+    retval
+  }
+
+  /**
+   * Like <code>makeTable</code>, but it works with a matrix
+   * @@param size The size of the matrix (NxN)
+   * @@param initializer The initializer to use
+   * @@return A matrix
+   */
+  def makeMatrix[ T ]( size: Int, initializer: ( Int, Int ) => T ) =
+    makeTable( size, size, initializer )
+
+  /**
+   * Makes a table of sets.  Note that since sets are immutable,
+   * each cell is initialized to the same set.
+   * @@param numRows The number of rows in it
+   * @@param numColumns The number of columns in it
+   * @@return A matrix of sets.
+   */
+  def makeTableOfSets( numRows: Int, numColumns: Int ) = {
+    val set = Set()
+    makeTable( numRows, 
+	       numColumns, 
+	       ( row, column ) => set )
+  }
+
+  /**
+a315 17
+   * Gets all cell ranges that are associated with the given named parameters.
+   * @@param namedParams The named parameters
+   * @@return All associated cell ranges (assumed to be spreadsheet variables)
+   */
+  def cellPointers( namedParams: Seq[ NamedParam ] ): Set[ CellPointer ] =
+    Set() ++ namedParams.filter( _.param.isInstanceOf[ CellRange ] )
+                        .map( _.param.asInstanceOf[ CellRange ].cellPointer )
+  
+  /**
+   * Gets all the associated cell ranges for the given instance.
+   * @@param instance The instance to get associated cell ranges from
+   * @@return All associated cell ranges.
+   */
+  def cellPointers( instance: Instance ): Set[ CellPointer ] =
+    cellPointers( instance.params )
+
+  /**
+d333 4
+a336 31
+   * Given a table and a cell pointer, it will return the cell that
+   * the given pointer is pointing to.  Note that this ignores the
+   * sheet in the cell pointer.
+   * @@param table The table of cells
+   * @@param pointer The pointer to a cell in the table
+   * @@return The cell that the pointer is pointing to
+   */
+  def getCell[ T ]( table: Seq[ Seq[ T ] ], pointer: CellPointer ) =
+    table( pointer.row )( pointer.column )
+
+  /**
+   * Given a table and a cell, it will get the worst color between
+   * the color contained in the cell and the colors of all cells associated
+   * with the given cell.
+   * @@param table The table
+   * @@param cell The cell, consisting of a pair of associatedCellPointer, color
+   * @@return The worst color between the cell and everything it's associated
+   * with
+   */
+  def worstColor( table: Seq[ Seq[ Pair[ Set[ CellPointer ], Color ] ] ], 
+		  cell: Pair[ Set[ CellPointer ], Color ] ): Color = {
+    worstColor( Set( cell._2 ) ++ cell._1.map( getCell( table, _ )._2 ) )
+  }
+
+  /**
+   * Given a table holding pairs of (associatedCellPointer, color), it
+   * will modify the table so that the color of each cell reflects the
+   * "worst" of the bunch.  For example, consider a cell X with color
+   * green.  If one of the associated cells has color red, then it will
+   * be set to red after this is called.
+   * @@param table The table of ( associatedCellPointer, color ) objects.
+d338 2
+a339 28
+  def setWorstColors( table: Array[ Array[ Pair[ Set[ CellPointer ], Color ] ] ] ) {
+    var changeMade = false
+
+    // sets the color of the given row and column
+    // ignores any association contraints
+    def setColor( pointer: CellPointer, color: Color ) {
+      val cell = getCell( table, pointer )
+      if ( cell._2 != ERROR_COLOR && // can't get worse
+	   color != cell._2 && // not setting the same
+	   worstColor( Set( color, cell._2 ) ) == color ) { // setting worse
+	table( pointer.row )( pointer.column ) = Pair( cell._1, color )
+	changeMade = true
+      }
+    }
+
+    def setColors( cell: Pair[ Set[ CellPointer ], Color ] ) {
+      val worst = worstColor( table, cell )
+      val associations = cell._1
+      associations.foreach( setColor( _, worst ) )
+    }
+	
+    // performs one run of the algorithm
+    // the algorithm needs a number of runs to complete
+    def setWorstColors() {
+      0.until( table.size ).foreach( row =>
+	0.until( table( row ).size ).foreach( column => 
+	  setColors( table( row )( column ) ) ) )
+    }
+a340 5
+    do {
+      changeMade = false
+      setWorstColors()
+    } while( changeMade );
+  }
+d379 2
+d612 10
+d630 1
+a630 1
+    val ( pointers, 
+d632 1
+a632 1
+    SentinelTable.setColors( pointers, color )
+a669 28
+   * Gets all cell pointers which are related to the given cell.
+   * This means every good data matcher or error correction
+   * rule that is registered on the cell.
+   * @@param row The row of the instance
+   * @@param column The column of the instance
+   */
+  def relatedCells( row: Int, column: Int ): Set[ CellPointer ] = {
+    model.updateCurrent( row, column )
+    Set() ++ model.getInstances( row, column )
+                  .flatMap( SentinelTable.cellPointers( _ ) )
+  }
+
+    /*
+    val instance = instanceResult( row, column )
+    if ( instance.isDefined &&
+	 instance.get.isDefined &&
+	 instance.get.get.isInstanceOf[ InstanceFailure[ _ ] ] ) {
+      model.updateCurrent( row, column )
+      relatedCells( instance.get
+		            .get
+		            .asInstanceOf[ InstanceFailure[ _ ] ]
+		            .failedInstance.asInstanceOf[ Instance ] ) 
+    } else {
+      Set()
+    }
+  }*/
+
+  /**
+a678 10
+   * Gets all cells that are associated with the given cell.
+   * Note that this includes the given cell.
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   * @@return Associated cell pointers
+   */
+  def allAssociatedCells( row: Int, column: Int ) = 
+    relatedCells( row, column ) ++ Set( CellPointer( name, row, column ) )
+
+  /**
+d711 1
+a711 1
+    Pair( allAssociatedCells( row, column ),
+d762 65
+d831 1
+a831 27
+    model.foreachRowColumn( ( row, column ) => 
+      setCellColor( row, column, 
+		    cellColor( row, column ) ) )
+  }
+
+  /**
+   * Makes a matrix showing which colors are associated with cell,
+   * along with the associations each cell has to other cells.
+   * @@return A matrix showing the above information, in pairs
+   * of ( cellPointerAssociations, color )
+   */
+  def colorAssociationMatrix() = 
+    SentinelTable.makeTable( getRowCount,
+			     getColumnCount,
+			     ( row, column ) =>
+			       Pair( allAssociatedCells( row, column ),
+				     cellColor( row, column ) ) )
+				     
+  /**
+   * Gets a matrix of sets showing which colors should be in each cell.
+   * The additional colors are based on parameters for each cell.
+   * @@return A matrix of sets showing valid colors of each cell
+   */
+  def cellColorsWithParams() = {
+    val retval = colorAssociationMatrix
+    SentinelTable.setWorstColors( retval )
+    retval
+d838 1
+a838 5
+    val colors = cellColorsWithParams 
+
+    model.foreachRowColumn( ( row, column ) =>
+      setCellColor( row, column,
+		    colors( row )( column )._2 ) )
+@
+
+
+1.10
+log
+@Fixed bug where the cell color could be green but
+the info text color could be red.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.9 2011/05/31 18:44:46 kyledewey Exp $
+d9 4
+d355 1
+a355 1
+  def cellRanges( namedParams: Seq[ NamedParam ] ): Set[ CellRange ] =
+d357 1
+a357 1
+                        .map( _.param.asInstanceOf[ CellRange ] )
+d364 2
+a365 2
+  def associatedCellRanges( instance: Instance ) =
+    cellRanges( instance.params )
+d421 9
+a429 4
+    def setColor( row: Int, column: Int, color: Color ) {
+      val associations = table( row )( column )._1
+      table( row )( column ) = Pair( associations, color )
+      changeMade = true
+d432 6
+d442 2
+a443 10
+	0.until( table( row ).size ).foreach( column => {
+	  val cell = table( row )( column )
+	  // it can't possibly get worse if this isn't true
+	  if ( cell._2 != ERROR_COLOR ) {
+	    val worst = worstColor( table, cell )
+	    if ( worst != cell._2 ) {
+	      setColor( row, column, worst )
+	    }
+	  }
+	} ) )
+d768 3
+a770 13
+   * Gets all cell pointers which are related to the given instance
+   * @@param instance The instance to check
+   * @@return A set of related cell pointers
+   */
+  def relatedCells( instance: Instance ): Set[ CellPointer ] =
+    Set() ++ SentinelTable.associatedCellRanges( instance )
+                          .map( _.cellPointer )
+  
+  /**
+   * Gets all cell pointers which are related to the instance
+   * at the given row and column.  If there isn't an instance
+   * here, or if the instance here shows success, then this
+   * returns an empty set.
+d774 7
+a780 1
+  def relatedCells( row: Int, column: Int ): Set[ CellPointer ]= {
+d793 1
+a793 1
+  }
+d917 1
+a917 1
+			       Pair( relatedCells( row, column ),
+@
+
+
+1.9
+log
+@Moved selection components and popup menu components
+to SingleSelectionTable and ContextSensitivePopupTable.
+Now implements ContextSensitivePopupTable.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.8 2011/05/31 00:08:17 kyledewey Exp kyledewey $
+d9 5
+d831 1
+a831 1
+      SentinelTable.CLEAN_COLOR
+@
+
+
+1.8
+log
+@SentinelTable now conforms to the RowMover interface.
+Added support for moving rows with mouse prsses.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.7 2011/05/30 04:03:25 kyledewey Exp kyledewey $
+d9 4
+a441 8
+ * The selection model used for the sentinel table.
+ * @@author Kyle Dewey
+ */
+class SentinelTableSelectionModel extends DefaultListSelectionModel {
+  setSelectionMode( ListSelectionModel.SINGLE_SELECTION )
+}
+
+/**
+d446 1
+a446 1
+class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellContents ] ) extends JTable( model ) with ActionListener with RowMover {
+a453 2
+  val rModel = new SentinelTableSelectionModel() // row selection model
+  val cModel = new SentinelTableSelectionModel() // column selection model
+d464 4
+a467 10
+  rModel.addListSelectionListener( selectionListener )
+  cModel.addListSelectionListener( selectionListener )
+  setSelectionModel( rModel )
+  getColumnModel.setSelectionModel( cModel )
+  setSelectionMode( ListSelectionModel.SINGLE_SELECTION )
+  setRowSelectionAllowed( false )
+
+  // mouse click stuff
+  addMouseListener( makeMouseListener )
+  addMouseListener( new MoveRowMouseListener( this ) )
+d486 7
+a521 38
+   * Sets the selected cell to the given cell.
+   * @@param row The row of the cell
+   * @@param column The column of the cell
+   */
+  def setSelectedCell( row: Int, column: Int ) {
+    setRowSelectionInterval( row, row )
+    setColumnSelectionInterval( column, column )
+  }
+
+  /**
+   * Sets the selected cell to the one that is at the given point.
+   * If the point does not point to a cell, this does nothing.
+   * @@param point the point
+   */
+  def setSelectedCell( point: Point ) {
+    callIfInCell( point, setSelectedCell( _, _ ) )
+  }
+
+  /**
+   * Calls the given function if the given point correlates to a row
+   * and column.  If the point does not point to a valid cell, then
+   * the function isn't called.
+   * @@param point The point
+   * @@param function The function to call
+   * @@return Some( functionResult ) if the given point is a point, else
+   * None
+   */
+  def callIfInCell[ T ]( point: Point, function: ( Int, Int ) => T ) = {
+    val row = rowAtPoint( point )
+    val column = columnAtPoint( point )
+    if ( row != -1 && column != -1 ) {
+      Some( function( row, column ) )
+    } else {
+      None
+    }
+  }
+
+  /**
+d593 1
+a593 1
+  def makePopupMenu( row: Int, column: Int ): JPopupMenu = {
+d604 1
+a604 1
+    retval
+a607 22
+   * Like <code>makePopupMenu</code>, but it works with a point.
+   * @@param point The point that was clicked.
+   * @@return A context-sensitive JPopupMenu, or None if there isn't
+   * an appropriate menu.
+   */
+  def makePopupMenu( point: Point ): Option[ JPopupMenu ] = 
+    callIfInCell( point, makePopupMenu( _, _ ) )
+  
+  /**
+   * Makes a popup menu that is relevant to the given mouse event.
+   * @@param event The mouse event that is relevant to the click
+   * @@return A context-sensitive JPopupMenu for the click.  If there
+   * isn't an appropriate menu, then this returns None.
+   */
+  def makePopupMenu( event: MouseEvent ): Option[ JPopupMenu ] =
+    if ( SwingUtilities.isRightMouseButton( event ) ) {
+      makePopupMenu( event.getPoint )
+    } else {
+      None
+    }
+
+  /**
+a632 28
+   * Makes a mouse listener for this table.
+   * The mouse listener responds to right clicking by bringing up
+   * a context-sensitive popup menu.
+   * @@return A mouse listener for this table
+   */
+  protected def makeMouseListener() = {
+    val thisTable = this
+    new MouseListener() {
+      def mouseClicked( event: MouseEvent ) {
+	setSelectedCell( event.getPoint )
+	val popup = makePopupMenu( event )
+	callIfSelected( ( row, column ) => {
+	  if ( popup.isDefined ) {
+	    val rect = getCellRect( row, column, true )
+	    popup.get.show( thisTable, 
+			    rect.getX.asInstanceOf[ Int ], 
+			    ( rect.getY + rect.getHeight ).asInstanceOf[ Int ] )
+	  }
+	} )
+      }
+      def mouseEntered( e: MouseEvent ) {}
+      def mouseExited( e: MouseEvent ) {}
+      def mousePressed( e: MouseEvent ) {}
+      def mouseReleased( e: MouseEvent ) {}
+    }
+  }
+	  
+  /**
+a857 20
+   * If calls the given function with the currently selected
+   * row and column, but only if there is a currently selected
+   * row and column.  Otherwise it doesn't do anything of use.
+   * @@param function Function to call with the currently selected
+   * row and column
+   * @@return Some( T ) if we have a currently selected row and column,
+   * otherwise None
+   */
+  def callIfSelected[ T ]( function: ( Int, Int ) => T ): Option[ T ] = {
+    val row = getSelectedRow
+    val column = getSelectedColumn
+
+    if ( row != -1 && column != -1 ) {
+      Some( function( row, column ) )
+    } else {
+      None
+    }
+  }
+
+  /**
+@
+
+
+1.7
+log
+@Added code to separate sheet names from commands that
+hold sheet names.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.6 2011/05/29 22:21:44 kyledewey Exp kyledewey $
+d9 4
+d450 1
+a450 1
+class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellContents ] ) extends JTable( model ) with ActionListener {
+d479 1
+d498 7
+@
+
+
+1.6
+log
+@Fixed bug where rows were added on a double
+down press regardless of which row is selected.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.5 2011/05/29 22:15:25 kyledewey Exp kyledewey $
+d9 4
+d66 2
+a67 1
+  val CORRECTION_PREFIX = "Correct to "
+d79 14
+d98 1
+a98 1
+    CORRECTION_PREFIX + "\"" + text + "\""
+d106 27
+a132 1
+    text.startsWith( CORRECTION_PREFIX + "\"" ) && text.endsWith( "\"" )
+d140 2
+a141 7
+  def correctionOptionCorrection( text: String ) = 
+    if ( looksLikeCorrectionOption( text ) ) {
+      Some( text.substring( ( CORRECTION_PREFIX + "\"" ).length,
+			    text.length - 1 ) )
+    } else {
+      None
+    }
+@
+
+
+1.5
+log
+@Added context-sensitive popup menus.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.4 2011/05/28 02:41:38 kyledewey Exp $
+d9 3
+d630 5
+a634 2
+	if ( event.getKeyCode == KeyEvent.VK_KP_DOWN ||
+	     event.getKeyCode == KeyEvent.VK_DOWN ) {
+@
+
+
+1.4
+log
+@Added the makeTable() methods.
+Added the showAllCellColors() and
+showAllCellColorsWithParams() methods.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.3 2011/05/27 18:52:09 kyledewey Exp kyledewey $
+d9 5
+d32 1
+a49 2
+  val CLEAN_TEXT = "OK"
+  val UNKNOWN_ERROR_TEXT = "Unknown error in error correction language."
+d53 14
+d71 45
+d157 14
+d403 3
+a405 1
+class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellContents ] ) extends JTable( model ) {
+d430 4
+d451 217
+d785 3
+a787 1
+    callIfSelected( updateSelection( _, _ ) )
+d829 1
+a829 1
+    model.getInstantiatedDataAt( row, column ).instanceResult
+@
+
+
+1.3
+log
+@Updates to cell colors can now go beyond
+the table that triggered them.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.2 2011/05/27 16:22:14 kyledewey Exp kyledewey $
+d9 4
+d43 6
+a48 1
+
+d53 78
+d147 8
+d180 17
+a196 1
+    tables.foreach( _.resetCellColors() )
+d229 82
+a320 8
+object RandomColor {
+  import java.util.Random
+  val colors = Seq( Color.BLUE, Color.CYAN, Color.RED, Color.GREEN, Color.PINK, Color.ORANGE )
+  val random = new Random()
+  def randomColor() =
+    colors( random.nextInt( colors.size ) )
+}
+
+d338 4
+d381 1
+a381 1
+	updateCellColors()
+d392 1
+a392 1
+	updateCellColors()
+d457 26
+a482 4
+   * To be called when cell colors should have changed.
+   * Note that this requires a currently selected cell.
+   * If there isn't a currently selected cell, then this is
+   * a no-op.
+d484 2
+a485 2
+  def updateCellColors() {
+    callIfSelected( updateCellColors( _, _ ) )
+d493 3
+a495 3
+  def relatedCells( instance: Instance ) =
+    SentinelTable.associatedCellRanges( instance )
+                 .map( _.cellPointer )
+d498 23
+d534 1
+a534 1
+   * @@return Associated cell ranges
+d536 2
+a537 17
+  def allAssociatedCells( row: Int, column: Int ) = {
+    val instanceHere = instanceResult( row, column )
+    var retval = Set( CellPointer( name, row, column ) )
+
+    if ( instanceHere.isDefined &&
+	 instanceHere.get.isDefined &&
+	 instanceHere.get.get.isInstanceOf[ InstanceFailure[ _ ] ] ) {
+      model.updateCurrent( row, column )
+      val related =
+	relatedCells( instanceHere.get
+		                  .get
+		                  .asInstanceOf[ InstanceFailure[ _ ] ]
+		                  .failedInstance.asInstanceOf[ Instance ] ) 
+      retval = related ++ retval
+    }
+    retval
+  }
+d641 45
+@
+
+
+1.2
+log
+@Cell editing now triggers color change processing.
+Now uses anonymous classes instead of extending
+a number of classes.
+@
+text
+@d5 1
+a5 1
+ *     $Id: SentinelTable.scala,v 1.1 2011/05/27 01:37:30 kyledewey Exp kyledewey $
+d9 5
+d34 1
+d40 62
+d152 1
+d172 7
+d256 16
+d274 1
+a274 4
+    resetCellColors()
+    forceRender() // reset backgrounds
+    determineCellColors()
+    forceRender()
+d278 1
+a278 1
+   * Gets all cells which are related to the given instance for this sheet
+d280 1
+a280 1
+   * @@return A set of related cells, as row, column Pairs
+d284 1
+a284 4
+                 .filter( _.sheet == model.name )
+                 .map( range =>
+		   Pair( range.row.getOrElse( getSelectedRow ),
+			 range.column.getOrElse( getSelectedColumn ) ) )
+d300 1
+a300 1
+   * @@return A set of related cells as row, column pairs
+d304 1
+a304 1
+    var retval = Set( Pair( row, column ) )
+d309 7
+a315 1
+      retval = relatedCells( instanceHere.get.get.asInstanceOf[ InstanceFailure[ _ ] ].failedInstance.asInstanceOf[ Instance ] ) ++ retval
+d346 1
+a346 2
+   * related to this cell.  Note that this will clear the
+   * cellColors map beforehand.
+d349 2
+d352 3
+a354 10
+  def determineCellColors( row: Int, column: Int ) {
+    println( "DETERMINING COLORS FOR: " + Pair( row, column ) )
+    cellColors = Map()
+    val color = cellColor( row, column )
+    allAssociatedCells( row, column ).foreach( cellColors += Pair( _, color ) )
+    if ( row == 3 && column == 2 ) {
+      cellColors += Pair( Pair( 2, 2 ), Color.BLUE )
+    }
+    println( cellColors )
+  }
+d358 2
+a359 1
+   * This is needed to undo the last selection.
+d362 7
+a368 3
+    cellColors = 
+      cellColors.transform( ( coord, color ) =>
+	SentinelTable.BACKGROUND_COLOR )
+d372 7
+a378 3
+   * Determines the color of cells based on the currently selected
+   * cell.  If there isn't a currently selected cell, then this
+   * doesn't do anything.
+d380 1
+a380 1
+  def determineCellColors() {
+d385 3
+a387 1
+      determineCellColors( row, column )
+d399 22
+a420 1
+      model.fireTableCellUpdated( pair._1, pair._2 ) )
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d73 2
+a74 1
+class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellContents ] ) extends JTable( model ) with TableCellRenderer with ListSelectionListener {
+d76 12
+a87 5
+  val defaultRenderer = new DefaultTableCellRenderer()
+  val rModel = new SentinelTableSelectionModel()
+  val cModel = new SentinelTableSelectionModel()
+  rModel.addListSelectionListener( this )
+  cModel.addListSelectionListener( this )
+d92 17
+a108 3
+  setDefaultRenderer( classOf[ String ], this )
+  setDefaultRenderer( classOf[ Object ], this )
+  getDefaultEditor( classOf[ String ] ).addCellEditorListener(
+d111 2
+a112 1
+	//println( "CANCELED: " + getEditingRow + ", " + getEditingColumn )
+d115 2
+a116 1
+	//println( "STOPPED: " + getEditingRow + ", " + getEditingColumn )
+d118 12
+a129 1
+    } )
+d131 43
+a173 19
+  def getTableCellRendererComponent( table: JTable,
+				     value: Object,
+				     isSelected: Boolean,
+				     hasFocus: Boolean,
+				     row: Int,
+				     column: Int ) = {
+    val asPair = Pair( row, column )
+    val baseComponent =
+      defaultRenderer.getTableCellRendererComponent( table, 
+						     value,
+						     isSelected,
+ 						     hasFocus,
+						     row,
+						     column )
+    val color = 
+      if ( cellColors.contains( asPair ) ) {
+	cellColors( asPair )
+      } else {
+	SentinelTable.BACKGROUND_COLOR
+d175 1
+a175 1
+    baseComponent.setBackground( color )
+d177 9
+a185 1
+    baseComponent
+d270 4
+d280 5
+d294 7
+a300 1
+  def assertRender() {
+a303 8
+
+  override def valueChanged( event: ListSelectionEvent ) {
+    super.valueChanged( event )
+    resetCellColors()
+    assertRender()
+    determineCellColors()
+    assertRender()
+  }
+@

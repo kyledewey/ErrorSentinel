@@ -1,0 +1,3902 @@
+head	1.26;
+access;
+symbols;
+locks
+	kyledewey:1.26; strict;
+comment	@# @;
+
+
+1.26
+date	2011.06.21.17.02.07;	author kyledewey;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2011.06.20.22.37.52;	author kyledewey;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2011.06.20.22.19.56;	author kyledewey;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2011.05.31.18.47.41;	author kyledewey;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2011.05.25.20.21.03;	author kyledewey;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2011.04.10.04.06.46;	author kyledewey;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2011.04.08.02.31.41;	author kyledewey;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2011.04.08.00.18.52;	author kyledewey;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2011.04.02.03.15.51;	author kyledewey;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2011.04.01.03.24.44;	author kyledewey;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2011.03.13.19.50.30;	author kyledewey;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2011.03.13.04.33.37;	author kyledewey;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2011.02.27.22.33.07;	author kyledewey;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2011.02.27.20.42.54;	author kyledewey;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2011.02.27.07.48.53;	author kyledewey;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2011.02.27.04.29.17;	author kyledewey;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.02.26.04.14.03;	author kyledewey;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2011.02.25.20.56.03;	author kyledewey;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2011.02.11.01.24.18;	author kyledewey;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2011.01.30.05.24.32;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2011.01.29.03.15.29;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2011.01.29.02.47.20;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2011.01.28.18.06.20;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2011.01.28.04.27.27;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2011.01.28.02.06.38;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2011.01.27.15.52.20;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@A graphical board on top of the backend board.
+@
+
+
+1.26
+log
+@updateDebuggers() now catches all exceptions, not just
+InputExceptions.
+@
+text
+@/*
+ * VisualBoard.scala
+ * 
+ * Version:
+ *     $Id: VisualBoard.scala,v 1.25 2011/06/20 22:37:52 kyledewey Exp $
+ *
+ * Revisions:
+ *      $Log: VisualBoard.scala,v $
+ *      Revision 1.25  2011/06/20 22:37:52  kyledewey
+ *      Moved ComponentsTree components to ComponentsTree.scala.
+ *
+ *      Revision 1.24  2011/06/20 22:19:56  kyledewey
+ *      Moved everything for the description panel to
+ *      DescriptionPanel.scala.
+ *
+ *      Revision 1.23  2011/05/31 18:47:41  kyledewey
+ *      Moved showError to ErrorShower.
+ *      Now implements ErrorShower.
+ *
+ *      Revision 1.22  2011/05/25 20:21:03  kyledewey
+ *      Added code to differentiate line selection from
+ *      node selection.
+ *
+ *      Revision 1.21  2011/04/10 04:06:46  kyledewey
+ *      Now uses ComponentKey instead of the now more
+ *      generic TreeKey.
+ *      Moved ComponentsTreeModel to ComponentsTreeModel.scala.
+ *
+ *      Revision 1.20  2011/04/08 02:31:41  kyledewey
+ *      Added the ComponentsTreeModel class.
+ *
+ *      Revision 1.19  2011/04/08 00:18:52  kyledewey
+ *      Moved SentinelVPL to SentinelVPL.scala.
+ *      Refactored to use JFrame instead of JPanel.
+ *
+ *      Revision 1.18  2011/04/02 03:15:51  kyledewey
+ *      Now verifies that the area selected is completely within
+ *      the board.
+ *
+ *      Revision 1.17  2011/04/01 03:24:44  kyledewey
+ *      Added rudimentary support for function creation.
+ *
+ *      Revision 1.16  2011/03/13 19:50:30  kyledewey
+ *      Added support for area selections.
+ *
+ *      Revision 1.15  2011/03/13 04:33:37  kyledewey
+ *      Refactored VisualBoard to use the State pattern regarding
+ *      mouse input events.
+ *
+ *      Revision 1.14  2011/02/27 22:33:07  kyledewey
+ *      Added the resetChildDebuggers() method.  Needed to
+ *      blank out the debuggers when a valid value is replaced
+ *      by an invalid value.
+ *
+ *      Revision 1.13  2011/02/27 20:42:54  kyledewey
+ *      Fixed bug that prevented the same component from being
+ *      dragged over twice in a row.
+ *
+ *      Revision 1.12  2011/02/27 07:48:53  kyledewey
+ *      Refactored so all updateDebuggers() now handles
+ *      InputExceptions on its own.
+ *
+ *      Revision 1.11  2011/02/27 04:29:17  kyledewey
+ *      Refactored for use with debuggers.
+ *
+ *      Revision 1.10  2011/02/26 04:14:03  kyledewey
+ *      Now uses makeVisualNode() for creating all visual nodes.
+ *
+ *      Revision 1.9  2011/02/25 20:56:03  kyledewey
+ *      Refactored to use VisualNodes in tandem with Nodes.
+ *
+ *      Revision 1.8  2011/02/11 01:24:18  kyledewey
+ *      Added support fro removing nodes from the board.
+ *
+ *      Revision 1.7  2011/01/30 05:24:32  kyledewey
+ *      Added support for dragging and dropping nodes in.
+ *
+ *      Revision 1.6  2011/01/29 03:15:29  kyledewey
+ *      Can now disconnect connections by right clicking.
+ *
+ *      Revision 1.5  2011/01/29 02:47:20  kyledewey
+ *      When dragging boxes around, the box no longer
+ *      always jumps to the top left corner of the box.
+ *
+ *      Revision 1.4  2011/01/28 18:06:20  kyledewey
+ *      Now allows for multiple input connections to the same line.
+ *
+ *      Revision 1.3  2011/01/28 04:27:27  kyledewey
+ *      Nodes can now be connected to each other.
+ *
+ *      Revision 1.2  2011/01/28 02:06:38  kyledewey
+ *      Now supports the ability to move nodes by clicking and dragging.
+ *
+ *      Revision 1.1  2011/01/27 15:52:20  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.vpl
+
+import sentinel.model._
+import javax.swing._
+import javax.swing.event._
+import java.awt._
+import java.awt.event._
+
+/**
+ * Holds constants for VisualBoard.
+ * @@author Kyle Dewey
+ */
+object VisualBoard {
+  // background color 
+  val BACKGROUND_COLOR = Color.WHITE
+
+  // border color
+  val BORDER_COLOR = Color.BLACK
+
+  // stroke used for moving nodes
+  val MOVING_NODE_COLOR = Color.BLACK
+  val MOVING_NODE_STROKE = new BasicStroke( 1.0f, 
+					    BasicStroke.CAP_BUTT,
+					    BasicStroke.JOIN_MITER,
+					    5.0f,
+					    Array( 5.0f ),
+					    0.0f )
+
+  // the user attempted to connect two inputs
+  val INPUT_TO_INPUT_CONNECTION_ERROR = "Cannot connect inputs to each other"
+
+  // the user attempted to connect two outputs
+  val OUTPUT_TO_OUTPUT_CONNECTION_ERROR = "Cannot connect outputs to each other"
+
+  val DEFAULT_NODE_LABEL = "NO LABEL"
+
+  /**
+   * Converts the given mouse event to a pair containing
+   * the x and y coordinates of the point within
+   * @@param event The mouse event
+   * @@return The x and y coordinates in a pair
+   */
+  def toPair( event: MouseEvent ) =
+    Pair( event.getX,
+	  event.getY )
+
+  /**
+   * For each node in the given model, it will make a visual node representing
+   * the node.  Returns nodes as a mapping of the original nodes to their new
+   * visual nodes.
+   * @@param board The board containing nodes
+   * @@param creator Given a node from the board, it will create a visual node
+   * based on it
+   * @@return a mapping of the original nodes to visual nodes
+   */
+  def makeVisualNodes[ T <: AnyRef, U ]( board: NodeBoard[ T, U ],
+					 creator: ( Node[ T, U ] ) => VisualNode[ T, U ] ): 
+  Map[ Node[ T, U ], VisualNode[ T, U ] ] =
+    Map() ++ board.getNodes.map( ( node: Node[ T, U ] ) =>
+      Pair( node,
+	    creator( node ) ) )
+  
+  /**
+   * Creates a visual node from a regular node, using <code>DEFAULT_NODE_LABEL</code>.
+   * @@param node The regular node
+   * @@param board The board the node is on
+   * @@return A visual node based on this node
+   */
+  def makeVisualNode[ T <: AnyRef, U ]( node: Node[ T, U ],
+				        board: NodeBoard[ T, U ] ) = {
+    VisualNode( node, 
+	        board,
+	        DEFAULT_NODE_LABEL )
+  }
+	       
+  /**
+   * Like <code>makeVisualNodes</code>, but for all nodes, it will try a label
+   * of <code>DEFAULT_NODE_LABEL</code>.
+   * @@param board Board containing nodes
+   * @@return A mapping of the original nodes to visual nodes
+   */
+  def makeVisualNodes[ T <: AnyRef, U ]( board: NodeBoard[ T, U ] ): 
+  Map[ Node[ T, U ], VisualNode[ T, U ] ] =
+    makeVisualNodes( board,
+		     makeVisualNode( _, board ) )
+  
+  /**
+   * Gets the node that would need to be updated
+   * if the given line on the given node were to be disconnected.
+   * @@param node The node
+   * @@param line The line on the node that is to be disconnected
+   * @@return The node that would have to be updated if the given line
+   * were disconnected.  If there are none, it returns None.
+   */
+  def nodeToUpdateIfDisconnect[ T <: AnyRef, U ]( node: Node[ T, U ],
+						  line: String ) = {
+    var retval: Option[ Node[ T, U ] ] = None
+
+    if ( line.eq( Node.OUTPUT_LINE ) ) {
+      if ( node.output.isDefined ) {
+	retval = Some( node.output.get._2 )
+      }
+    } else {
+      retval = Some( node )
+    }
+
+    retval
+  }
+}
+
+/**
+ * Represents an internal state of the visual board.
+ * Depending on what the user has done in the past,
+ * different actions are applicable.
+ * Putting all of this in one class gets cumbersome.
+ * @@param board The visual board that we are associated with.
+ * @@author Kyle Dewey
+ */
+abstract class VisualBoardState[ T <: AnyRef, U ]
+( val board: VisualBoard[ T, U ] ) extends MouseInputListener {
+  /**
+   * Paints components that are specific to this state.
+   * @@param graphics The graphics object to paint with
+   */
+  def paintComponent( graphics: Graphics ): Unit
+}
+
+/**
+ * Default state for the visual board.
+ * @@param board The visual board that we are assciated with
+ * @@author Kyle Dewey
+ */
+class DefaultVisualBoardState[ T <: AnyRef, U ]
+( board: VisualBoard[ T, U ] ) extends VisualBoardState[ T, U ]( board ) {
+  /**
+   * Performs a specific action to clicks.
+   * This will first look to see if we tried to debug something.
+   * If not, it will show the description for a node that was clicked (if
+   * applicable), then attempt to remove a node (if applicable)
+   * @@param event Event correlating to the click
+   */
+  override def mouseClicked( event: MouseEvent ) {
+    if ( SwingUtilities.isLeftMouseButton( event ) ) {
+      if ( event.getClickCount == 1 ) {
+	singleLeftClick( event )
+      } else if ( event.getClickCount == 2 ) {
+	doubleLeftClick( event ) 
+      }
+    } else if ( SwingUtilities.isRightMouseButton( event ) ) {
+      if ( event.getClickCount == 1 ) {
+	singleRightClick( event )
+      }
+    }
+  }
+
+  /**
+   * Performs a specific action to entering.
+   * Informs the main gui that we have entered the board.
+   * @@param event Event correlating to the enter action
+   */
+  override def mouseEntered( event: MouseEvent ) {
+    board.gui.mouseEnteredBoard()
+  }
+
+  /**
+   * Performs a specific action to exiting.
+   * Informs the main gui that we exited the board
+   * @@param event Event correlating to the exit action
+   */
+  override def mouseExited( event: MouseEvent ) {
+    board.gui.mouseExitedBoard()
+  }
+
+  /**
+   * Whenever a single left click is performed, this will be called.
+   * @@param event The event that correlates to a single left click
+   */
+  def singleLeftClick( event: MouseEvent ) {
+    board.attemptShowNodeSelected( event )
+  }
+
+  /**
+   * Whenever a double left click is performed, this will be called.
+   * @@param event The event that correlates to a double left click
+   */
+  def doubleLeftClick( event: MouseEvent ) {
+    board.attemptDebug( event ) 
+  }
+
+  /**
+   * Whener a single right click is performed, this will be called.
+   * @@param event The event that correlates to the single right click
+   */
+  def singleRightClick( event: MouseEvent ) {
+    if ( !board.attemptDisconnect( event ) ) {
+      board.attemptRemove( event )
+    }
+  }
+
+  /**
+   * Performs a specific action upon pressing the mouse.
+   * By default, this will conditionally move us into the input selected
+   * state or the node selected state.
+   * @@param event The event correlating to the press
+   */
+  override def mousePressed( event: MouseEvent ) {
+    if ( SwingUtilities.isLeftMouseButton( event ) ) {
+      val selectedNode = board.getSelectedNode( event )
+      
+      if ( selectedNode.isDefined ) {
+	val selectedLine = board.visualNode( selectedNode.get )
+	                        .selectedLine( event.getX,
+					       event.getY )
+	if ( selectedLine.isDefined ) {
+	  linePressed( selectedNode.get,
+		       selectedLine.get,
+		       event )
+	} else {
+	  nodePressed( selectedNode.get,
+		       event )
+	}
+      } else {
+	emptyAreaPressed( event )
+      }
+    }
+  }
+
+  /**
+   * Called when the user presses on an empty area.
+   * @@pre The press occurred with the left mouse button
+   * @@param event The event that correlates to the press
+   */
+  def emptyAreaPressed( event: MouseEvent ) {
+    board.changeState( new AreaSelectedState( board,
+					      event.getX,
+					      event.getY ) )
+    board.repaint()
+  }
+
+  /**
+   * Called when the user presses on a node but not a line on the node.
+   * @@pre The press occurred with the left mouse button
+   * @@param node The node that has been pressed
+   * @@param event The event that correlates to the press
+   */
+  def nodePressed( node: Node[ T, U ], event: MouseEvent ) {
+    val visualNode = board.visualNode( node )
+    
+    if ( visualNode.selectedLine( event.getX,
+				  event.getY ).isEmpty ) {
+      val nodePos = visualNode.topLeftCorner
+      board.changeState( new NodeSelectedState( board,
+					        node,
+					        Pair( event.getX - nodePos._1,
+						      event.getY - nodePos._2 ) ) )
+      board.repaint()
+    }
+  }
+
+  /**
+   * Called when the user presses on a node and an input on that node
+   * @@pre The press occurred with the left mouse button
+   * @@param node The node that has been pressed
+   * @@param line The line on the node that has been pressed
+   * @@param event The event that correlates to the mouse being pressed
+   */
+  def linePressed( node: Node[ T, U ],
+		   line: String,
+		   event: MouseEvent ) {
+    board.changeState( new InputSelectedState( board,
+					       node,
+					       line,
+					       event.getX,
+					       event.getY ) )
+    board.repaint()
+  }
+
+  /**
+   * Performs a specific action for the mouse being released.
+   * By default, this does nothing.
+   * @@param event Event correlating to the mouse being released
+   */
+  override def mouseReleased( event: MouseEvent ) {}
+
+  /**
+   * Performs a specific action for the mouse being dragged.
+   * By default, this does nothing.
+   * @@param event The event that correlates to the mouse being dragged
+   */
+  override def mouseDragged( event: MouseEvent ) {}
+
+  /**
+   * Performs a specific action for the mouse being moved.
+   * By default, this does nothing
+   * @@param event The event that correlates to the mouse being moved
+   */
+  override def mouseMoved( event: MouseEvent ) {}
+
+  /**
+   * Performs drawing that is specific to this state
+   * By default, this clears the board, paints all nodes, and
+   * paints all connections
+   * @@param graphics The graphics object to draw with
+   */
+  override def paintComponent( graphics: Graphics ) {
+    board.clear( graphics )
+    board.paintNodes( graphics )
+    board.paintConnections( graphics )
+  }
+}
+
+/**
+ * Holds constants for NodeSelectedState
+ * @@author Kyle Dewey
+ */
+object NodeSelectedState {
+  val MOVING_NODE_COLOR = Color.BLACK
+  val MOVING_NODE_STROKE = new BasicStroke( 1.0f, 
+					    BasicStroke.CAP_BUTT,
+					    BasicStroke.JOIN_MITER,
+					    5.0f,
+					    Array( 5.0f ),
+					    0.0f )
+  /**
+   * Paints a box with a given color and stroke.
+   * @@param x The top left x coordinate
+   * @@param y The top left y coordinate
+   * @@param width The width of the box
+   * @@param height The height of the box
+   * @@param color The color of the box
+   * @@param stroke The stroke to use for the box
+   * @@param graphics The graphics object to draw with
+   */
+  def paintBox( x: Int,
+                y: Int,
+                width: Int,
+                height: Int,
+                color: Color,
+                stroke: Stroke,
+                graphics: Graphics ) {
+    val as2D = graphics.asInstanceOf[ Graphics2D ]
+    val oldStroke = as2D.getStroke
+    val oldColor = as2D.getColor
+
+    as2D.setColor( color )
+    as2D.setStroke( stroke )
+    as2D.drawRect( x, y,
+                   width, height )
+    as2D.setStroke( oldStroke )
+    as2D.setColor( oldColor )
+  }
+
+  /**
+   * Paints a box using <code>MOVING_NODE_COLOR</code> and
+   * <code>MOVING_NODE_STROKE</code>
+   * @@param x The top left x coordinate
+   * @@param y The top left y coordinate
+   * @@param width The width of the box
+   * @@param height The height of the box
+   * @@param graphics The graphics object to draw with
+   */
+  def paintBox( x: Int,
+	        y: Int,
+	        width: Int,
+	        height: Int,
+	        graphics: Graphics ) {
+    paintBox( x, y,
+	      width,
+	      height,
+	      MOVING_NODE_COLOR,
+	      MOVING_NODE_STROKE,
+	      graphics )
+  }
+}
+
+/**
+ * Represents a state where the user has selected a node, and he is dragging
+ * it to move the node.
+ * @@param board The board that we are associated with
+ * @@param selectedNode The node that has been selected
+ * @@param nodePositionX The origin of the node
+ * @@param nodePositionY The origin of the node
+ * @@param originDifference The difference between the origin of the selected node
+ * and where the user clicked.
+ * @@author Kyle Dewey
+ */
+class NodeSelectedState[ T <: AnyRef, U ]
+( board: VisualBoard[ T, U ], 
+  private val node: Node[ T, U ], 
+  private var nodePositionX: Int,
+  private var nodePositionY: Int,
+  private val originDifference: Pair[ Int, Int ] ) 
+extends DefaultVisualBoardState[ T, U ]( board ) {
+  /**
+   * Determines the position of the node using it's current position on
+   * the board.
+   * @@pre The given node is on the given board
+   * @@param board The board that we are associated with
+   * @@param node The node that has been selected
+   * @@param originDifference The difference between the origin of
+   * the selected node and where the user clicked
+   */
+  def this( board: VisualBoard[ T, U ],
+	    node: Node[ T, U ], 
+	    originDifference: Pair[ Int, Int ] ) = 
+    this( board,
+	  node,
+	  board.model.getTopLeftCorner( node ).get._1,
+	  board.model.getTopLeftCorner( node ).get._2,
+	  originDifference )
+
+  /**
+   * Indicates that the mouse has been dragged.
+   * Updates the position of the node outline
+   * @@param event Event that correlates to the drag
+   */
+  override def mouseDragged( event: MouseEvent ) {
+    nodePositionX = event.getX - originDifference._1
+    nodePositionY = event.getY - originDifference._2
+    board.repaint()
+  }
+
+  /**
+   * Indicates that the mouse has been released.
+   * Attempts to move the selected node to the given position.
+   * @@param event Event that correlates to the mouse release
+   */
+  override def mouseReleased( event: MouseEvent ) {
+    try {
+      board.model.moveNode( node,
+			    event.getX - originDifference._1,
+			    event.getY - originDifference._2 )
+    } catch {
+      case e: NodeUnplacableException => board.showError( e )
+    }
+    board.changeState( new DefaultVisualBoardState( board ) )
+    board.repaint()
+  }
+
+  /**
+   * Draws the outline of the moving node
+   * @@param graphics The graphics object to draw with
+   */
+  override def paintComponent( graphics: Graphics ) {
+    super.paintComponent( graphics )
+    NodeSelectedState.paintBox( nodePositionX,
+			        nodePositionY,
+			        node.width,
+			        node.height,
+			        graphics )
+  }
+}
+    
+/**
+ * Represents a state where a user has selected an input, and he is dragging
+ * it to make a connection.
+ * @@param board The board that we are associated with
+ * @@param node The node that has been selected
+ * @@param line The line (input/output) that has been selected
+ * @@param linePositionX The position where the user has clicked
+ * @@param linePositionY The position where the user has clicked
+ * @@author Kyle Dewey
+ */
+class InputSelectedState[ T <: AnyRef, U ]
+( board: VisualBoard[ T, U ],
+  private val node: Node[ T, U ],
+  private val line: String,
+  private var linePositionX: Int,
+  private var linePositionY: Int )
+extends DefaultVisualBoardState[ T, U ]( board ) {
+  // begin instance variables
+  private val startingLinePositionX = linePositionX
+  private val startingLinePositionY = linePositionY
+  private val startingLinePosition = Pair( startingLinePositionX,
+					   startingLinePositionY )
+  private var dontDraw = false
+  // end instance variables
+
+  /**
+   * Indicates that the mouse has been dragged.
+   * This means that a connection is starting to be made between nodes
+   * @@param event The mouse event that correlates to the event
+   */
+  override def mouseDragged( event: MouseEvent ) {
+    super.mouseDragged( event )
+    linePositionX = event.getX
+    linePositionY = event.getY
+    board.repaint()
+  }
+
+  /**
+   * To be called when the user releases the mouse while the user
+   * is attempting to make a connection.  If we were released over
+   * a connection, then this will try to make the connection.  If not,
+   * then this won't do anything.
+   * @@param event The mouse event correlating to the release
+   */
+  def connectIfPossible( event: MouseEvent ) {
+    val nodeHere = board.getSelectedNode( event )
+
+    if ( nodeHere.isDefined ) {
+      val lineHere = board.visualNode( nodeHere.get ).selectedLine( event.getX,
+								    event.getY )
+      if ( lineHere.isDefined ) {
+	board.connect( node,
+		       line,
+		       nodeHere.get,
+		       lineHere.get )
+      }
+    }
+  }
+
+  /**
+   * Indicates that the mouse has been released
+   * This means that we should try to make a connection
+   * @@param event The event that correlates to the mouse being released
+   */
+  override def mouseReleased( event: MouseEvent ) {
+    super.mouseReleased( event )
+    connectIfPossible( event )
+    dontDraw = true
+    board.repaint()
+  }
+
+  /**
+   * Shows a connection being made
+   * @@param graphics The graphics object to draw with
+   */
+  override def paintComponent( graphics: Graphics ) {
+    super.paintComponent( graphics )
+    if ( !dontDraw ) {
+      VisualNode.drawLinePoints( Pair( linePositionX, 
+				       linePositionY ),
+				 Pair( startingLinePositionX,
+				       startingLinePositionY ),
+				 graphics )
+    }
+  }
+}
+
+/**
+ * Holds constants and static routines for AreaSelectedState.
+ * @@author Kyle Dewey
+ */
+object AreaSelectedState {
+  /**
+   * Converts all elements of a set to the given type
+   * @@param set The set to convert
+   * @@return The converted set
+   */
+  def convertSet[ T ]( set: Set[ _ ] ) =
+    Set[ T ]() ++ set.map( _.asInstanceOf[ T ] )
+
+  /**
+   * Converts all the given elements of a set to SentinelNodes.
+   * @@param set The set to convert
+   * @@return The converted set
+   */
+  def convertSetToSentinel( set: Set[ _ ] ) =
+    convertSet[ SentinelNode ]( set )
+
+  /**
+   * Gets all nodes in the board in the given rectangle.
+   * @@param board The board that contains nodes
+   * @@param rect The rectangle holding a portion of the board.
+   * @@return A set of Nodes contained within the area
+   */
+  def getNodes[ T <: AnyRef, U ]( board: VisualBoard[ T, U ],
+				  rect: Rectangle ) = {
+    board.model.getNodes( rect.startX,
+			  rect.startY,
+			  rect.endX,
+			  rect.endY )
+  }
+
+  /**
+   * Determines if the given x value is in the board.
+   * If it isn't, it will get the closest X that is.
+   * @@param x The x value
+   * @@param board The board
+   * @@return An x value that is guarenteed to be in the board.
+   */
+  def xInBoard[ T <: AnyRef, U ]( x: Int, board: VisualBoard[ T, U ] ) = 
+    if ( x < 0 ) {
+      0
+    } else if ( x >= board.model.width ) {
+      board.model.width - 1
+    } else {
+      x
+    }
+  
+  /**
+   * Determines if the given y value is in the board.
+   * If it isn't, it will get the closest Y that is.
+   * @@param y The y value
+   * @@param board The board
+   * @@return A y value that is guarenteed to be in the board
+   */
+  def yInBoard[ T <: AnyRef, U ]( y: Int, board: VisualBoard[ T, U ] ) =
+    if ( y < 0 ) {
+      0
+    } else if ( y >= board.model.height ) {
+      board.model.height - 1
+    } else {
+      y
+    }
+
+  /**
+   * Makes sure that the given rectangle fits with the given board.
+   * If it doesn't, it will make a new rectangle that's as close
+   * to the old one as possible.
+   * @@param rect The rectangle to check
+   * @@param board The board that the rectangle's supposed to go into
+   * @@return A rectangle that is guarenteed to be in the board.
+   * Note that if <code>rect</code> already fits, then it will be
+   * returned as-is.
+   */
+  def fitRect[ T <: AnyRef, U ]( rect: Rectangle, board: VisualBoard[ T, U ] ) = {
+    val newRect = new Rectangle( xInBoard( rect.startX, board ),
+				 yInBoard( rect.startY, board ),
+				 xInBoard( rect.endX, board ),
+				 yInBoard( rect.endY, board ) )
+    if ( newRect == rect ) {
+      rect
+    } else {
+      newRect
+    }
+  }
+
+  /**
+   * Like <code>getNodes</code>, but it returns sentinel nodes.
+   * @@param board The board that contains nodes
+   * @@param rect Rectangle holding a portion of the board
+   * @@return A set of SentinelNodes contained in the area
+   */
+  def getSentinelNodes[ T <: AnyRef, U ]( board: VisualBoard[ T, U ],
+					  rect: Rectangle ) = {
+    convertSetToSentinel( getNodes( board, 
+				    fitRect( rect, board ) ) )
+  }
+}
+
+/**
+ * Represents a state where the user is attempting to select an entire region.
+ * This is for function creation.
+ * @@param board The board that we are associated with
+ * @@param startPointX Where we started selecting
+ * @@param startPointY Where we started selecting
+ * @@author Kyle Dewey
+ */
+class AreaSelectedState[ T <: AnyRef, U ]
+( board: VisualBoard[ T, U ],
+  startPointX: Int,
+  startPointY: Int )
+extends DefaultVisualBoardState[ T, U ]( board ) {
+  // begin instance variables
+  private val rect = new SelectionRectangle( startPointX, 
+					     startPointY )
+  // end instance variables
+  
+  /**
+   * Indicates that the mouse has been dragged.
+   * This updates where the end of the box is
+   * @@param event The event that correlates to the drag
+   */
+  override def mouseDragged( event: MouseEvent ) {
+    super.mouseDragged( event )
+    rect.adjustRectangle( event.getX,
+			  event.getY )
+    board.repaint()
+  }
+
+  /**
+   * Given a set of sentinel nodes, returns a sorted seq.
+   * The sort is based on <code>sortNodes</code> in VisualBoard.
+   * @@param nodes The set of nodes
+   * @@return The sorted sequence of nodes
+   */
+  def sortNodes( nodes: Set[ SentinelNode ] ) =
+    board.sortNodes( nodes.toSeq
+		          .map( _.asInstanceOf[ Node[ T, U ] ] ) )
+         .map( _.asInstanceOf[ SentinelNode ] )
+  
+  /**
+   * Creates a PreFunction from the given nodes.
+   * @@param nodes The nodes to make the function from
+   * @@return A GUI function based on the given nodes
+   * @@param BadOutputException If there were not exactly one possible output
+   * @@param InputNotConnectedException If there is an unreachable node from
+   */
+  def makePreFunction( nodes: Set[ SentinelNode ] ) =
+    new PreFunction( nodes,
+		     sortNodes( nodes ) )
+  
+  /**
+   * Makes a function panel for the given nodes.
+   * @@param nodes The nodes to make the panel for
+   * @@param BadOutputException If there were not exactly one possible output
+   * @@param InputNotConnectedException If there is an unreachable node from
+   * the output.
+   */
+  def functionPanel( nodes: Set[ SentinelNode ] ) {
+    val frame = new JFrame( "Create Function" )
+    frame.add( new GUIFunction( makePreFunction( nodes ),
+			        board.gui.languageManager ) )
+    frame.setDefaultCloseOperation( WindowConstants.DISPOSE_ON_CLOSE )
+    frame.pack()
+    frame.setVisible( true )
+  }
+
+  /**
+   * Indicates that the mouse has been released.
+   * This means that we should try to make a function from the
+   * nodes that were within the box.
+   * @@param event The event that correlates to the mouse being released
+   */
+  override def mouseReleased( event: MouseEvent ) {
+    super.mouseReleased( event )
+    try {
+      functionPanel( AreaSelectedState.getSentinelNodes( board, rect ) )
+    } catch {
+      case BadOutputException( message, numOutputs ) => {
+	if ( numOutputs != 0 ) {
+	  board.showError( message )
+	}
+      }
+      case e: InputNotConnectedException => board.showError( e )
+    }
+    board.changeState( new DefaultVisualBoardState( board ) )
+    board.repaint()
+  }
+
+  /**
+   * Draws the outline of the area being selected on the screen
+   * @@param graphics The graphics object to draw with
+   */
+  override def paintComponent( graphics: Graphics ) {
+    super.paintComponent( graphics )
+    NodeSelectedState.paintBox( rect.startX,
+			        rect.startY,
+			        rect.endX - rect.startX,
+			        rect.endY - rect.startY,
+			        graphics )
+  }
+}
+
+import sentinel.utils.interactive.ErrorShower
+
+/**
+ * Represents the canvas on which the user moves and connects nodes.
+ * Note that the entire GUI is contained in three portions: the board (this),
+ * a description panel for selected components, and a panel for putting
+ * components on the board.
+ * @@param model The underlying board
+ * @@param gui The main gui that holds everything
+ * @@author Kyle Dewey
+ */
+class VisualBoard[ T <: AnyRef, U ]( val model: NodeBoard[ T, U ],
+				     val gui: VisualBoardGUIView[ T, U ] ) 
+extends JComponent with ErrorShower with MouseInputListener {
+  // maps regular nodes to their visual version
+  var visualNode: Map[ Node[ T, U ], VisualNode[ T, U ] ] = 
+    VisualBoard.makeVisualNodes( model )
+
+  // current state that we are in
+  private var state: VisualBoardState[ T, U ] = 
+    new DefaultVisualBoardState( this )
+
+  setBackground( VisualBoard.BACKGROUND_COLOR )
+  addMouseListener( this )
+  addMouseMotionListener( this )
+  repaint()
+
+  /**
+   * Boxes the given seq of nodes to their visual equivalents.
+   * @@param nodes The nodes to box
+   * @@return The boxed nodes
+   */
+  def toVisualNodes( nodes: Seq[ Node[ T, U ] ] ) =
+    nodes.map( visualNode( _ ) )
+
+  /**
+   * Boxes the given seq of visual nodes to their normal
+   * equivalents.
+   * @@param nodes The nodes to convert
+   * @@return The boxed nodes
+   */
+  def toRegularNodes( nodes: Seq[ VisualNode[ T, U ] ] ) =
+    nodes.map( _.node )
+
+  /**
+   * Sorts the given set of nodes.
+   * The actual sort uses VisualNode's <code>sortNodes</code> routine.
+   * @@param nodes The nodes to sort
+   * @@return The sorted nodes
+   */
+  def sortNodes( nodes: Seq[ Node[ T, U ] ] ) =
+    toRegularNodes( VisualNode.sortNodes( toVisualNodes( nodes ) ) )
+
+  /**
+   * Changes the state of this board to the given state.
+   * @@param state The new state to use
+   */
+  def changeState( state: VisualBoardState[ T, U ] ) {
+    this.state = state
+  }
+
+  /**
+   * Gets the preferred size of the component.
+   * This is the same as the width and height of the model
+   * @@return The width and height of the model
+   */
+  override def getPreferredSize() =
+    new Dimension( model.width, model.height )
+
+  /**
+   * Gets the minimum size of the component
+   * This is the same as the preferred size
+   * @@return The minimum size of the component (the preferred size)
+   */
+  override def getMinimumSize() =
+    getPreferredSize
+
+  /**
+   * Paints all the input connections for the given node
+   * @@param node The node to paint the inputs of
+   * @@param graphics The graphics object to paint with
+   */
+  def paintInputConnections( node: Node[ T, U ],
+			     graphics: Graphics ) {
+    lazy val inputBoxPositions = visualNode( node ).inputBoxPositions.toArray
+    var currentInput = 0
+
+    node.inputNames.foreach( ( name: String ) => {
+      node.input( currentInput ).foreach( ( connectedTo: Node[ T, U ] ) => {
+	VisualNode.drawLineBoxes( inputBoxPositions( currentInput ),
+				  visualNode( connectedTo ).outputBoxPosition,
+				  graphics )
+      })
+      currentInput += 1
+    })
+  }
+
+  /**
+   * Paints all connections between all nodes
+   * @@param graphics The graphics object to paint with
+   */
+  def paintConnections( graphics: Graphics ) {
+    model.getNodes.foreach( paintInputConnections( _, graphics ) )
+  }
+      
+
+  /**
+   * Draws the border
+   * @@param graphics The graphics object to draw with
+   */
+  def drawBorder( graphics: Graphics ) {
+    graphics.setColor( VisualBoard.BORDER_COLOR )
+    graphics.drawRect( 0, 0, model.width - 1, model.height - 1 )
+  }
+
+  /**
+   * Clears out the screen
+   * @@param graphics The graphics object to draw with
+   */
+  def clear( graphics: Graphics ) {
+    graphics.setColor( VisualBoard.BACKGROUND_COLOR )
+    graphics.fillRect( 0, 0, model.width, model.height )
+    drawBorder( graphics )
+  }
+
+  /**
+   * Paints all of the nodes on the board
+   * @@param graphics The graphics object to paint with
+   */
+  def paintNodes( graphics: Graphics ) {
+    visualNode.values.foreach( _.paintNode( graphics ) )
+  }
+
+  /**
+   * Returns that this is opaque
+   * @@return true
+   */
+  override def isOpaque() = true
+
+  /**
+   * Paints the board.
+   * @@param graphics The graphics object to paint with
+   */
+  override def paintComponent( graphics: Graphics ) {
+    super.paintComponent( graphics )
+    state.paintComponent( graphics )
+  }
+
+  /**
+   * Given an x and y coordinate, returns the node that was selected, or None
+   * if no nodes were selected
+   * @@param x The x coordinate
+   * @@param y The y coordinate
+   * @@return the node that was selected, or None if none were selected
+   */
+  def getSelectedNode( x: Int, y: Int ): Option[ Node[ T, U ] ] =
+    model.getNode( x, y )
+
+  /**
+   * Given a mouse event, gets the node that was at the x and y coordinates
+   * of the node
+   * @@param event The mouse event
+   * @@return The node that was selected, or None if none were selected
+   */
+  def getSelectedNode( event: MouseEvent ): Option[ Node[ T, U ] ] =
+    getSelectedNode( event.getX, event.getY )
+
+  /**
+   * Attempts to show that a node has been selected.
+   * Does not assume that this is the case
+   * @@pre The user has performed a single left click
+   * @@param event The mouse event that correlates to a click
+   */
+  def attemptShowNodeSelected( event: MouseEvent ) {
+    val nodeHere = getSelectedNode( event )
+    
+    if ( nodeHere.isDefined ) {
+      gui.nodeSelected( nodeHere.get )
+    }
+  }
+
+  /**
+   * Removes the given node from the board
+   * @@param node The node to remove
+   * @@throws NoSuchNodeException If the given node isn't on the board
+   */
+  def removeNode( node: Node[ T, U ] ) {
+    val child = node.output
+    model.removeNode( node )
+    visualNode -= node
+
+    if ( child.isDefined ) {
+      updateDebuggers( child.get._2 )
+    }
+    repaint()
+  }
+
+  /**
+   * Attempts to remove a node.  When one right clicks on a node, it is removed.
+   * Does not assume that this has happened.  Note that this will remove a node
+   * if the input/output line were selected.
+   * @@pre The user has right clicked
+   * @@param event The mouse event that correlates to a click
+   */
+  def attemptRemove( event: MouseEvent ) {
+    val nodeHere = getSelectedNode( event )
+    
+    if ( nodeHere.isDefined ) {
+      removeNode( nodeHere.get )
+    }
+  }
+
+  /**
+   * Disconnects the given input/output line on the given node
+   * @@param node The node to disconnect
+   * @@param line The line to disconnect
+   */
+  def disconnect( node: Node[ T, U ], line: String ) {
+    val toUpdate = VisualBoard.nodeToUpdateIfDisconnect( node, line )
+    node.disconnect( line )
+    if ( toUpdate.isDefined ) {
+      updateDebuggers( toUpdate.get )
+    }
+  }
+    
+  /**
+   * Attempts to disconnect connections.  When one right clicks on
+   * an input line or an output line, all connections on the given
+   * line are disconnected.  Does not assume that this is the case
+   * @@pre The user has performed a single right click
+   * @@param event The mouse event that correlates to a click
+   * @@return true if the user clicked on an input/output for disconnect, else
+   * false.  Note that this will return true if an unconnected line was selected
+   * for disconnection
+   */
+  def attemptDisconnect( event: MouseEvent )  = {
+    var retval = false
+    val nodeHere = getSelectedNode( event )
+    
+    if ( nodeHere.isDefined ) {
+      val lineHere = visualNode( nodeHere.get ).selectedLine( event.getX,
+							      event.getY )
+      if ( lineHere.isDefined ) {
+	retval = true
+	disconnect( nodeHere.get,
+		    lineHere.get )
+	repaint()
+      }
+    }
+
+    retval
+  }
+
+  /**
+   * If the user double clicked on a debugging node, then
+   * we want to change the value of that node.
+   * @@pre The user has performed a double left click
+   * @@param event The mouse event that describes what was clicked
+   * @@return true if the user double clicked on a debugging node,
+   * else false
+   */
+  def attemptDebug( event: MouseEvent ) = {
+    var retval = false
+
+    val nodeHere = getSelectedNode( event )
+      
+    if ( nodeHere.isDefined && 
+	 visualNode( nodeHere.get ).isInstanceOf[ DebuggingNode ] ) {
+      val asDebug = visualNode( nodeHere.get ).asInstanceOf[ DebuggingNode ]
+      val newLabel = JOptionPane.showInputDialog( this,
+						  "Input debugging value.",
+						  asDebug.label )
+      retval = true
+      if ( newLabel != null && 
+	   newLabel != asDebug.label ) {
+	asDebug.label = newLabel
+	updateDebuggers( nodeHere.get )
+	repaint()
+      }
+    }
+
+    retval
+  }
+      
+  /**
+   * When the user clicks on the board, we want to display information about the
+   * given item that has been clicked.
+   * @@param event The mouse event that describes where we clicked
+   */
+  def mouseClicked( event: MouseEvent ) {
+    state.mouseClicked( event )
+  }
+
+  /**
+   * Occurs when the mouse enters the board.
+   * @@param event The event correlating to the mouse entering the board
+   */
+  def mouseEntered( event: MouseEvent ) {
+    state.mouseEntered( event )
+  }
+
+  /**
+   * Occurs when the mouse exits the board.
+   * @@param event The event correlating to the mouse exiting the board
+   */
+  def mouseExited( event: MouseEvent ) {
+    state.mouseExited( event )
+  }
+
+  /**
+   * Tells us that we should show the siloette of a node moving.
+   * Doesn't assume the node is on the board
+   * @@param node The node to show a siloette of
+   * @@param x The x position of the node
+   * @@param y The y position of the node
+   */
+  def showNodeOutline( node: Node[ T, U ], x: Int, y: Int ) {
+    changeState( new NodeSelectedState( this,
+				        node,
+				        x, y,
+				        Pair( x, y ) ) )
+    repaint()
+  }
+
+  /**
+   * Tells us to forget the outline of a node.
+   */
+  def forgetNodeOutline() {
+    changeState( new DefaultVisualBoardState( this ) )
+    repaint()
+  }
+    
+  /**
+   * When the user clicks and drags on a node, we want to
+   * move an outline of the given node to show where the node would go.
+   * @@param event Event describing the move
+   */
+  def mousePressed( event: MouseEvent ) { 
+    state.mousePressed( event )
+  }
+
+  /**
+   * Connects the given node to the other node on the other node's input.
+   * @@param node1 The node to connect to the other node
+   * @@param node2 The node that the first connects to
+   * @@param line The input line on node2 that node1 connects to
+   * @@return true if the connection was successful, else false
+   */
+  protected def connect( node1: Node[ T, U ],
+			 node2: Node[ T, U ],
+			 line: String ): Boolean = {
+    var connectionMade = false
+
+    try {
+      node2.connect( node1, line )
+      updateDebuggers( node1 )
+      connectionMade = true
+    } catch {
+      // thrown when a connection was never attempted
+      case e: InvalidNodeConnectionException => showError( e )
+    }
+
+    connectionMade
+  }
+
+  /**
+   * Attempts to connect the two nodes.
+   * If a connection isn't possible, then the user will be shown a message
+   * why.
+   * @@param node1 The first node in the connection
+   * @@param node1Line The line on node1 to use for the connection
+   * @@param node2 The second node in the connection
+   * @@param node2Line The line on node2 to use for the connection
+   * @@return true if a connection was made, else false
+   */
+  def connect( node1: Node[ T, U ],
+	       node1Line: String,
+	       node2: Node[ T, U ],
+	       node2Line: String ): Boolean = {
+    var connectionMade = false
+
+    if ( node1Line.eq( Node.OUTPUT_LINE ) &&
+	 node2Line.eq( Node.OUTPUT_LINE ) ) {
+      showError( VisualBoard.OUTPUT_TO_OUTPUT_CONNECTION_ERROR )
+    } else if ( !node1Line.eq( Node.OUTPUT_LINE ) &&
+	        !node2Line.eq( Node.OUTPUT_LINE ) ) {
+      showError( VisualBoard.INPUT_TO_INPUT_CONNECTION_ERROR )
+    } else if ( node1Line.eq( Node.OUTPUT_LINE ) ) {
+      connectionMade = connect( node1, node2, node2Line )
+    } else {
+      connectionMade = connect( node2, node1, node1Line )
+    }
+
+
+    connectionMade
+  }
+
+  /**
+   * Resets the debugging values of all the child nodes of the
+   * given node.
+   * @@param node The node to reset the debuggers of
+   */
+  def resetChildDebuggers( node: Node[ T, U ] ) {
+    def getOutput( myNode: Node[ T, U ] ) =
+      if ( myNode.output.isEmpty ) {
+	None
+      } else {
+	Some( myNode.output.get._2 )
+      }
+    
+    def resetChildDebuggers( myNode: Option[ Node[ T, U ] ] ) {
+      if ( myNode.isDefined ) {
+	val visual = visualNode( myNode.get )
+	if ( visual.isInstanceOf[ DebuggingNode ] ) {
+	  visual.asInstanceOf[ DebuggingNode ].reset()
+	}
+	resetChildDebuggers( getOutput( myNode.get ) )
+      }
+    }
+
+    resetChildDebuggers( Some( node ) )
+  }
+
+  /**
+   * Given a node, it will look for debuggers connected to
+   * the node whoose values may have changed.  It will
+   * update them to show the change.  
+   * @@pre The node is already on the board
+   * @@param node The node that has been placed
+   * @@throws InputException If an input to a node was invalid
+   */
+  def updateDebuggers( node: Node[ T, U ] ) {
+    try {
+      node.lastChild.returnValue()
+    } catch {
+      case e: InputException[ _, _ ] => {
+	e.node.disconnectInput( e.input )
+	showError( e )
+	resetChildDebuggers( e.node.asInstanceOf[ Node[ T, U ] ] )
+      }
+      case e: Exception => showError( e )
+    }
+  }
+
+  /**
+   * Attempts to place the given node on the board at the given position.
+   * @@param node The node to place
+   * @@param x The x position
+   * @@param y The y position
+   */
+  def placeNode( node: Node[ T, U ], x: Int, y: Int ) {
+    try {
+      model.placeNode( node, x, y )
+      val visNode = VisualBoard.makeVisualNode( node, model )
+      visualNode += Pair( node, visNode )
+      repaint()
+    } catch {
+      case e: NodeUnplacableException => showError( e )
+    }
+  }
+
+  /**
+   * When the user releases, we want to move the node to this position
+   * @@param event Event describing the move
+   */
+  def mouseReleased( event: MouseEvent ) { 
+    state.mouseReleased( event )
+  }
+
+  /**
+   * Notes when the mouse is being dragged.
+   * When the user is moving a node, we want to move the outline of a node
+   * around with the mouse.
+   * @@param event Event describing the drag
+   */
+  def mouseDragged( event: MouseEvent ) {
+    state.mouseDragged( event )
+  }
+
+  /**
+   * Indicates that the mouse has moved.
+   * @@param event Event descriving the move
+   */
+  def mouseMoved( event: MouseEvent ) {
+    state.mouseMoved( event )
+  }
+}
+
+@
+
+
+1.25
+log
+@Moved ComponentsTree components to ComponentsTree.scala.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.24 2011/06/20 22:19:56 kyledewey Exp kyledewey $
+d9 3
+d1286 1
+@
+
+
+1.24
+log
+@Moved everything for the description panel to
+DescriptionPanel.scala.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.23 2011/05/31 18:47:41 kyledewey Exp $
+d9 4
+a1329 311
+import javax.swing.tree._
+
+/**
+ * Holds constants for <code>ComponentsTree</code>
+ * @@author Kyle Dewey
+ */
+object ComponentsTreeHelpers {
+  val VIEWPORT_WIDTH_INCREMENT = 100
+  val VIEWPORT_HEIGHT_INCREMENT = 100
+}
+
+/**
+ * A tree that holds components that can be created into nodes.
+ * Note that the leaf nodes MUST be of type <code>ComponentKey[ T, U ]</code>
+ * @@param root The root node of the tree
+ * @@param gui The gui holding everything together
+ * @@author Kyle Dewey
+ */
+class ComponentsTree[ T <: AnyRef, U ]( val gui: ComponentsTreeGUIView[ T, U ], 
+				        val model: ComponentsTreeModel )
+extends JTree( model ) with TreeSelectionListener with MouseInputListener {
+  // begin instance variables
+  private var lastKeySelected: Option[ ComponentKey[ T, U ] ] = None
+  private var draggingOut = false
+  // end instance variables
+
+  // begin constructor
+  addTreeSelectionListener( this )
+  addMouseListener( this )
+  addMouseMotionListener( this )
+  //setEditable( true )
+  // end constructor
+
+  /**
+   * Creates a tree with the given node as the root node.
+   * @@param gui The gui that we are associated with
+   * @@param root The root node
+   */
+  def this( gui: ComponentsTreeGUIView[ T, U ],
+	    root: DefaultMutableTreeNode ) = 
+    this( gui, new ComponentsTreeModel( root ) )
+
+  /**
+   * Gets the preferred size of the viewport
+   * For some reason, the defaults are overconservative.
+   * Merely adds <code>VIEWPORT_WIDTH_INCREMENT</code> and
+   * <code>VIEWPORT_HEIGHT_INCREMENT</code> to the original size.
+   * @@return The preferred scrollable viewpoer size.
+   */
+  override def getPreferredScrollableViewportSize() = {
+    val original = super.getPreferredScrollableViewportSize
+    original.setSize( original.getWidth + 
+		       ComponentsTreeHelpers.VIEWPORT_WIDTH_INCREMENT,
+		      original.getHeight + 
+		       ComponentsTreeHelpers.VIEWPORT_HEIGHT_INCREMENT )
+    original
+  }
+
+  /**
+   * Returns a key from the given tree path.
+   * @@param path The tree path
+   * @@return The tree key at this path
+   */
+  def getKey( path: TreePath ) = {
+    val last = path.getLastPathComponent
+    var retval: Option[ ComponentKey[ T, U ] ] = None
+    
+    if ( last.isInstanceOf[ DefaultMutableTreeNode ] ) {
+      val asNode = last.asInstanceOf[ DefaultMutableTreeNode ]
+      if ( !asNode.getAllowsChildren && // must be a leaf
+	   asNode.getUserObject.isInstanceOf[ ComponentKey[ _, _ ] ] ) {
+	retval = Some( asNode.getUserObject.asInstanceOf[ ComponentKey[ T, U ] ] )
+      } 
+    }
+
+    retval
+  }
+      
+  /**
+   * Records when a selection occurs on the tree.
+   * If the user clicks on a leaf, then we want to show a
+   * description of the leaf.
+   * @@param event The selection event correlating to the click
+   */
+  def valueChanged( event: TreeSelectionEvent ) {
+    lastKeySelected = getKey( event.getPath )
+
+    if( lastKeySelected.isDefined ) {
+      gui.showDescription( lastKeySelected.get )
+    }
+  }
+
+  /**
+   * Gets the tree key at the given X, Y position
+   * @@param x The x position
+   * @@param y The y position
+   * @@return The tree key here
+   */
+  def getKey( x: Int, y: Int ): Option[ ComponentKey[ T, U ] ] = {
+    val path = getPathForLocation( x, y )
+    if ( path != null ) {
+      getKey( path )
+    } else {
+      None
+    }
+  }
+
+  /**
+   * Gets the key for the given mouse event.
+   * @@param event The mouse event
+   * @@return The key for this event, or None if there isn't one
+   */
+  def getKey( event: MouseEvent ): Option[ ComponentKey[ T, U ] ] =
+    getKey( event.getX, event.getY )
+
+  /**
+   * Tells the GUI that we are dragging in the tree.
+   * @@param event The mouse event that correlates to the drag
+   */
+  def mouseDragged( event: MouseEvent ) {
+    gui.treeDragging( event )
+  }
+
+  /**
+   * Triggered when this is clicked.  Doesn't do anything.
+   * @@param event The event associated with the click
+   */
+  def mouseClicked( event: MouseEvent ) {}
+
+  /**
+   * Triggered when the mouse enters this.
+   * Doesn't do anything.
+   * @@param event The event associated with the enter
+   */
+  def mouseEntered( event: MouseEvent ) {}
+  
+  /**
+   * Tells the GUI that we have exited the tree.
+   * @@param event The event associated with leaving the tree
+   */
+  def mouseExited( event: MouseEvent ) {
+    if ( draggingOut ) {
+      gui.nodeDraggingOut( lastKeySelected.get.makeNode )
+    }
+  }
+
+  /**
+   * If we clicked on a key, then this will start the process
+   * of dragging out a component.
+   * @@param event The event correlating to the drag
+   */
+  def mousePressed( event: MouseEvent ) {
+    // note that this is called after valueChanged
+    val keyHere = getKey( event )
+    if ( lastKeySelected.isDefined &&
+	 keyHere.isDefined &&
+	 lastKeySelected.get == keyHere.get ) {
+      draggingOut = true
+    }
+  }
+
+  /**
+   * Tells the GUI that the mouse has been released.
+   * If we were dragging a node, this will cause it to be placed.
+   * @@param event The event correlating to the release
+   */
+  def mouseReleased( event: MouseEvent ) {
+    draggingOut = false
+    gui.nodeReleased( event )
+  }
+
+  /**
+   * Triggered when the mouse is moved in this component.
+   * Doesn't actually do anything.
+   * @@param event The event correlating to the move
+   */
+  def mouseMoved( event: MouseEvent ) {}
+}
+
+/**
+ * Tree that is specific to Sentinel.
+ * @@param gui The gui that is holding everything together
+ * @@param root The root of the tree
+ * @@author Kyle Dewey
+ */
+class SentinelTree( gui: ComponentsTreeGUIView[ InstanceFactory[ _ ], Param ],
+		    root: DefaultMutableTreeNode )
+extends ComponentsTree[ InstanceFactory[ _ ], Param ]( gui, root ) {}
+
+/**
+ * Contains routines to make SentinelTrees with different types of roots
+ * @@author Kyle Dewey
+ */
+object SentinelTree {
+  import java.io._
+
+  /**
+   * Creates a tree with the given gui and root
+   * @@param gui The gui
+   * @@param root The root for the tree
+   * @@return A sentinel tree made from the given information
+   */
+  def apply( gui: ComponentsTreeGUIView[ InstanceFactory[ _ ], Param ],
+	     root: DefaultMutableTreeNode ): SentinelTree = {
+    new SentinelTree( gui, root )
+  }
+
+  /**
+   * Creates a tree, using the given base directory for components.
+   * It will recursively look for components in the base directory and
+   * include them.
+   * @@param gui The gui holding everything together
+   * @@param baseDir The base directory
+   * @@return A sentinel tree holding all the components in the given directory
+   */
+  def apply( gui: ComponentsTreeGUIView[ InstanceFactory[ _ ], Param ],
+	     baseDir: String ): SentinelTree = {
+    apply( gui, 
+	   SentinelTreeHelpers.makeTreeNodeFromDir( baseDir ) )
+  }
+
+  /**
+   * Creates a tree, using the given project file.
+   * @@param gui The gui holding everything together
+   * @@param project The project file.  Assumes that this is in XML
+   * @@return A sentinel tree holding all the components from the file
+   */
+  def apply( gui: ComponentsTreeGUIView[ InstanceFactory[ _ ], Param ],
+	     project: File ): SentinelTree = {
+    apply( gui,
+	   SentinelTreeHelpers.makeTreeNodeFromProject( project ) )
+  }
+}
+
+/**
+ * Base for the VPL.
+ * The VPL simply needs to know when a particular node has been selected.
+ * @@author Kyle Dewey
+ */
+trait BaseVPL[ T <: AnyRef, U ] {
+  /**
+   * Says that the given node has been selected
+   * @@param node The node that has been selected
+   */
+  def nodeSelected( node: Node[ T, U ] ): Unit
+
+  /**
+   * Shows a description of the given describable thing
+   * @@param item The describable item
+   */
+  def showDescription( item: Describable ): Unit
+}
+
+/**
+ * View of the GUI that the components tree gets.
+ * The components tree should have access to only a restricted set of methods
+ * that are in the full GUI, and this makes sure that it can access only
+ * those that are applicable to it.
+ * @@author Kyle Dewey
+ */
+trait ComponentsTreeGUIView[ T <: AnyRef, U ] extends BaseVPL[ T, U ] {
+  /**
+   * Tells us where we are dragging to, relative to the components tree.
+   * @@param event The mouse event correlating to the drag
+   */
+  def treeDragging( event: MouseEvent ): Unit
+
+  /**
+   * Says that the node that we were dragging out has been released.
+   * @@param event The mouse event on the board that correlates to the release
+   */
+  def nodeReleased( event: MouseEvent ): Unit
+
+  /**
+   * Says that the given node is being dragged away
+   * from the tree that held it.
+   * @@param node The node that is being moved
+   */
+  def nodeDraggingOut( node: Node[ T, U ] ): Unit
+}
+
+/**
+ * View of the GUI that the visual board gets.
+ * The visual board needs to tell the GUI when we are and are not in the board.
+ * @@author Kyle Dewey
+ */
+trait VisualBoardGUIView[ T <: AnyRef, U ] extends BaseVPL[ T, U ] {
+  /**
+   * Says that the mouse is in the board.
+   */
+  def mouseEnteredBoard(): Unit
+
+  /**
+   * Says that the mouse exited the board.
+   */
+  def mouseExitedBoard(): Unit
+
+  /**
+   * Gets all the available languages that are known to the GUI.
+   * @@return All languages known to the GUI
+   */
+  def languageManager(): LanguageManager
+}
+
+/**
+ * A complete VPL interface.
+ * @@author Kyle Dewey
+ */
+trait CompleteVPL[ T <: AnyRef, U ] 
+extends ComponentsTreeGUIView[ T, U ] with VisualBoardGUIView[ T, U ] {}
+
+@
+
+
+1.23
+log
+@Moved showError to ErrorShower.
+Now implements ErrorShower.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.22 2011/05/25 20:21:03 kyledewey Exp $
+d9 4
+a1325 140
+import javax.swing.table._
+
+/**
+ * Holds constants for <code>ReplaceTableModel</code>
+ * @@author Kyle Dewey
+ */
+object ReplaceTableModel {
+  // default starting data
+  val DEFAULT_DATA: Array[ Array[ String ] ] = new Array( 1, 1 )
+  DEFAULT_DATA( 0 )( 0 ) = "Input items"
+}
+
+/**
+ * Special table model that is intended to be able to quickly completely
+ * change the data that the table shows
+ * @@param data The data to put into the table
+ * @@author Kyle Dewey
+ */
+class ReplaceTableModel( private var data: Array[ Array[ String ] ] ) 
+extends AbstractTableModel {
+  /**
+   * Creates a new table model with
+   * DEFAULT_DATA
+   */
+  def this() =
+    this( ReplaceTableModel.DEFAULT_DATA )
+
+  /**
+   * Gets the number of rows in the table
+   * @@return The number of rows in the table
+   */
+  def getRowCount() =
+    data.length
+
+  /**
+   * Gets the number of columns in the table
+   * @@return The number of columns in the table
+   */
+  def getColumnCount() =
+    if ( data.length == 0 ) 0 
+    else data( 0 ).length
+  
+  /**
+   * Gets the value at the given row and column of the table
+   * @@param row The row of the table
+   * @@param column The column of the table
+   * @@return The item at this row and column
+   */
+  def getValueAt( row: Int, column: Int ) =
+    data( row )( column )
+
+  /**
+   * Changes the data in the model.  Updates reports that a change occurred.
+   * @@param newData The new data to put into the table
+   */
+  def changeData( newData: Array[ Array[ String ] ] ) {
+    data = newData
+    fireTableStructureChanged()
+  }
+}
+
+/**
+ * Holds constants for the description panel.
+ * @@author Kyle Dewey
+ */
+object DescriptionPanel {
+  // prefix for the output description
+  val OUTPUT_DESC_PREFIX = "Output: "
+}
+
+/**
+ * Represents the description panel in the VPL.  The description panel describes
+ * all inputs and outputs to the selected component.
+ * @@param gui The gui that is holding everything together
+ * @@author Kyle Dewey
+ */
+class DescriptionPanel extends JPanel {
+  val nameLabel = new JLabel( "Name" )
+  val descLabel = new JLabel( "Description" )
+  val tableModel = new ReplaceTableModel()
+  val table = createTable
+  val outputLabel = new JLabel( "Output Description" )
+
+  setLayout( new GridLayout( 5, 1 ) )
+  add( nameLabel )
+  add( descLabel )
+  add( new JLabel( "Inputs:" ) )
+  add( new JTable( tableModel ) )
+  add( outputLabel )
+
+  /**
+   * Creates the table used
+   * @@pre tableModel has been initialized
+   * @@return The table to use
+   */
+  protected def createTable() = {
+    val retval = new JTable( tableModel )
+    retval.setShowGrid( true )
+    retval.setGridColor( Color.BLACK )
+    retval
+  }
+
+  /**
+   * Sets the value of the output description label.
+   * Note that this will append OUTPUT_DESC_PREFIX to the text shown, unless
+   * the value we set to is an empty string
+   * @@param value The value to set the output description to
+   */
+  def setOutputDescription( value: String ) {
+    var newValue: String = null
+
+    if ( value == "" ) {
+      newValue = ""
+    } else {
+      newValue = DescriptionPanel.OUTPUT_DESC_PREFIX + value
+    }
+    
+    outputLabel.setText( newValue )
+  }
+
+  /**
+   * Shows a description of the given describable thing.
+   * @@param item The describable item
+   */
+  def showDescription( item: Describable ) {
+    showDescription( item.describer )
+  }
+
+  /**
+   * Shows a description for the given describable thing.
+   * @@param item The item to show a description of
+   */
+  def showDescription( item: Description ) {
+    nameLabel.setText( item.name )
+    descLabel.setText( item.description )
+    tableModel.changeData( Array( item.inputHeader ) ++ item.detailedDescription )
+    setOutputDescription( item.outputDescription )
+  }
+}
+
+d1577 1
+a1577 1
+  }
+@
+
+
+1.22
+log
+@Added code to differentiate line selection from
+node selection.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.21 2011/04/10 04:06:46 kyledewey Exp $
+d9 4
+d835 2
+d848 1
+a848 1
+extends JComponent with MouseInputListener {
+a896 19
+   * Shows an error to the user.
+   * @@param message The message to show to the user in the error box
+   */
+  def showError( message: String ) {
+    JOptionPane.showMessageDialog( this, 
+				   message, 
+				   "Error",
+				   JOptionPane.ERROR_MESSAGE )
+  }
+
+  /**
+   * Shows an error to the user, raised from an exception
+   * @@param exception The exception
+   */
+  def showError( exception: Exception ) {
+    showError( exception.getMessage )
+  }
+
+  /**
+@
+
+
+1.21
+log
+@Now uses ComponentKey instead of the now more
+generic TreeKey.
+Moved ComponentsTreeModel to ComponentsTreeModel.scala.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.20 2011/04/08 02:31:41 kyledewey Exp kyledewey $
+d9 5
+d331 11
+a341 7
+    val nodePosition = board.visualNode( node )
+                            .topLeftCorner
+    board.changeState( new NodeSelectedState( board,
+					      node,
+					      Pair( event.getX - nodePosition._1,
+						    event.getY - nodePosition._2 ) ) )
+    board.repaint()
+@
+
+
+1.20
+log
+@Added the ComponentsTreeModel class.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.19 2011/04/08 00:18:52 kyledewey Exp kyledewey $
+d9 3
+d779 2
+a780 1
+    frame.add( new GUIFunction( makePreFunction( nodes ) ) )
+a1477 43
+ * Tree model used for <code>ComponentsTree</code>.
+ * @@param rootNode The root of the tree
+ * @@author Kyle Dewey
+ */
+class ComponentsTreeModel( val rootNode: DefaultMutableTreeNode )
+extends DefaultTreeModel( rootNode ) {
+  /**
+   * Like <code>insertNodeInto</code>, only it will always insert
+   * into the last index.
+   * @@param child The child node
+   * @@param parent The parent node
+   */
+  def insertNodeInto( child: MutableTreeNode,
+		      parent: MutableTreeNode ) {
+    insertNodeInto( child,
+		    parent,
+		    parent.getChildCount )
+  }
+
+  /**
+   * Inserts the given child at the root at the given index.
+   * @@param node The node to insert
+   * @@param index The index to insert at
+   */
+  def insertNodeIntoRoot( node: MutableTreeNode,
+			  index: Int ) {
+    insertNodeInto( node,
+		    rootNode,
+		    index )
+  }
+
+  /**
+   * Like <code>insertNodeIntoRoot</code>, but it inserts at
+   * the last index.
+   * @@param node The node to insert
+   */
+  def insertNodeIntoRoot( node: MutableTreeNode ) {
+    insertNodeInto( node,
+		    rootNode )
+  }
+}
+
+/**
+d1479 1
+a1479 1
+ * Note that the leaf nodes MUST be of type <code>TreeKey[ T, U ]</code>
+d1488 1
+a1488 1
+  private var lastKeySelected: Option[ TreeKey[ T, U ] ] = None
+d1531 1
+a1531 1
+    var retval: Option[ TreeKey[ T, U ] ] = None
+d1536 2
+a1537 2
+	   asNode.getUserObject.isInstanceOf[ TreeKey[ _, _ ] ] ) {
+	retval = Some( asNode.getUserObject.asInstanceOf[ TreeKey[ T, U ] ] )
+d1564 1
+a1564 1
+  def getKey( x: Int, y: Int ): Option[ TreeKey[ T, U ] ] = {
+d1578 1
+a1578 1
+  def getKey( event: MouseEvent ): Option[ TreeKey[ T, U ] ] =
+d1762 6
+@
+
+
+1.19
+log
+@Moved SentinelVPL to SentinelVPL.scala.
+Refactored to use JFrame instead of JPanel.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.18 2011/04/02 03:15:51 kyledewey Exp $
+d9 4
+d1474 43
+d1524 3
+a1526 2
+				        root: DefaultMutableTreeNode ) 
+extends JTree( root ) with TreeSelectionListener with MouseInputListener {
+d1529 3
+d1535 11
+d1620 4
+d1627 5
+d1633 6
+d1640 5
+d1650 6
+d1666 5
+d1675 6
+@
+
+
+1.18
+log
+@Now verifies that the area selected is completely within
+the board.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.17 2011/04/01 03:24:44 kyledewey Exp kyledewey $
+d9 4
+a1710 110
+/**
+ * The main GUI for the VPL.  Holds everything together.
+ * @@param boardCreator Function that creates the visual board.
+ * The visual board needs the whole GUI as a parameter, so it
+ * passes <code>this</code> to it
+ * @@param descriptionPanelCreator Like <code>boardCreator</code>,
+ * but with the descrption panel
+ * @@param componentsCreator Like <code>boardCreator</code>, but with
+ * the components panel.
+ * @@author Kyle Dewey
+ */
+class SentinelVPL[ T <: AnyRef, U ]( boardCreator: (VisualBoardGUIView[ T, U ]) => VisualBoard[ T, U ],
+				     descriptionPanelCreator: (SentinelVPL[ T, U ]) => DescriptionPanel,
+				     componentsCreator: (ComponentsTreeGUIView[ T, U ]) => ComponentsTree[ T, U ] )  
+extends JPanel with CompleteVPL[ T, U ] {
+  private var nodeDragging: Option[ Node[ T, U ] ] = None
+  private var mouseInBoard = false
+  val board = boardCreator( this )
+  val descPanel = descriptionPanelCreator( this )
+  val components = componentsCreator( this )
+  val scrollPane = new JScrollPane( components )
+  val topPanel = new JPanel()
+
+  topPanel.setLayout( new FlowLayout() )
+  topPanel.add( board )
+  topPanel.add( scrollPane )
+  topPanel.setComponentOrientation( ComponentOrientation.LEFT_TO_RIGHT )
+
+  setLayout( new BorderLayout() )
+  add( topPanel, BorderLayout.NORTH )
+  add( descPanel, BorderLayout.SOUTH )
+  add( topPanel )
+
+  /**
+   * Shows a description of the given describable thing
+   * @@param item The describable item
+   */
+  def showDescription( item: Describable ) {
+    descPanel.showDescription( item )
+  }
+
+  /**
+   * Says that the given node has been selected
+   * @@param node The node that has been selected
+   */
+  def nodeSelected( node: Node[ T, U ] ) {
+    showDescription( node )
+  }
+
+  /**
+   * Says that the given node is being dragged away
+   * from the tree that held it.
+   * @@param node The node that is being moved
+   */
+  def nodeDraggingOut( node: Node[ T, U ] ) {
+    nodeDragging = Some( node )
+  }
+
+  /**
+   * Tells us where we are dragging to, relative to the components tree.
+   * TO BE CALLED ONLY BY THE TREE.
+   * @@param event The mouse event correlating to the drag
+   */
+  def treeDragging( event: MouseEvent ) {
+    if ( nodeDragging.isDefined &&
+	 mouseInBoard ) {
+      val location = SwingUtilities.convertPoint( components,
+						  event.getX,
+						  event.getY,
+						  board )
+      board.showNodeOutline( nodeDragging.get,
+			     location.x,
+			     location.y )
+    }
+  }
+
+  /**
+   * Says that the node that we were dragging out has been released.
+   * TO BE CALLED ONLY BY THE TREE.
+   * @@param event The mouse event on the board that correlates to the release
+   */
+  def nodeReleased( event: MouseEvent ) {
+    if ( nodeDragging.isDefined &&
+	 mouseInBoard ) {
+      val location = SwingUtilities.convertPoint( components,
+						  event.getX,
+						  event.getY,
+						  board )
+      board.placeNode( nodeDragging.get,
+		       location.x,
+		       location.y )
+    }
+    nodeDragging = None
+    board.forgetNodeOutline()
+  }
+
+  /**
+   * Says that the mouse is in the board.
+   */
+  def mouseEnteredBoard() {
+    mouseInBoard = true
+  }
+
+  /**
+   * Says that the mouse exited the board.
+   */
+  def mouseExitedBoard() {
+    mouseInBoard = false
+  }
+}
+@
+
+
+1.17
+log
+@Added rudimentary support for function creation.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.16 2011/03/13 19:50:30 kyledewey Exp $
+d9 3
+d639 16
+d657 38
+d702 2
+a703 1
+    convertSetToSentinel( getNodes( board, rect ) )
+d738 22
+d768 1
+a768 1
+    frame.add( new GUIFunction( new PreFunction( nodes ) ) )
+d785 5
+a789 1
+      case e: BadOutputException => board.showError( e )
+d836 26
+@
+
+
+1.16
+log
+@Added support for area selections.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.15 2011/03/13 04:33:37 kyledewey Exp $
+d9 3
+d603 47
+d680 15
+d702 6
+a707 1
+    // TODO: add in function creation stuff
+d1472 11
+a1482 5
+ * A special tree for Sentinel.
+ * @@param baseDir The base directory containing all the components
+ * @@param projectPath Path to a project file, or None if there is no
+ * associated project
+ * @@param gui The gui holding everything together
+d1485 14
+a1498 4
+class SentinelTree( baseDir: String, 
+		    projectPath: Option[ String ],
+		    gui: ComponentsTreeGUIView[ InstanceFactory[ _ ], Param ] )
+extends ComponentsTree[ InstanceFactory[ _ ], Param ]( gui, SentinelTreeHelpers.makeTreeNode( baseDir, projectPath ) ) {
+d1500 3
+a1502 2
+   * Creates a tree in sentinel without a related project
+   * @@param baseDir base directory
+d1504 2
+d1507 6
+a1512 6
+  def this( baseDir: String, 
+	    gui: ComponentsTreeGUIView[ InstanceFactory[ _ ], Param ] ) =
+	      this( baseDir, 
+		    None,
+		    gui )
+  
+d1514 1
+a1514 3
+   * Creates a tree in sentinel with an associated project
+   * @@param baseDir Base directory
+   * @@param projectPath Path to the project file
+d1516 2
+d1519 5
+a1523 6
+  def this( baseDir: String, 
+	    projectPath: String, 
+	    gui: ComponentsTreeGUIView[ InstanceFactory[ _ ], Param ] ) =
+    this( baseDir, 
+	  Some( projectPath ), 
+	  gui )
+@
+
+
+1.15
+log
+@Refactored VisualBoard to use the State pattern regarding
+mouse input events.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.14 2011/02/27 22:33:07 kyledewey Exp kyledewey $
+d9 4
+d205 9
+a213 4
+    if ( !board.attemptDebug( event ) ) {
+      board.attemptShowNodeSelected( event )
+      if ( !board.attemptDisconnect( event ) ) {
+	board.attemptRemove( event )
+d237 26
+a268 3
+    // ugly hack
+    // right clicking triggers mousePressed, and it ends up that mouseClicked never
+    // receives the right click needed for disconnects
+d277 3
+a279 5
+	  board.changeState( new InputSelectedState( board, 
+						     selectedNode.get,
+						     selectedLine.get,
+						     event.getX,
+						     event.getY ) )
+d281 2
+a282 6
+	  val nodePosition = board.visualNode( selectedNode.get )
+	                          .topLeftCorner
+	  board.changeState( new NodeSelectedState( board,
+						    selectedNode.get,
+						    Pair( event.getX - nodePosition._1,
+							  event.getY - nodePosition._2 ) ) )
+d284 2
+a285 1
+	board.repaint()
+d288 47
+a334 1
+  } 
+d382 50
+d504 5
+a508 12
+    val as2D = graphics.asInstanceOf[ Graphics2D ]
+    val oldStroke = as2D.getStroke
+    val oldColor = as2D.getColor
+
+    as2D.setColor( NodeSelectedState.MOVING_NODE_COLOR )
+    as2D.setStroke( NodeSelectedState.MOVING_NODE_STROKE )
+    as2D.drawRect( nodePositionX,
+		   nodePositionY,
+		   node.width,
+		   node.height )
+    as2D.setStroke( oldStroke )
+    as2D.setColor( oldColor )
+d524 2
+a525 2
+  val node: Node[ T, U ],
+  val line: String,
+d543 1
+d577 1
+d598 58
+a655 1
+			       
+d817 1
+d821 4
+a824 6
+    if ( SwingUtilities.isLeftMouseButton( event ) ) { 
+      val nodeHere = getSelectedNode( event )
+
+      if ( nodeHere.isDefined ) {
+	gui.nodeSelected( nodeHere.get )
+      }
+d848 1
+d852 4
+a855 6
+    if ( SwingUtilities.isRightMouseButton( event ) ) {
+      val nodeHere = getSelectedNode( event )
+
+      if ( nodeHere.isDefined ) {
+	removeNode( nodeHere.get )
+      }
+d876 1
+d884 10
+a893 13
+
+    if ( SwingUtilities.isRightMouseButton( event ) ) {
+      val nodeHere = getSelectedNode( event )
+
+      if ( nodeHere.isDefined ) {
+	val lineHere = visualNode( nodeHere.get ).selectedLine( event.getX,
+							        event.getY )
+	if ( lineHere.isDefined ) {
+	  retval = true
+	  disconnect( nodeHere.get,
+		      lineHere.get )
+	  repaint()
+	}
+d903 1
+a903 1
+   * Doesn't assume that this is the case
+d911 1
+a911 2
+    if ( event.getClickCount == 2 ) {
+      val nodeHere = getSelectedNode( event )
+d913 12
+a924 13
+      if ( nodeHere.isDefined &&
+	   visualNode( nodeHere.get ).isInstanceOf[ DebuggingNode ] ) {
+	val asDebug = visualNode( nodeHere.get ).asInstanceOf[ DebuggingNode ]
+	val newLabel = JOptionPane.showInputDialog( this,
+						    "Input debugging value.",
+						    asDebug.label )
+	retval = true
+        if ( newLabel != null &&
+	     newLabel != asDebug.label ) {
+	  asDebug.label = newLabel
+	  updateDebuggers( nodeHere.get )
+	  repaint()
+	}
+d978 1
+a978 1
+
+@
+
+
+1.14
+log
+@Added the resetChildDebuggers() method.  Needed to
+blank out the debuggers when a valid value is replaced
+by an invalid value.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.13 2011/02/27 20:42:54 kyledewey Exp kyledewey $
+d9 5
+d170 312
+d497 3
+a499 18
+  // currently selected node
+  private var selectedNode: Option[ Node[ T, U ] ] = None
+
+  // currently selected input
+  private var selectedInput: Option[ String ] = None
+
+  // current position of the currently selected node
+  // note that this applies only if there isn't a currently
+  // selected output
+  private var selectedNodePosition: Option[ Pair[ Int, Int ] ] = None
+
+  // how far off we are from the top left corner of the node
+  private var selectedNodeDifference: Option[ Pair[ Int, Int ] ] = None
+
+  // positions for the origin of input selection and the current 
+  // position
+  private var startingSelectedInputPosition: Option[ Pair[ Int, Int ] ] = None
+  private var selectedInputPosition: Option[ Pair[ Int, Int ] ] = None
+d507 8
+a611 47
+   * Paints any nodes that are being moved.
+   * @@param color The color to paint the lines
+   * @@param graphics The graphics object to paint with
+   */
+  def paintMovingNodes( color: Color,
+		        graphics: Graphics ) {
+    if ( selectedNode.isDefined &&
+         selectedNodePosition.isDefined ) {
+      val as2D = graphics.asInstanceOf[ Graphics2D ]
+      val oldStroke = as2D.getStroke
+      val oldColor = as2D.getColor
+
+      as2D.setColor( color )
+      as2D.setStroke( VisualBoard.MOVING_NODE_STROKE )
+      as2D.drawRect( selectedNodePosition.get._1,
+		     selectedNodePosition.get._2,
+		     selectedNode.get.width,
+		     selectedNode.get.height )
+      as2D.setStroke( oldStroke )
+      as2D.setColor( oldColor )
+    }
+  }
+    
+  /**
+   * Paints any nodes that are being moved.
+   * Uses <code>VisualBoard.MOVING_NODE_COLOR</code> for the color
+   * @@param graphics The graphics object to paint with
+   */
+  def paintMovingNodes( graphics: Graphics ) {
+    paintMovingNodes( VisualBoard.MOVING_NODE_COLOR,
+		      graphics )
+  }
+
+  /**
+   * Paints any connections that are being moved.
+   * @@param graphics The graphics object to draw with
+   */
+  def paintMovingConnections( graphics: Graphics ) {
+    if ( startingSelectedInputPosition.isDefined &&
+	 selectedInputPosition.isDefined ) {
+      VisualNode.drawLinePoints( startingSelectedInputPosition.get,
+				 selectedInputPosition.get,
+				 graphics )
+    }
+  }
+
+  /**
+d617 1
+a617 5
+    clear( graphics )
+    paintNodes( graphics )
+    paintConnections( graphics )
+    paintMovingNodes( graphics )
+    paintMovingConnections( graphics )
+d768 1
+a768 6
+    if ( !attemptDebug( event ) ) {
+      attemptShowNodeSelected( event )
+      if ( !attemptDisconnect( event ) ) {
+	attemptRemove( event )
+      }
+    }
+d776 1
+a776 1
+    gui.mouseEnteredBoard()
+d784 1
+a784 1
+    gui.mouseExitedBoard()
+d795 4
+a798 2
+    selectedNode = Some( node )
+    selectedNodePosition = Some( Pair( x, y ) )
+d806 1
+a806 2
+    selectedNode = None
+    selectedNodePosition = None
+d816 2
+a817 23
+    // ugly hack
+    // right clicking triggers mousePressed, and it ends up that mouseClicked never
+    // receives the right click needed for disconnects
+    if ( SwingUtilities.isLeftMouseButton( event ) ) {
+      selectedNode = getSelectedNode( event )
+      
+      if ( selectedNode.isDefined ) {
+	selectedInput = visualNode( selectedNode.get ).selectedLine( event.getX,
+								     event.getY )
+	if ( selectedInput.isDefined ) {
+	  startingSelectedInputPosition = Some( VisualBoard.toPair( event ) )
+	  selectedInputPosition = startingSelectedInputPosition
+	} else {
+	  selectedNodePosition = Some( visualNode( selectedNode.get ).topLeftCorner )
+	  selectedNodeDifference = Some( Pair( event.getX - 
+					        selectedNodePosition.get._1,
+					       event.getY - 
+					        selectedNodePosition.get._2 ) )
+	}
+	repaint()
+      }
+    }
+  } 
+a875 44
+   * To be called when the user releases the mouse while the user
+   * is attempting to make a connection.  If we were released over
+   * a connection, then this will try to make the connection.  If not,
+   * then this won't do anything.
+   * @@pre The user was clicking and dragging, as if he were trying
+   * to make a connection.
+   * (i.e. <code>selectedNode.isDefined && selectedInput.isDefined</code>)
+   * @@param event The mouse event correlating to the release
+   */
+  def connectIfPossible( event: MouseEvent ) {
+    val nodeHere = getSelectedNode( event.getX, 
+				    event.getY )
+
+    if ( nodeHere.isDefined ) {
+      val lineHere = visualNode( nodeHere.get ).selectedLine( event.getX,
+							      event.getY )
+      if ( lineHere.isDefined ) {
+	connect( selectedNode.get,
+		 selectedInput.get,
+		 nodeHere.get,
+		 lineHere.get )
+      }
+    }
+
+    selectedNode = None
+    selectedInput = None
+    startingSelectedInputPosition = None
+    selectedInputPosition = None
+  }
+
+  /**
+   * Attempts to make a connection.  Doesn't assume anything
+   * about things being defined
+   * @@param event The mouse event that correlates to the user releasing
+   * the mouse
+   */
+  def attemptConnection( event: MouseEvent ) {
+    if ( selectedNode.isDefined &&
+	 selectedInput.isDefined ) {
+      connectIfPossible( event )
+    }
+  }
+
+  /**
+a938 22
+   * Attempts to move a node.  Doesn't assume anything about things
+   * being defined
+   * @@param event The mouse event that correlaes to the user releasing
+   * the mouse
+   */
+  def attemptNodeMove( event: MouseEvent ) {
+    if ( selectedNode.isDefined &&
+         selectedNodePosition.isDefined ) {
+      try {
+	model.moveNode( selectedNode.get,
+		        event.getX - selectedNodeDifference.get._1,
+		        event.getY - selectedNodeDifference.get._2 )
+      } catch {
+	case e: NodeUnplacableException => showError( e )
+      }
+      selectedNode = None
+      selectedNodePosition = None
+      selectedNodeDifference = None
+    }
+  }
+
+  /**
+d943 1
+a943 18
+    attemptConnection( event )
+    attemptNodeMove( event )
+    repaint()
+  }
+
+  /**
+   * If the user is attempting to move a node, then it will show the
+   * outline of a node moving across the screen.  Doesn't assume this is
+   * the case.
+   * @@param event The mouse event correlating to the drag
+   */
+  def attemptShowNodeMove( event: MouseEvent ) {
+    if ( selectedNode.isDefined &&
+	 selectedNodePosition.isDefined ) {
+      selectedNodePosition = Some( Pair( event.getX - selectedNodeDifference.get._1,
+					 event.getY - selectedNodeDifference.get._2 ) )
+      repaint()
+    }
+a946 14
+   * If the user is attempting to make a connection, then it will show a line
+   * from the connection source to the current area the mouse is on.  Doesn't
+   * assume that this is the case
+   * @@param event The mouse event correlating to the drag
+   */
+  def attemptShowConnection( event: MouseEvent ) {
+    if ( selectedNode.isDefined &&
+	 selectedInputPosition.isDefined ) {
+      selectedInputPosition = Some( VisualBoard.toPair( event ) )
+      repaint()
+    }
+  }
+  
+  /**
+d950 1
+a950 1
+   * @@param event Event describing the move
+d953 1
+a953 2
+    attemptShowNodeMove( event )
+    attemptShowConnection( event )
+d956 7
+a962 1
+  def mouseMoved( event: MouseEvent ) {}
+@
+
+
+1.13
+log
+@Fixed bug that prevented the same component from being
+dragged over twice in a row.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.12 2011/02/27 07:48:53 kyledewey Exp kyledewey $
+d9 4
+d139 23
+d401 1
+d404 4
+d428 13
+d460 2
+a461 2
+	  VisualNode.disconnect( nodeHere.get,
+				 lineHere.get )
+d625 2
+a626 2
+    if ( node1Line.eq( VisualNode.OUTPUT_LINE ) &&
+	 node2Line.eq( VisualNode.OUTPUT_LINE ) ) {
+d628 2
+a629 2
+    } else if ( !node1Line.eq( VisualNode.OUTPUT_LINE ) &&
+	        !node2Line.eq( VisualNode.OUTPUT_LINE ) ) {
+d631 1
+a631 1
+    } else if ( node1Line.eq( VisualNode.OUTPUT_LINE ) ) {
+d686 26
+d726 1
+@
+
+
+1.12
+log
+@Refactored so all updateDebuggers() now handles
+InputExceptions on its own.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.11 2011/02/27 04:29:17 kyledewey Exp $
+d9 4
+d872 10
+a881 2
+   * Shows a description for the given node
+   * @@param node The node to show a description of
+d883 5
+a887 5
+  def showDescription( node: Node[ _, _ ] ) {
+    nameLabel.setText( node.name )
+    descLabel.setText( node.description )
+    tableModel.changeData( Array( node.inputHeader ) ++ node.detailedDescription )
+    setOutputDescription( node.outputDescription )
+d912 1
+a912 1
+  private var lastNodeSelected: Option[ Node[ T, U ] ] = None
+d935 1
+a935 1
+   * Returns a node from the given tree path.
+d937 1
+a937 2
+   * @@return The node on the path, or None if the path doesn't
+   * end with a node
+d939 1
+a939 1
+  def getNode( path: TreePath ) = {
+d941 1
+a941 1
+    var retval: Option[ Node[ T, U ] ] = None
+d947 2
+a948 9
+	// note that TreeKey[ T ] is more specific, but there
+	// is no difference between that and TreeKey[ _ ], due
+	// to type erasure.  TreeKey[ _ ] doesn't trigger a warning,
+	// unlike TreeKey[ T ]
+	retval = Some( asNode.getUserObject
+	                     .asInstanceOf[ TreeKey[ _, _ ] ]
+	                     .makeNode
+	                     .asInstanceOf[ Node[ T, U ] ] )
+      }
+d961 1
+a961 1
+    lastNodeSelected = getNode( event.getPath )
+d963 2
+a964 2
+    if( lastNodeSelected.isDefined ) {
+      gui.nodeSelected( lastNodeSelected.get )
+d969 1
+a969 1
+   * Gets the node at the given X, Y position
+d972 1
+a972 1
+   * @@return The node here
+d974 1
+a974 1
+  def getNode( x: Int, y: Int ): Option[ Node[ T, U ] ] = {
+a975 2
+    var retval: Option[ Node[ T, U ] ] = None
+
+d977 3
+a979 1
+      retval = getNode( path )
+a980 1
+    retval
+d984 1
+a984 1
+   * Gets the node for the given mouse event.
+d986 1
+a986 1
+   * @@return The node for this event, or None if there isn't one
+d988 2
+a989 2
+  def getNode( event: MouseEvent ): Option[ Node[ T, U ] ] =
+    getNode( event.getX, event.getY )
+d998 1
+a998 1
+      gui.nodeDraggingOut( lastNodeSelected.get )
+d1003 6
+a1008 6
+    val nodeHere = getNode( event )
+    if ( lastNodeSelected.isDefined &&
+	 nodeHere.isDefined &&
+	 lastNodeSelected.get.component.eq( nodeHere.get.component ) ) {
+	   draggingOut = true
+	 }
+d1066 7
+a1072 1
+}
+d1160 8
+d1172 1
+a1172 1
+    descPanel.showDescription( node )
+@
+
+
+1.11
+log
+@Refactored for use with debuggers.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.10 2011/02/26 04:14:03 kyledewey Exp kyledewey $
+d9 3
+d442 6
+a447 2
+        asDebug.label = if ( newLabel == null ) "" else newLabel
+	repaint()
+a554 4
+      case e: Exception => { // connection was made, and must be undone
+	node2.disconnectInput( node1, line )
+	showError( e )
+      }
+d639 1
+a639 2
+   * update them to show the change.  Doesn't actually
+   * perform a repaint() if this happens.
+d642 1
+d645 8
+a652 1
+    node.lastChild.returnValue()
+@
+
+
+1.10
+log
+@Now uses makeVisualNode() for creating all visual nodes.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.9 2011/02/25 20:56:03 kyledewey Exp kyledewey $
+d9 3
+d98 4
+a101 3
+  def makeVisualNodes[ T <: AnyRef ]( board: NodeBoard[ T ],
+				      creator: ( Node[ T ] ) => VisualNode[ T ] ): Map[ Node[ T ], VisualNode[ T ] ] =
+    Map() ++ board.getNodes.map( ( node: Node[ T ] ) =>
+d111 2
+a112 2
+  def makeVisualNode[ T <: AnyRef ]( node: Node[ T ],
+				     board: NodeBoard[ T ] ) = {
+d124 2
+a125 1
+  def makeVisualNodes[ T <: AnyRef ]( board: NodeBoard[ T ] ): Map[ Node[ T ], VisualNode[ T ] ] =
+d139 2
+a140 2
+class VisualBoard[ T <: AnyRef ]( val model: NodeBoard[ T ],
+				  val gui: VisualBoardGUIView[ T ] ) 
+d143 1
+a143 1
+  var visualNode: Map[ Node[ T ], VisualNode[ T ] ] = 
+d147 1
+a147 1
+  private var selectedNode: Option[ Node[ T ] ] = None
+d210 1
+a210 1
+  def paintInputConnections( node: Node[ T ],
+d216 1
+a216 1
+      node.input( currentInput ).foreach( ( connectedTo: Node[ T ] ) => {
+d334 1
+a334 1
+  def getSelectedNode( x: Int, y: Int ): Option[ Node[ T ] ] =
+d343 1
+a343 1
+  def getSelectedNode( event: MouseEvent ): Option[ Node[ T ] ] =
+d366 1
+a366 1
+  def removeNode( node: Node[ T ] ) {
+d417 29
+d453 5
+a457 3
+    attemptShowNodeSelected( event )
+    if ( !attemptDisconnect( event ) ) {
+      attemptRemove( event )
+d484 1
+a484 1
+  def showNodeOutline( node: Node[ T ], x: Int, y: Int ) {
+d530 28
+d567 1
+a567 1
+  def connect( node1: Node[ T ],
+d569 2
+a570 2
+	       node2: Node[ T ],
+	       node2Line: String ) = {
+d573 10
+a582 16
+    try {
+      if ( node1Line.eq( VisualNode.OUTPUT_LINE ) &&
+	   node2Line.eq( VisualNode.OUTPUT_LINE ) ) {
+	showError( VisualBoard.OUTPUT_TO_OUTPUT_CONNECTION_ERROR )
+      } else if ( !node1Line.eq( VisualNode.OUTPUT_LINE ) &&
+	          !node2Line.eq( VisualNode.OUTPUT_LINE ) ) {
+	showError( VisualBoard.INPUT_TO_INPUT_CONNECTION_ERROR )
+      } else if ( node1Line.eq( VisualNode.OUTPUT_LINE ) ) {
+	node2.connect( node1, node2Line )
+	connectionMade = true
+      } else {
+	node1.connect( node2, node1Line )
+	connectionMade = true
+      }
+    } catch {
+      case e: InvalidNodeConnectionException => showError( e )
+d585 1
+d634 12
+d651 1
+a651 1
+  def placeNode( node: Node[ T ], x: Int, y: Int ) {
+d755 2
+a756 1
+class ReplaceTableModel( private var data: Array[ Array[ String ] ] ) extends AbstractTableModel {
+d861 1
+a861 1
+  def showDescription( node: Node[ _ ] ) {
+d882 1
+a882 1
+ * Note that the leaf nodes MUST be of type <code>TreeKey[ T ]</code>
+d887 2
+a888 2
+class ComponentsTree[ T <: AnyRef ]( val gui: ComponentsTreeGUIView[ T ], 
+				     root: DefaultMutableTreeNode ) 
+d890 1
+a890 1
+  private var lastNodeSelected: Option[ Node[ T ] ] = None
+d920 1
+a920 1
+    var retval: Option[ Node[ T ] ] = None
+d925 1
+a925 1
+	   asNode.getUserObject.isInstanceOf[ TreeKey[ _ ] ] ) {
+d931 1
+a931 1
+	                     .asInstanceOf[ TreeKey[ _ ] ]
+d933 1
+a933 1
+	                     .asInstanceOf[ Node[ T ] ] )
+d960 1
+a960 1
+  def getNode( x: Int, y: Int ): Option[ Node[ T ] ] = {
+d962 1
+a962 1
+    var retval: Option[ Node[ T ] ] = None
+d975 1
+a975 1
+  def getNode( event: MouseEvent ): Option[ Node[ T ] ] =
+d1015 2
+a1016 2
+		    gui: ComponentsTreeGUIView[ InstanceFactory[ _ ] ] )
+extends ComponentsTree[ InstanceFactory[ _ ] ]( gui, SentinelTreeHelpers.makeTreeNode( baseDir, projectPath ) ) {
+d1023 1
+a1023 1
+	    gui: ComponentsTreeGUIView[ InstanceFactory[ _ ] ] ) =
+d1036 1
+a1036 1
+	    gui: ComponentsTreeGUIView[ InstanceFactory[ _ ] ] ) =
+d1047 1
+a1047 1
+trait BaseVPL[ T <: AnyRef ] {
+d1052 1
+a1052 1
+  def nodeSelected( node: Node[ T ] ): Unit
+d1062 1
+a1062 1
+trait ComponentsTreeGUIView[ T <: AnyRef ] extends BaseVPL[ T ] {
+d1080 1
+a1080 1
+  def nodeDraggingOut( node: Node[ T ] ): Unit
+d1088 1
+a1088 1
+trait VisualBoardGUIView[ T <: AnyRef ] extends BaseVPL[ T ] {
+d1104 2
+a1105 1
+trait CompleteVPL[ T <: AnyRef ] extends ComponentsTreeGUIView[ T ] with VisualBoardGUIView[ T ] {}
+d1118 5
+a1122 5
+class SentinelVPL[ T <: AnyRef ]( boardCreator: (VisualBoardGUIView[ T ]) => VisualBoard[ T ],
+				  descriptionPanelCreator: (SentinelVPL[ T ]) => DescriptionPanel,
+				  componentsCreator: (ComponentsTreeGUIView[ T ]) => ComponentsTree[ T ] )  
+extends JPanel with CompleteVPL[ T ] {
+  private var nodeDragging: Option[ Node[ T ] ] = None
+d1144 1
+a1144 1
+  def nodeSelected( node: Node[ T ] ) {
+d1153 1
+a1153 1
+  def nodeDraggingOut( node: Node[ T ] ) {
+@
+
+
+1.9
+log
+@Refactored to use VisualNodes in tandem with Nodes.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.8 2011/02/11 01:24:18 kyledewey Exp kyledewey $
+d9 3
+d73 3
+a75 1
+  
+d91 2
+d95 2
+a96 1
+  def makeVisualNodes[ T <: AnyRef ]( board: NodeBoard[ T ] ) =
+d99 24
+a122 1
+	    new VisualNodeOnBoard( node, board ) ) )
+d138 1
+a138 1
+  private var visualNode: Map[ Node[ T ], VisualNode[ T ] ] = 
+a253 1
+    //visualNode.values.foreach( _.repaint() )
+d279 2
+a280 2
+		     model.getWidth( selectedNode.get ),
+		     model.compHeight )
+d425 4
+d432 5
+d583 2
+a584 1
+      visualNode += Pair( node, new VisualNodeOnBoard( node, model ) )
+@
+
+
+1.8
+log
+@Added support fro removing nodes from the board.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.7 2011/01/30 05:24:32 kyledewey Exp kyledewey $
+d9 3
+a49 10
+  // size of input/outputs
+  val INPUT_WIDTH = 5
+  val INPUT_HEIGHT = 5
+
+  // special string representing the output of a node
+  val OUTPUT_LINE = "output"
+
+  // default line color
+  val DEFAULT_LINE_COLOR = Color.BLACK
+
+a79 177
+  
+  /**
+   * Determines if the given point is within the rectangle dictated
+   * by the given coordinates.
+   * @@param point The point to determine
+   * @@param topLeft The top left corner of the rectangle
+   * @@param bottomRight The bottom right corner of the rectangle
+   * @@return true if the point is within the rectange, else false
+   */
+  def pointWithin( point: Pair[ Int, Int ], 
+		   topLeft: Pair[ Int, Int ], 
+		   bottomRight: Pair[ Int, Int ] ) = {
+    point._1 >= topLeft._1 &&
+    point._1 <= bottomRight._1 &&
+    point._2 >= topLeft._2 &&
+    point._2 <= bottomRight._2
+  }
+
+  /**
+   * Draws a filled rectangle on the given graphics, using the given
+   * top left and bottom right corners of the rectangle.
+   * @@param points The top left and bottom right corners of the rectangle
+   * @@param color The color to draw the rectangle
+   * @@param graphics The graphics object to draw on
+   */
+  def fillRect( points: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+	        color: Color,
+	        graphics: Graphics ) {
+    val oldColor = graphics.getColor
+    graphics.setColor( color )
+    graphics.fillRect( points._1._1,
+		       points._1._2,
+		       points._2._1 - points._1._1,
+		       points._2._2 - points._1._2 )
+    graphics.setColor( oldColor )
+  }
+
+  /**
+   * Gets the Euclidean distance between two points
+   * @@param point1 The first point
+   * @@param point2 The second point
+   * @@return The distance between the two
+   */
+  def distance( point1: Pair[ Int, Int ], point2: Pair[ Int, Int ] ): Double =
+    distance( point1._1,
+	      point1._2,
+	      point2._1,
+	      point2._2 )
+  
+  /**
+   * Gets the Euclidean distance between two points
+   * @@param px The first point's x
+   * @@param py The first point's y
+   * @@param qx The second point's x
+   * @@param qy The second point's y
+   * @@return The distance between the two
+   */
+  def distance( px: Int, py: Int, qx: Int, qy: Int ): Double =
+    Math.sqrt( Math.pow( px - qx, 2 ) + 
+	       Math.pow( py - qy, 2 ) )
+  
+  /**
+   * Gets the width of the given box
+   * @@param box The box
+   * @@return The width of the box
+   */
+  def width( box: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) =
+    box._2._1 - box._1._1
+
+  /**
+   * Gets the height of the given box
+   * @@param box The box
+   * @@return The height of the box
+   */
+  def height( box: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) =
+    box._2._2 - box._1._2
+
+  /**
+   * Given a box, returns a point for each edge.  The point is in the middle
+   * of the edge.
+   * @@param box The box to get the mid points of
+   * @@return The middle point for each of the edges
+   */
+  def edgeMidPoints( box: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) = {
+    val middleX = ( width( box ) / 2 ) + box._1._1
+    val middleY = ( height( box ) / 2 ) + box._1._2
+    
+    Seq( Pair( middleX, box._1._2 ),
+	 Pair( middleX, box._2._2 ),
+	 Pair( box._1._1, middleY ),
+	 Pair( box._2._1, middleY ) )
+  }
+  
+  /**
+   * Given two boxes, gets the two points that should be used as
+   * end points between a line between them.  It picks the closest edge.
+   * @@param box1 The first box
+   * @@param box2 The second box
+   * @@return The points that should be used as edge points for a line
+   */
+  def lineEndPoints( box1: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+		     box2: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) = {
+    var firstPoint: Pair[ Int, Int ] = null
+    var secondPoint: Pair[ Int, Int ] = null
+    var retvalDistance = 0.0
+
+    edgeMidPoints( box1 ).foreach( ( box1Edge: Pair[ Int, Int ] ) => {
+      edgeMidPoints( box2 ).foreach( ( box2Edge: Pair[ Int, Int ] ) => {
+	val currentDistance = distance( box1Edge, box2Edge )
+
+	if ( firstPoint == null ||
+	     currentDistance < retvalDistance ) {
+	  retvalDistance = currentDistance
+	  firstPoint = box1Edge
+	  secondPoint = box2Edge
+	}
+      })
+    })
+
+    Pair( firstPoint,
+	  secondPoint )
+  }
+    
+  /**
+   * Draws a line between the two boxes.  The line is put at
+   * the center of the edge closest to the other
+   * @@param box1 The first box
+   * @@param box2 The second box
+   * @@param color The color to draw the line
+   * @@param graphics The graphics object to draw with
+   */
+  def drawLineBoxes( box1: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+	             box2: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+	             color: Color,
+	             graphics: Graphics ) {
+    val ( firstPoint,
+	  secondPoint ) = lineEndPoints( box1, box2 )
+    drawLinePoints( firstPoint,
+		    secondPoint,
+		    color,
+ 		    graphics )
+  }
+
+  /**
+   * Like <code>drawLine</code>, but it uses DEFAULT_LINE_COLOR.
+   * @@param box1 The first box
+   * @@param box2 The second box
+   * @@param graphics The graphics object to draw with
+   */
+  def drawLineBoxes( box1: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+	             box2: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+	             graphics: Graphics ) {
+    drawLineBoxes( box1,
+		   box2,
+ 		   DEFAULT_LINE_COLOR,
+		   graphics )
+  }
+
+  /**
+   * Draws a line between the two given points.
+   * @@param point1 The first point
+   * @@param point2 The second point
+   * @@param color The color of the line
+   * @@param graphics The graphics object to draw with
+   */
+  def drawLinePoints( point1: Pair[ Int, Int ],
+	              point2: Pair[ Int, Int ],
+	              color: Color,
+	              graphics: Graphics ) {
+    val oldColor = graphics.getColor
+    graphics.setColor( color )
+    graphics.drawLine( point1._1,
+		       point1._2,
+		       point2._1,
+		       point2._2 )
+    graphics.setColor( oldColor )
+  }
+d82 10
+a91 28
+   * Draws a line between the two given points.
+   * Uses <code>DEFAULT_LINE_COLOR</code>
+   * @@param point1 The first point
+   * @@param point2 The second point
+   * @@param graphics The graphics object to draw with
+   */
+  def drawLinePoints( point1: Pair[ Int, Int ],
+	              point2: Pair[ Int, Int ],
+	              graphics: Graphics ) {
+    drawLinePoints( point1,
+		    point2,
+		    DEFAULT_LINE_COLOR,
+		    graphics )
+  }
+
+  /**
+   * Given a node and an input/output line, it will perform
+   * a disconnection operation
+   * @@param node The node
+   * @@param line The input/output line to disconnect
+   */
+  def disconnect( node: Node[ _ ], line: String ) {
+    if ( line.eq( OUTPUT_LINE ) ) {
+      node.disconnectOutput()
+    } else {
+      node.disconnectInput( line )
+    }
+  }
+d106 4
+d176 1
+a176 1
+    lazy val inputBoxPositions = getInputBoxPositions( node ).toArray
+d179 5
+a183 5
+    node.getInputNames.foreach( ( name: String ) => {
+      node.getInput( currentInput ).foreach( ( connectedTo: Node[ T ] ) => {
+	VisualBoard.drawLineBoxes( inputBoxPositions( currentInput ),
+				   getOutputBoxPosition( connectedTo ),
+				   graphics )
+a196 55
+  /**
+   * Paints all the input lines of the given node
+   * @@param node The node to paint the input lines of
+   * @@param graphics The graphics object to paint with
+   */
+  def paintInputLines( node: Node[ T ],
+		       graphics: Graphics ) {
+    var currentInput = 0
+    getInputBoxPositions( node ).foreach( 
+      ( box: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) => {
+	VisualBoard.fillRect( box,
+			      node.inputColor( currentInput ),
+			      graphics )
+	currentInput += 1
+      })
+  }
+
+  /**
+   * Paints all the input and output lines of the given node
+   * @@param node The node to paint the lines of
+   * @@param graphics The graphics object to paint with
+   */
+  def paintLines( node: Node[ T ],
+		  graphics: Graphics ) {
+    paintInputLines( node, graphics )
+    VisualBoard.fillRect( getOutputBoxPosition( node ),
+			  node.outputColor,
+			  graphics )
+  }
+
+  /**
+   * Paints the given node
+   * @@param node The node to paint
+   * @@param graphics The graphics object to paint with
+   */
+  def paintNode( node: Node[ T ],
+		 graphics: Graphics ) {
+    paintNodeBase( node, graphics )
+    paintLines( node, graphics )
+  }
+
+  /**
+   * Paints out the main rectangle of the given node
+   * @@param node The node to paint
+   * @@param color The color to paint it
+   * @@param graphics The graphics object to paint with
+   */
+  def paintNodeBase( node: Node[ T ],
+		     color: Color,
+		     graphics: Graphics ) {
+    VisualBoard.fillRect( Pair( model.getTopLeftCorner( node ).get,
+			        model.getBottomRightCorner( node ) ),
+			  color,
+			  graphics )
+  }
+a217 13
+   * Paints out the main rectangle of the given node, using
+   * node.getColor for the color
+   * @@param node The node to paint
+   * @@param graphics The graphics object to paint with
+   */
+  def paintNodeBase( node: Node[ T ],
+		     graphics: Graphics ) {
+    paintNodeBase( node,
+		   node.getColor,
+		   graphics )
+  }
+
+  /**
+d222 2
+a223 1
+    model.getNodes.foreach( paintNode( _, graphics ) )
+d273 3
+a275 3
+      VisualBoard.drawLinePoints( startingSelectedInputPosition.get,
+				  selectedInputPosition.get,
+				  graphics )
+a292 116
+   * Gets the amount that each input should be staggered on the x axis for the
+   * given node.
+   * @@param node The node to get the stagger of
+   * @@return The amount of stagger for each input on the x axis
+   */
+  def getStagger( node: Node[ T ] ) = {
+    val numInputs = node.numInputs
+    Math.ceil( ( model.getWidth( node ) - 
+		( VisualBoard.INPUT_WIDTH * node.numInputs ) ) / 
+	      ( numInputs + 1 ).asInstanceOf[ Double ] ).asInstanceOf[ Int ]
+  }
+
+  /**
+   * Given a node, it will return where the output box is.
+   * The output box is represented as a top left corner and a bottom right corner.
+   * @@param node The node to get the output box position of
+   * @@return The position of the output box
+   */
+  def getOutputBoxPosition( node: Node[ T ] ) = {
+    val bottomRight = model.getBottomRightCorner( node )
+    Pair( Pair( bottomRight._1 - VisualBoard.INPUT_WIDTH,
+	        bottomRight._2 - VisualBoard.INPUT_HEIGHT ),
+	  bottomRight )
+  }
+
+  /**
+   * Given a node, it will return the positions of each of the input boxes.
+   * Each position is represented as a pair of coordinate pairs.
+   * @@param node The node to get the input box positions of
+   * @@return The positions of the input boxes
+   */
+  def getInputBoxPositions( node: Node[ T ] ) = {
+    val width = model.getWidth( node )
+    val stagger = getStagger( node )
+    val topLeft = model.getTopLeftCorner( node ).get
+    var retval: Seq[ Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ] = Seq()
+    var currentX = stagger
+
+    while( currentX < width ) {
+      retval ++= Seq( Pair( Pair( topLeft._1 + currentX,
+				  topLeft._2 ),
+			    Pair( topLeft._1 + currentX + VisualBoard.INPUT_WIDTH,
+				  topLeft._2 + VisualBoard.INPUT_HEIGHT ) ) )
+      currentX += stagger + VisualBoard.INPUT_WIDTH
+    }
+
+    retval
+  }
+
+  /**
+   * Given a node and an x, y coordinate, returns which line was selected.
+   * @@pre The x, y coordinate is within the node
+   * @@param node The node that has been selected
+   * @@param x The x coordinate
+   * @@param y The y coordinate
+   * @@return The name of the input that was selected, or OUTPUT_LINE if
+   * the output was selected, or None if no lines were selected
+   */
+  def getSelectedLine( node: Node[ T ], x: Int, y: Int ) = 
+    if ( outputLineSelected( node, x, y ) ) {
+      Some( VisualBoard.OUTPUT_LINE )
+    } else {
+      getSelectedInput( node, x, y )
+    }
+  
+  /**
+   * Given a node and an x, y coordinate, returns the name of the
+   * input that was selected.
+   * @@pre The x, y coordinate is within the given node
+   * @@param node The node that has been selected
+   * @@param x The x coordinate
+   * @@param y The y coordinate
+   * @@return The name of the input that was selected, or None
+   * if no inputs were selected
+   */
+  def getSelectedInput( node: Node[ T ], x: Int, y: Int ) = {
+    val point = Pair( x, y )
+    val inputPositions = getInputBoxPositions( node ).toArray
+    var inputNumber = 0
+    var retval: Option[ String ] = None
+    var done = false
+
+    while( inputNumber < inputPositions.length &&
+	   !done ) {
+      val current = inputPositions( inputNumber )
+      if ( VisualBoard.pointWithin( point,
+				    current._1,
+				    current._2 ) ) {
+	retval = Some( node.inputNumberToName( inputNumber ) )
+	done = true
+      }
+      inputNumber += 1
+    }
+
+    retval
+  }
+      
+  /**
+   * Given a node and an x and y coordinate, it returns whether or
+   * not the output line was selected.  Assumes that the x and y
+   * coordinates are within the node
+   * @@pre The given x and y coordinate are in the node
+   * @@param node The node that has been selected
+   * @@param x The x coordinate of selection
+   * @@param y The y coordinate of selection
+   * @@return true if the output line was selected, else false
+   */
+  def outputLineSelected( node: Node[ T ], x: Int, y: Int ) = {
+    val ( topLeft,
+	  bottomRight ) = getOutputBoxPosition( node )
+    VisualBoard.pointWithin( Pair( x, y ),
+			     topLeft,
+			     bottomRight )
+  }
+
+  /**
+d327 11
+d348 1
+a348 2
+	model.removeNode( nodeHere.get )
+	repaint()
+d369 2
+a370 3
+	val lineHere = getSelectedLine( nodeHere.get,
+				        event.getX,
+				        event.getY )
+d373 2
+a374 2
+	  VisualBoard.disconnect( nodeHere.get,
+				  lineHere.get )
+d437 2
+a438 3
+	selectedInput = getSelectedLine( selectedNode.get,
+					 event.getX,
+					 event.getY )
+d443 1
+a443 1
+	  selectedNodePosition = model.getTopLeftCorner( selectedNode.get )
+d471 2
+a472 2
+      if ( node1Line.eq( VisualBoard.OUTPUT_LINE ) &&
+	   node2Line.eq( VisualBoard.OUTPUT_LINE ) ) {
+d474 2
+a475 2
+      } else if ( !node1Line.eq( VisualBoard.OUTPUT_LINE ) &&
+	          !node2Line.eq( VisualBoard.OUTPUT_LINE ) ) {
+d477 1
+a477 1
+      } else if ( node1Line.eq( VisualBoard.OUTPUT_LINE ) ) {
+d506 2
+a507 3
+      val lineHere = getSelectedLine( nodeHere.get,
+				      event.getX,
+				      event.getY )
+d544 1
+d593 1
+a593 1
+					 event.getY - selectedNodeDifference.get._2 ))
+@
+
+
+1.7
+log
+@Added support for dragging and dropping nodes in.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.6 2011/01/29 03:15:29 kyledewey Exp kyledewey $
+d9 3
+d306 1
+a306 1
+				  val gui: SentinelVPL[ T ] ) 
+d708 17
+d729 3
+d733 3
+a735 1
+  def attemptDisconnect( event: MouseEvent ) {
+d744 1
+d751 2
+d762 3
+a764 1
+    attemptDisconnect( event )
+d1148 1
+a1148 1
+class ComponentsTree[ T <: AnyRef ]( val gui: SentinelVPL[ T ], 
+d1276 1
+a1276 1
+		    gui: SentinelVPL[ InstanceFactory[ _ ] ] )
+d1284 1
+a1284 1
+	    gui: SentinelVPL[ InstanceFactory[ _ ] ] ) =
+d1297 1
+a1297 1
+	    gui: SentinelVPL[ InstanceFactory[ _ ] ] ) =
+d1303 64
+a1366 1
+      
+d1378 1
+a1378 1
+class SentinelVPL[ T <: AnyRef ]( boardCreator: (SentinelVPL[ T ]) => VisualBoard[ T ],
+d1380 2
+a1381 2
+				  componentsCreator: (SentinelVPL[ T ]) => ComponentsTree[ T ] )  
+extends JPanel {
+@
+
+
+1.6
+log
+@Can now disconnect connections by right clicking.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.5 2011/01/29 02:47:20 kyledewey Exp kyledewey $
+d9 3
+d33 1
+d302 2
+a303 2
+class VisualBoard[ T ]( val model: NodeBoard[ T ],
+		        val gui: SentinelVPL[ T ] ) 
+d737 28
+a764 2
+  def mouseEntered( event: MouseEvent ) {}
+  def mouseExited( event: MouseEvent ) {}
+d880 15
+d972 10
+d987 7
+a993 2
+class ReplaceTableModel extends AbstractTableModel {
+  private var data: Array[ Array[ String ] ] =  new Array( 0, 0 )
+d1045 2
+a1046 2
+  val nameLabel = new JLabel( "" )
+  val descLabel = new JLabel( "" )
+d1049 1
+a1049 1
+  val outputLabel = new JLabel( "" )
+d1100 174
+d1281 2
+d1285 3
+a1287 2
+class SentinelVPL[ T ]( boardCreator: (SentinelVPL[ T ]) => VisualBoard[ T ],
+		        descriptionPanelCreator: (SentinelVPL[ T ]) => DescriptionPanel ) 
+d1289 2
+d1293 2
+a1294 1
+  //val components = new JTree()
+d1296 1
+d1299 3
+a1301 1
+  //topPanel.add( components )
+d1305 1
+d1314 61
+@
+
+
+1.5
+log
+@When dragging boxes around, the box no longer
+always jumps to the top left corner of the box.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.4 2011/01/28 18:06:20 kyledewey Exp kyledewey $
+d9 4
+d273 14
+d686 38
+d729 2
+a730 5
+    val nodeHere = getSelectedNode( event )
+
+    if ( nodeHere.isDefined ) {
+      gui.nodeSelected( nodeHere.get )
+    }
+d742 21
+a762 13
+    selectedNode = getSelectedNode( event )
+
+    if ( selectedNode.isDefined ) {
+      selectedInput = getSelectedLine( selectedNode.get,
+				       event.getX,
+				       event.getY )
+      if ( selectedInput.isDefined ) {
+	startingSelectedInputPosition = Some( VisualBoard.toPair( event ) )
+	selectedInputPosition = startingSelectedInputPosition
+      } else {
+	selectedNodePosition = model.getTopLeftCorner( selectedNode.get )
+	selectedNodeDifference = Some( Pair( event.getX - selectedNodePosition.get._1,
+					     event.getY - selectedNodePosition.get._2 ) )
+a763 1
+      repaint()
+@
+
+
+1.4
+log
+@Now allows for multiple input connections to the same line.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.3 2011/01/28 04:27:27 kyledewey Exp kyledewey $
+d9 3
+d293 4
+a296 1
+ 
+d353 5
+a357 7
+      if ( node.inputConnected( name ) ) {
+	node.getInput( currentInput ).foreach( ( connectedTo: Node[ T ] ) => {
+	  VisualBoard.drawLineBoxes( inputBoxPositions( currentInput ),
+				     getOutputBoxPosition( connectedTo ),
+				     graphics )
+	})
+      }
+d599 2
+a600 1
+   * Given a node and an x, y coordinate, returns the name of the input that was selected.
+d605 2
+a606 1
+   * @@return The name of the input that was selected, or None if no inputs were selected
+d699 3
+a701 1
+	selectedNodePosition = Some( VisualBoard.toPair( event ) )
+d800 2
+a801 2
+		        event.getX,
+		        event.getY )
+d807 1
+d830 2
+a831 1
+      selectedNodePosition = Some( VisualBoard.toPair( event ) )
+@
+
+
+1.3
+log
+@Nodes can now be connected to each other.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.2 2011/01/28 02:06:38 kyledewey Exp kyledewey $
+d9 3
+d348 5
+a352 4
+	val connectedTo = node.getInput( currentInput ).get
+	VisualBoard.drawLineBoxes( inputBoxPositions( currentInput ),
+				   getOutputBoxPosition( connectedTo ),
+				   graphics )
+@
+
+
+1.2
+log
+@Now supports the ability to move nodes by clicking and dragging.
+@
+text
+@d5 1
+a5 1
+ *     $Id: VisualBoard.scala,v 1.1 2011/01/27 15:52:20 kyledewey Exp kyledewey $
+d9 3
+d55 16
+d201 4
+a204 5
+  def drawLine( box1: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+	        box2: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+	        color: Color,
+	        graphics: Graphics ) {
+    val oldColor = graphics.getColor
+d207 4
+a210 6
+    graphics.setColor( color )
+    graphics.drawLine( firstPoint._1,
+		       firstPoint._2,
+		       secondPoint._1,
+		       secondPoint._2 )
+    graphics.setColor( oldColor )
+d219 43
+a261 7
+  def drawLine( box1: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+	        box2: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+	        graphics: Graphics ) {
+    drawLine( box1,
+	      box2,
+	      DEFAULT_LINE_COLOR,
+	      graphics )
+d279 7
+d287 5
+d346 3
+a348 3
+	VisualBoard.drawLine( inputBoxPositions( currentInput ),
+			      getOutputBoxPosition( connectedTo ),
+			      graphics )
+d471 2
+a472 1
+    if ( selectedNode.isDefined ) {
+d489 1
+a489 1
+   * Paints any noes that are being moved.
+d499 13
+d521 1
+d621 3
+a623 2
+   * Given a node and an x and y coordinate, it returns whether or not the output
+   * line was selected.  Assumes that the x and y coordinates are within the node
+d680 13
+a692 3
+    selectedNodePosition = Some( Pair( event.getX, 
+				       event.getY ) )
+    repaint()
+d696 90
+a785 5
+   * When the user releases, we want to move the node to this position
+   * @@param event Event describing the move
+   */
+  def mouseReleased( event: MouseEvent ) { 
+    if ( selectedNode.isDefined ) {
+d795 23
+d823 14
+d843 2
+a844 5
+    if ( selectedNode.isDefined ) {
+      selectedNodePosition = Some( Pair( event.getX,
+					 event.getY ) )
+      repaint()
+    }
+d971 2
+a972 2
+ * @@param descriptionPanelCreator Like <code>boardCreator</code>, but with the descrption
+ * panel
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d18 1
+d20 1
+a26 4
+  // default x and y positions
+  val DEFAULT_X = 0
+  val DEFAULT_Y = 0
+
+d37 15
+d215 3
+d219 1
+d222 47
+a268 6
+class VisualBoard[ T ]( val model: NodeBoard[ T ] ) 
+extends JLabel {
+  setBounds( VisualBoard.DEFAULT_X,
+	     VisualBoard.DEFAULT_Y,
+	     model.width,
+	     model.height )
+d329 58
+d391 40
+a430 7
+    model.getNodes.foreach( ( node: Node[ T ] ) => {
+      VisualBoard.fillRect( Pair( model.getTopLeftCorner( node ).get,
+				  model.getBottomRightCorner( node ) ),
+			    node.getColor,
+			    graphics )
+      paintLines( node, graphics )
+    })
+d439 1
+d442 1
+d565 1
+a565 1
+  def getSelectedNode( x: Int, y: Int ) =
+d567 220
+@

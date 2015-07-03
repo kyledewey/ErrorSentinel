@@ -1,0 +1,134 @@
+head	1.4;
+access;
+symbols;
+locks
+	kyledewey:1.4; strict;
+comment	@# @;
+
+
+1.4
+date	2011.06.20.23.01.13;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2011.06.03.04.23.00;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.06.18.21.01.39;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.06.16.00.04.35;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Performs simple stats on the codebase.
+@
+
+
+1.4
+log
+@Added a count of classes.
+@
+text
+@#!/bin/sh
+
+#
+# counts.sh
+#
+# Version:
+#     $Id: counts.sh,v 1.3 2011/06/03 04:23:00 kyledewey Exp kyledewey $
+#
+# Revisions:
+#      $Log: counts.sh,v $
+#      Revision 1.3  2011/06/03 04:23:00  kyledewey
+#      Only looks in src/ for actively developed Error
+#      Sentinel code.  Only looks in classes/ for active
+#      class files.
+#
+#      Revision 1.2  2010/06/18 21:01:39  kyledewey
+#      Made it so counts of Makefiles, shell files, and perl
+#      files are included in with a separate line count.
+#
+#      Revision 1.1  2010/06/16 00:04:35  kyledewey
+#      Initial revision
+#
+#
+#
+
+# Performs simple stats on the codebase to get
+# data of interest
+#
+# Author: Kyle Dewey
+
+echo "Line totals for everything:"
+find . \( -name '*.scala' -o -name 'Makefile' -o -name 'makefile' -o -name '*.pl' -o -name '*.sh' \) | xargs wc -l
+
+echo "Line totals for active Scala:"
+find src/ -name '*.scala' | xargs wc -l
+
+/bin/echo -n "Number of classes: "
+grep '\.html' docs/all-classes.html | wc -l | sed 's/[^0-9]//g'
+
+/bin/echo -n "Number of class files: "
+find classes/ -name '*.class' | wc -l | sed 's/[^0-9]//g'
+
+@
+
+
+1.3
+log
+@Only looks in src/ for actively developed Error
+Sentinel code.  Only looks in classes/ for active
+class files.
+@
+text
+@d7 1
+a7 1
+#     $Id: counts.sh,v 1.2 2010/06/18 21:01:39 kyledewey Exp kyledewey $
+d11 5
+d37 3
+@
+
+
+1.2
+log
+@Made it so counts of Makefiles, shell files, and perl
+files are included in with a separate line count.
+@
+text
+@d7 1
+a7 1
+#     $Id: counts.sh,v 1.1 2010/06/16 00:04:35 kyledewey Exp $
+d11 4
+d29 2
+a30 2
+echo "Line totals for Scala:"
+find . -name '*.scala' | xargs wc -l
+d33 1
+a33 1
+find . -name '*.class' | wc -l | sed 's/[^0-9]//g'
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+a7 1
+#     $Id$
+d10 4
+a13 1
+#      $Log$
+d22 4
+a25 1
+echo "Line totals:"
+@

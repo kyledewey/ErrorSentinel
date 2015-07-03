@@ -1,0 +1,2394 @@
+head	1.20;
+access;
+symbols;
+locks
+	kyledewey:1.20; strict;
+comment	@# @;
+
+
+1.20
+date	2011.06.20.22.40.51;	author kyledewey;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2011.06.18.03.28.47;	author kyledewey;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2011.06.08.04.23.43;	author kyledewey;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2011.06.07.08.15.44;	author kyledewey;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2011.05.31.17.17.48;	author kyledewey;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2011.05.25.20.04.57;	author kyledewey;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2011.03.27.14.04.37;	author kyledewey;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2011.02.27.20.29.21;	author kyledewey;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2011.02.27.06.39.55;	author kyledewey;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2011.02.27.05.18.54;	author kyledewey;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2011.02.12.01.48.48;	author kyledewey;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2010.07.11.05.44.00;	author kyledewey;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2010.06.26.04.02.24;	author kyledewey;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2010.06.23.03.10.20;	author kyledewey;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2010.06.20.17.25.38;	author kyledewey;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2010.06.18.19.35.31;	author kyledewey;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2010.06.18.03.01.07;	author kyledewey;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2010.06.16.00.58.54;	author kyledewey;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2010.06.15.23.58.19;	author kyledewey;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2010.06.15.17.53.40;	author kyledewey;	state Exp;
+branches;
+next	;
+
+
+desc
+@Contains basic factories and routines related to factories.
+@
+
+
+1.20
+log
+@Now uses SentinelHelpers.numTimesSeen for the implementation
+of getNumTimesSeen.
+Uses lists instead of Seqs for appending in
+ParseNode.
+@
+text
+@/*
+ * Factory.scala
+ *
+ * Version:
+ *     $Id: Factory.scala,v 1.19 2011/06/18 03:28:47 kyledewey Exp kyledewey $
+ *
+ * Revisions:
+ *      $Log: Factory.scala,v $
+ *      Revision 1.19  2011/06/18 03:28:47  kyledewey
+ *      Added support for optimizations.
+ *
+ *      Revision 1.18  2011/06/08 04:23:43  kyledewey
+ *      Massive refactor to that all parameter types are uniform
+ *      from the perspective of matchers and replacers.
+ *
+ *      Revision 1.17  2011/06/07 08:15:44  kyledewey
+ *      Added typed parse tree proxies.
+ *
+ *      Revision 1.16  2011/05/31 17:17:48  kyledewey
+ *      Added the mapParamInfos method.
+ *
+ *      Revision 1.15  2011/05/25 20:04:57  kyledewey
+ *      Now uses Matcher and Replacer Proxies for parse tree instances.
+ *
+ *      Revision 1.14  2011/03/27 14:04:37  kyledewey
+ *      Minor code cleanup.
+ *
+ *      Revision 1.13  2011/02/27 20:29:21  kyledewey
+ *      Factory now conforms to the SentinelDescription and
+ *      Describable traits.
+ *
+ *      Revision 1.12  2011/02/27 06:39:55  kyledewey
+ *      Added the param parameter to ParameterTypeException.
+ *
+ *      Revision 1.11  2011/02/27 05:18:54  kyledewey
+ *      Refactored to include parameter order.
+ *
+ *      Revision 1.10  2011/02/12 01:48:48  kyledewey
+ *      Changed implementation of getSortedParamNames() to utilize
+ *      ParamInfo.sortParams().
+ *
+ *      Revision 1.9  2010/07/11 05:44:00  kyledewey
+ *      The *param* methods no longer return NamedParam, but Param.
+ *
+ *      Revision 1.8  2010/06/26 04:02:24  kyledewey
+ *      Added helpers for optional params;
+ *      added implicit conversion of Int to Data.
+ *
+ *      Revision 1.7  2010/06/23 03:10:20  kyledewey
+ *      Added comments explaining that all kinds
+ *      of reflection factories can throw ClassNotFound
+ *      and NoSuchMethod exceptions in their constructors.
+ *
+ *      Revision 1.6  2010/06/20 17:25:38  kyledewey
+ *      Major refactor to clean up factory hierarchy and remove
+ *      duplication of some code.
+ *
+ *      Revision 1.5  2010/06/18 19:35:31  kyledewey
+ *      Made factories take a name and description.
+ *
+ *      Revision 1.4  2010/06/18 03:01:07  kyledewey
+ *      Added implicit type conversions.
+ *
+ *      Revision 1.3  2010/06/16 00:58:54  kyledewey
+ *      Fixed typo in name of ParameterizedInstantiationException.
+ *
+ *      Revision 1.2  2010/06/15 23:58:19  kyledewey
+ *      Made it so validateTypes() prints human-readable
+ *      type names.
+ *
+ *      Revision 1.1  2010/06/15 17:53:40  kyledewey
+ *      Initial revision
+ *
+ *
+ */
+
+package sentinel.model
+
+/**
+ * Contains helper methods relevant to InstanceFactory
+ * @@author Kyle Dewey
+ */
+object InstanceFactory {
+  // begin constants
+  val SEPARATOR = ", "
+  // end constants
+
+  /**
+   * Gets an array of optional params.
+   * @@param name The name of the param
+   * @@param params The listing of params
+   * @@return All params with the given name, or None if it wasn't passed
+   */
+  def opAsArray( name: String, 
+		 params: Seq[ NamedParam ] ): Option[ Array[ Param ] ] = {
+    val result = params.filter( _.name == name )
+    if ( !result.isEmpty ) {
+      Some( result.map( _.param ).toArray )
+    } else None
+  }
+
+  /**
+   * Given a listing of params and the name of a param,
+   * gets only those params that match the name.  Assumes that
+   * The items are of the given type.
+   * @@param name The name to look for
+   * @@param params The listing of params
+   * @@return All params with that name, or an empty sequence
+   *         if there were none.
+   */
+  def asArray( name: String, params: Seq[ NamedParam ] ): Array[ Param ] =
+    opAsArray( name, params ).get
+
+  /**
+   * Gets the optional param with the given name.
+   * @@param name The name of the desired param
+   * @@param params The listing of params
+   * @@return The param, or None if it wasn't passed.
+   */
+  def opParam( name: String, params: Seq[ NamedParam ] ): Option[ Param ] = {
+    val asArray = opAsArray( name, params )
+    if ( asArray.isDefined ) {
+      Some( asArray.get.first )
+    } else None
+  }
+
+  /**
+   * Gets the param with the given name.  Note that if multiple params
+   * have the same name, it will return the first one found.
+   * @@param name The name of the desired param
+   * @@param params The listing of params
+   * @@return the first param found
+   */
+  def param( name: String, params: Seq[ NamedParam ] ): Param =
+    opParam( name, params ).get
+
+  /**
+   * Converts the given array of parameters to an array of matchers
+   * @@param params The params
+   * @@return An array of matchers
+   * @@throws ValueException If a conversion failed
+   */
+  def matchers( params: Seq[ Param ] ) =
+    params.map( _.matcherValue )
+
+  /**
+   * Given a sequence, will sort the items in the sequence and produce
+   * a string that's applicable for an error
+   * @@param items The items in the sequence
+   * @@return an appropriate string for an error message
+   */
+  def errStr( items: Seq[ String ] ) =
+    items.toList.sort( _ < _ ).mkString( SEPARATOR )
+
+  /**
+   * Gets information about a class as to whether or not it is
+   * a built in.
+   * @@param theClass The class to get the information of
+   * @@return whether or not it's a built in, and the name of
+   *         the JVM class that backs it if it is
+   */
+  def builtInInfo( theClass: InstanceFactory[ _ ] ) = {
+    val builtIn = theClass.isInstanceOf[ ReflectionFactory[ _ ] ]
+    var className: Option[ String ] = None
+    if ( builtIn ) {
+      className = Some( theClass.asInstanceOf[ ReflectionFactory[ _ ] ]
+                                .JVMClassName )
+    }
+    ( builtIn,
+      className )
+  }
+
+  /**
+   * Converts the given boolean value to "Yes" or "No", depending on
+   * whether it is true or false.
+   * @@param value The boolean value to convert
+   * @@return "Yes" for true, or "No" for false
+   */
+  def toYesNo( value: Boolean ) =
+    if ( value ) "Yes" else "No"
+}
+
+/**
+ * <p>Defines a factory that can create objects that can
+ * take parameters. Note that within sentinel, there are two acceptable
+ * ways to do this.  The first is by creating a class in a JVM-aware
+ * language, and then creating instances of that.  The second is
+ * by using parse trees to build new classes from existing classes
+ * within the framework.</p>
+ *
+ * @@param name The name of the factory
+ * @@param desc A description of the factory
+ * @@param neededParams What params are needed to instantiate
+ *        an object.  The keys are the names of the params and
+ *        the values are detailed information about the params
+ * @@param paramOrder The order of the parameters
+ * 
+ * @@author Kyle Dewey
+ */
+abstract class InstanceFactory[ T <: Instance ]
+( val name: String,
+  val desc: String,
+  val validParams: Map[ String, ParamInfo ],
+  val paramOrder: Seq[ String ] ) 
+extends Ordered[ InstanceFactory[ T ] ] with Describable with SentinelDescription {
+  
+  import InstanceFactory._
+  import ParamType._
+
+  /**
+   * Gets a describer for this factory.
+   * Note that this simply returns the factory itself
+   * @@return <code>this</code>
+   */
+  def describer() =
+    this
+
+  /**
+   * Gets a description of this factory
+   * @@return <code>desc</code>
+   */
+  def description() =
+    desc
+
+  /**
+   * Gets the name of all inputs, in their desired order
+   * @@return <code>paramOrder.toArray</code>
+   */
+  def inputNames() =
+    paramOrder.toArray
+
+  /**
+   * Maps the valid params against the given function.
+   * They are called in order of paramOrder
+   * @@param function The function to map with
+   * @@return The mapping result
+   */
+  def mapParamInfos[ T ]( function: ParamInfo => T ) =
+    paramOrder.map( ( paramName: String ) =>
+      function( validParams( paramName ) ) )
+
+  /**
+   * Validates the given input name.
+   * @@param input The name of the input to validate
+   * @@throws InputNameException If the name of the input isn't recognized
+   */
+  def validateName( input: String ) {
+    if ( !validParams.contains( input ) ) {
+      throw new UnknownInputException( "Unknown input with name: " + input )
+    }
+  }
+
+  /**
+   * Gets a description of the given input.
+   * @@param input The name of the input
+   * @@return A description of the given input
+   * @@throws UnknownInputException If the given input name isn't
+   * recognized
+   */
+  def inputDescription( input: String ) = {
+    validateName( input )
+    validParams( input ).desc
+  }
+  
+  /**
+   * Gets a detailed description of the given input.
+   * @@param input The name of the input
+   * @@return The input name, description, type, whether or not it's an
+   * array, and whether or not it's required, in an array
+   * @@throws UnknownInputException If the given input name isn't recognized
+   */
+  override def detailedDescription( input: String ) = {
+    validateName( input )
+    val paramInfo = validParams( input )
+    Array( paramInfo.name,
+	   paramInfo.desc,
+	   ParamType.toString( paramInfo.paramType ),
+	   InstanceFactory.toYesNo( paramInfo.isArray ),
+	   InstanceFactory.toYesNo( paramInfo.isRequired ) )
+  }
+
+  
+  /**
+   * Compares this factory to another factory.
+   * The comparison is based upon the name.
+   * @@param other The other factory to compare to
+   * @@return <code>this.name.compare( other.name )</code>
+   */
+  override def compare( other: InstanceFactory[ T ] ) =
+    name.compare( other.name )
+
+  /**
+   * Verifies that the given sequence of params is valid.
+   * If not, it will throw the appropriate exceptions
+   * 
+   * @@param params The params to verify
+   * @@return Converted, safe params
+   * @@throws ParameterNameException If one of the parameters
+   *         has a name that we don't recognize
+   * @@throws ParameterTypeException If the expected types and
+   *         actual types of the param differ
+   * @@throws ParameterRequirementException If a neccessary param
+   *         is missing
+   * @@throws ParameterArrayException If our expectation of an array
+   *         or not is different from the given param
+   */
+  def validateParams( params: Seq[ NamedParam ] ) = {
+    validateNames( params )
+    validateRequirements( params )
+    validateArrays( params )
+    validateAndConvertTypes( params )
+  }
+
+  /**
+   * Verifies that we recognize all the names in the given
+   * sequence of params
+   * @@param params Params to verify
+   * @@throws ParameterNameException If we do not recognize a name
+   *         in the given listing of params
+   */
+  def validateNames( params: Seq[ NamedParam ] ) = {
+    val invalid = params.filter( param =>
+      !validParams.contains( param.name ) )
+    if ( invalid.size != 0 ) {
+      throw new ParameterNameException( "Found unrecognized names: " +
+				        errStr( invalid.map( _.name ) ) )
+    }
+  }
+
+  /**
+   * Makes sure that all parameters are of the appropriate type.
+   * If they all are, then they will be returned as-is.
+   * If conversions had to be made, then a new sequence containing
+   * the converstions will be returned.
+   * If the types are invalid or a conversion is impossible, then
+   * an exception is thrown.
+   * @@param params The params to verify and/or convert.
+   * @@throws ParameterTypeException If a type didn't match and conversion
+   *         was impossible
+   */
+  def validateAndConvertTypes( params: Seq[ NamedParam ] ) = 
+    params.map( validateAndConvertType( _ ) )
+
+  /**
+   * Given a param, it will verify that the type matches.
+   * If the type doesn't match, it will attempt a conversion.
+   * If the conversion failed, then this throws an exception.
+   * @@param param The param to verify
+   * @@return The NamedParameter to use
+   * @@throws ParameterTypeException If the type didn't match and
+   *         conversion was impossible
+   */
+  def validateAndConvertType( param: NamedParam ): NamedParam = {
+    val expectedType = validParams( param.name ).paramType
+    var retval = param
+
+    // if the type wasn't expected, then try a conversion
+    if ( param.param.getType != expectedType ) {
+      val converted = param.param.convertTo( expectedType )
+      if ( converted.isEmpty ) {
+	throw new ParameterTypeException( param, expectedType )
+      } else {
+	retval = new NamedParam( param.name,
+				 converted.get )
+      }
+    }
+
+    retval
+  }
+      
+  /**
+   * Verifies that we have all required params are accounted for.
+   * @@param params to verify
+   * @@throws ParameterRequirementException If a neccessary param
+   *         is missing
+   */
+  def validateRequirements( params: Seq[ NamedParam ] ) = {
+    val required = 
+      getRequiredNames -- params.map( _.name )
+    if ( required.size != 0 )
+      throw new ParameterRequirementException( "Missing required parameters: " +
+					       errStr( required.toList ) )
+  }
+
+  /**
+   * Verifies that if an item is expected to be an array,
+   * then it is an array, and vice-versa.  Note that arrays
+   * are implemented merely by specifying the same parameter
+   * name multiple times.
+   * @@param params Params to verify
+   * @@throws ParameterArrayException If something is (or is not) found
+   *         to be an array and the opposite was expected
+   */
+  def validateArrays( params: Seq[ NamedParam ] ) = {
+    val numSeen = getNumTimesSeen( params )
+    val invalid = numSeen.filter( pair =>
+      pair._2 > 1 && !validParams( pair._1 ).isArray )
+    if ( invalid.size != 0 ) 
+      throw new ParameterArrayException( "The following were treated as " +
+					 "arrays, but are not: " +
+					 errStr( invalid.keys.toList ) )
+  }
+
+  /**
+   * Gets the number of times each name is observed in the given
+   * list of params
+   * @@param params The params
+   * @@return a mapping from the name to the number of times it is seen
+   */
+  def getNumTimesSeen( params: Seq[ NamedParam ] ) =
+    SentinelHelpers.numTimesSeen( params.map( _.name ) )
+			 
+  /**
+   * Gets a set of the names of all required params.
+   * @@return A set of names of all required params
+   */
+  def getRequiredNames() =
+    Set() ++ validParams.filter( _._2.isRequired ).keys
+  
+  /**
+   * Instantiates an object without any parameters.
+   * Note that this is equivalent to <code>instantiate( Seq(), optimize )</code>
+   * @@param optimize If any optimizations should be performed.
+   * @@return A new object initialized without any parameters
+   * @@throws ParameterNameException If one of the parameters
+   *         has a name that we don't recognize
+   * @@throws ParameterTypeException If the expected types and
+   *         actual types of the param differ
+   * @@throws ParameterRequirementException If a neccessary param
+   *         is missing
+   * @@throws ParameterArrayException If our expectation of an array
+   *         or not is different from the given param
+   * @@throws ParameterizedInstantiationException If the params were ok
+   *         but the object could not otherwise be instantiated
+   */
+  def instantiate( optimize: Boolean ): T =
+    instantiate( Seq(), optimize )
+
+  /**
+   * Instantitates an object given a listing of params.
+   * @@param params The params to instantiate an object with
+   * @@param optimize Whether or not to perform any optimizations
+   * @@return A new object initialized with the given params
+   * @@throws ParameterNameException If one of the parameters
+   *         has a name that we don't recognize
+   * @@throws ParameterTypeException If the expected types and
+   *         actual types of the param differ
+   * @@throws ParameterRequirementException If a neccessary param
+   *         is missing
+   * @@throws ParameterArrayException If our expectation of an array
+   *         or not is different from the given param
+   * @@throws ParameterizedInstantiationException If the params were ok
+   *         but the object could not otherwise be instantiated
+   */
+  def instantiate( params: Seq[ NamedParam ], optimize: Boolean ): T = {
+    val newParams = validateParams( params )
+    try {
+      internalInstantiate( newParams, optimize ).convertTo( instanceType )
+                                                .get
+                                                .asInstanceOf[ T ]
+    } catch {
+      case e: ParameterizedInstantiationException => throw e
+      case e: Exception => 
+	throw new ParameterizedInstantiationException( e )
+    }
+  }
+
+  /**
+   * Gets the names of all parameters in sorted order.  Required parameters
+   * go first in sorted order, which are followed by optional parameters
+   * in sorted order.
+   * @@return the names of all parameters in the order decribed above
+   */
+  def getSortedParamNames(): Seq[ String ] = 
+    ParamInfo.sortParams( validParams.values.toList ).map( _.name )
+  
+  /**
+   * Gets the kind of instances that can be created by
+   * this factory.
+   * @@return The kind of instances this factory makes.
+   */
+  def instanceType(): ParamType
+
+  /**
+   * Instantiates an object given a listing of params.
+   * Note that the params are guarenteed to be valid.
+   * Also note that the params passed to internalInstantiate
+   * MAY NOT be the same params passed to instantiate; this
+   * can happen when a type conversion had to take place.
+   * @@param params The params to instantiate an object with
+   * @@param optimize Whether or not to perform any optimizations
+   * @@return A new object instantiated with the given params
+   * @@throws ParameterizedInstantiationException If the params were ok
+   *         but the object could not otherwise be instantiated
+   */
+  protected def internalInstantiate( params: Seq[ NamedParam ], 
+				     optimize: Boolean ): T
+} // InstanceFactory[ T ]
+
+/**
+ * Like InstanceFactory, but what is produced is determined
+ * via reflection.
+ * @@param name The name of the factory.
+ * @@param desc A description of the factory
+ * @@param neededParams The params the objects that will be created take
+ * @@param paramOrder The order of the params
+ * @@param JVMClassName The name of the JVM class that backs the factory
+ * @@throws ClassNotFoundException If the given class name doesn't exist
+ * @@throws NoSuchMethodException If there was no constructor that takes
+ *         Seq[ NamedParam ]
+ * @@author Kyle Dewey
+ */
+abstract class ReflectionFactory[ T <: Instance ]( name: String,
+						   desc: String,
+						   neededParams: Map[ String, ParamInfo ],
+						   paramOrder: Seq[ String ],
+						   val JVMClassName: String  )
+extends InstanceFactory[ T ]( name,
+			      desc, 
+			      neededParams,
+			      paramOrder ) {
+  private val constructor = 
+    Class.forName( JVMClassName )
+         .getConstructor( classOf[ String ], classOf[ Seq[ Param ] ] )
+
+  /**
+   * Instantiates an object with the given params.
+   * @@param params The params for the object
+   * @@param optimize Whether or not to perform any optimizations.  At the
+   * moment, this does nothing.
+   * @@return a new object instantiated with the given params
+   * @@throws ParameterizedInstantiationException If the params were ok
+   *         but the object could not otherwise be instantiated
+   */
+  def internalInstantiate( params: Seq[ NamedParam ], optimize: Boolean ) = 
+    constructor.newInstance( name, params ).asInstanceOf[ T ]
+}
+
+/**
+ * Represents a node in a parse tree.  Note that a node may
+ * or may not be a terminal.
+ * @@param name The name of the node
+ * @@author Kyle Dewey
+ */
+abstract class ParseNode( val name: String ) {
+  private var children: List[ ParseNode ] = List()
+
+  /**
+   * Attaches a child node to this node.
+   * @@param node The child node
+   */
+  def attach( node: ParseNode ) =
+    children ::= node
+
+  /**
+   * Gets child nodes of this node.
+   * @@return child nodes of this node
+   */
+  def getChildren() =
+    children.reverse.toSeq
+
+  /**
+   * Gets the value of this node.  Assumes that
+   * the parse tree has been completely built.
+   * Note that this returns a Seq in order to accomodate
+   * given parameters which are arrays; under all other
+   * conditions, it is guarenteed to return a Seq of
+   * size 1.
+   * @@param params Parameters to the tree
+   * @@return The evaluated parameter
+   */
+  def getValue( params: Seq[ NamedParam ] ): Seq[ NamedParam ]
+
+  /**
+   * Like <code>getValue</code>, but it performs optimizations.
+   * Note that the default is to simply forward the call to
+   * getValue().
+   * @@param params Parameters for the tree
+   * @@return The evaulated parameter, with optimizations.  The default is
+   * <code>getValue( params )</code>
+   */
+  def getOptimizedValue( params: Seq[ NamedParam ] ) =
+    getValue( params )
+}
+
+/**
+ * An instance returned by a parse tree
+ * This is needed since the parameters and class name returned by the
+ * root instance will NOT match what was given to the parse tree factory
+ * @@param className the class name
+ * @@param params The parameters that were passed to the parse tree
+ * @@param instance The instance itself
+ * @@author Kyle Dewey
+ */
+class ParseTreeInstance[ T <: Instance ]( val className: String,
+					  val params: Seq[ NamedParam ],
+					  val instance: T ) 
+extends Instance with Proxy {
+  import ParamType._
+
+  /**
+   * Gets the underlying instance
+   * @@return The underlying instance
+   */
+  def self() = instance
+  
+  def proxify( param: Param ): Param =
+    if ( param eq instance ) this else param
+  def proxify( param: Option[ Param ] ): Option[ Param ] = 
+    if ( param.isDefined ) {
+      Some( proxify( param.get ) )
+    } else {
+      None
+    }
+      
+  // begin delegated methods
+  override def sentStringValue() = instance.sentStringValue
+  override def sentIntValue() = instance.sentIntValue
+  override def sentRealValue() = instance.sentRealValue
+  override def sentCharValue() = instance.sentCharValue
+  override def matcherValue() = instance.matcherValue
+  override def replacerValue() = instance.replacerValue
+  override def toSentString() = instance.toSentString 
+  override def toSentInt() = instance.toSentInt 
+  override def toSentReal() = instance.toSentReal 
+  override def toSentChar() = instance.toSentChar 
+  override def toReplacer() = instance.toReplacer
+  override def toMatcher() = instance.toMatcher 
+  override def convertTo( toType: ParamType ) = instance.convertTo( toType )
+  override def getType() = instance.getType
+  override def isInstanceType() = instance.isInstanceType
+  override def isConstantType() = instance.isConstantType
+  override def isVariableType() = instance.isVariableType
+  override def typeName() = instance.typeName
+  override def printableValue() = instance.printableValue
+  override def isPure() = instance.isPure
+  // end delegated methods
+}
+
+/**
+ * A matcher returned from a parse tree.
+ * @@param className The name of the class
+ * @@param params The parameters that were passed to the tree
+ * @@param matcher The matcher
+ * @@author Kyle Dewey
+ */
+class ParseTreeMatcher( className: String,
+		    params: Seq[ NamedParam ],
+		    matcher: Matcher )
+extends ParseTreeInstance[ Matcher ]( className, params, matcher ) with Matcher {
+  /**
+   * Delegates to the matcher
+   * @@return The result of delegating to the matcher
+   */
+  override def matches() = instance.matches
+}
+
+/**
+ * A replacer returned from a parse tree
+ * @@param className The name of the class
+ * @@param params The parameters that were passed to the tree
+ * @@param replacer The replacer
+ * @@author Kyle Dewey
+ */
+class ParseTreeReplacer( className: String, 
+			 params: Seq[ NamedParam ],
+			 replacer: Replacer )
+extends ParseTreeInstance[ Replacer ]( className, params, replacer ) with Replacer {
+  /**
+   * Delegates to the replacer
+   * @@return The result of delegating to the replacer
+   */
+  override def replace() = instance.replace
+}
+
+/**
+ * A factory that creates objects based upon a parse tree.
+ * @@param name The name of the factory.
+ * @@param desc A description of the factory
+ * @@param neededParams The parameters that are valid for the tree
+ * @@param paramOrder The order of the params
+ * @@param tree The parse tree
+ * @@author Kyle Dewey
+ */
+abstract class ParseTreeFactory[ T <: Instance ]( name: String,
+						  desc: String,
+						  neededParams: Map[ String, ParamInfo ],
+						  paramOrder: Seq[ String ],
+						  val tree: ParseNode ) 
+extends InstanceFactory[ T ]( name,
+			      desc,
+			      neededParams,
+			      paramOrder ) {
+  /**
+   * Creates a new param based on the parse tree
+   * @@param params Parameters to the underlying instance
+   * @@param optimize Whether or not to optimize
+   * @@return A new instance of the underlying object
+   * @@throws ParameterizedInstantiationException If the params were ok but
+   *         the object could not otherwise be instantiated
+   */
+  def rootParam( params: Seq[ NamedParam ], optimize: Boolean ) = {
+    val root =
+      if ( optimize ) tree.getOptimizedValue( params )
+      else tree.getValue( params )
+
+    if ( root.size != 1 ) {
+      throw new ParameterizedInstantiationException( "Tree returned array " +
+						     "of params instead of " +
+						     "a single param" )
+    }
+    root.first.param
+  }
+}
+
+/**
+ * Factory that can create matchers.
+ * @@author Kyle Dewey
+ */
+trait MatcherFactory extends InstanceFactory[ Matcher ] {
+  /**
+   * Gets that this factory creates instances of matchers.
+   * @@return ParamType.MatcherType
+   */
+  override def instanceType() =
+    ParamType.MatcherType
+}
+
+/**
+ * Factory that can create replacers.
+ * @@author Kyle Dewey
+ */
+trait ReplacerFactory extends InstanceFactory[ Replacer ] {
+  /**
+   * Gets that this factory creates instances of replacers.
+   * @@return ParamType.ReplacerType
+   */
+  override def instanceType() =
+    ParamType.ReplacerType
+}
+
+/**
+ * Factory that creates matchers via reflection.
+ * @@param name The name of the factory
+ * @@param desc A description of the factory
+ * @@param validParams The parameters that are needed to initalize objects
+ * @@param paramOrder The order of the params
+ * @@param JVMClassName The name of the class that backs instances 
+ *        created by the factory
+ * @@throws ClassNotFoundException If the given class name doesn't exist
+ * @@throws NoSuchMethodException If there was no constructor that takes
+ *         Seq[ NamedParam ] * @@author Kyle Dewey
+ */
+class ReflectionMatcherFactory( name: String,
+			        desc: String,
+			        validParams: Map[ String, ParamInfo ],
+			        paramOrder: Seq[ String ],
+			        JVMClassName: String )
+extends ReflectionFactory[ Matcher ]( name,
+				      desc,
+				      validParams,
+				      paramOrder,
+				      JVMClassName ) with MatcherFactory {}
+
+/**
+ * Factory that creates matchers via parse trees.
+ * @@param name The name of the factory
+ * @@param desc A description of the factory
+ * @@param validParams The parameters that are needed to initialize objects
+ * @@param paramOrder The order of the params
+ * @@param tree The root of the parse tree
+ * @@throws ClassNotFoundException If the given class name doesn't exist
+ * @@throws NoSuchMethodException If there was no constructor that takes
+ *         Seq[ NamedParam ]
+ * @@author Kyle Dewey
+ */
+class ParseTreeMatcherFactory( name: String,
+			       desc: String,
+			       validParams: Map[ String, ParamInfo ],
+			       paramOrder: Seq[ String ],
+			       tree: ParseNode )
+extends ParseTreeFactory[ Matcher ]( name,
+				     desc,
+				     validParams,
+				     paramOrder,
+				     tree ) with MatcherFactory {
+  /**
+   * Creates a new matcher based on the parse tree
+   * @@param params Parameters to the underlying matcher
+   * @@param optimize Whether or not to optimize
+   * @@return A new matcher
+   * @@throws ParameterizedInstantiationException If the params were ok
+   * but the object could not otherwise be instantiated
+   */
+  def internalInstantiate( params: Seq[ NamedParam ], optimize: Boolean ) = {
+    val root = rootParam( params, optimize )
+    val asMatcher = root.toMatcher
+    if ( asMatcher.isDefined &&
+         asMatcher.get.isInstanceOf[ Matcher ] ) {
+      new ParseTreeMatcher( name, 
+			    params, 
+			    asMatcher.get.asInstanceOf[ Matcher ] )
+    } else {
+      throw new ParameterizedInstantiationException( 
+	"Parse tree did not return matcher. Returned: " + root.typeName )
+    }
+  }
+}
+
+/**
+ * Factory that creates replacers via reflection.
+ * @@param name The name of the factory
+ * @@param desc A description of the factory
+ * @@param validParams The parameters that are needed to initalize objects
+ * @@param paramOrder The order of the params
+ * @@param JVMClassName The name of the class that backs instances 
+ *        created by the factory
+ * @@author Kyle Dewey
+ */
+class ReflectionReplacerFactory( name: String,
+			         desc: String,
+			         validParams: Map[ String, ParamInfo ],
+				 paramOrder: Seq[ String ],
+			         JVMClassName: String )
+extends ReflectionFactory[ Replacer ]( name,
+				       desc,
+				       validParams,
+				       paramOrder,
+				       JVMClassName ) with ReplacerFactory {}
+
+/**
+ * Factory that creates replacers via parse trees.
+ * @@param name The name of the factory
+ * @@param desc A description of the factory
+ * @@param validParams The parameters that are needed to initialize objects
+ * @@param paramOrder The order of the params
+ * @@param tree The root of the parse tree
+ * @@author Kyle Dewey
+ */
+class ParseTreeReplacerFactory( name: String,
+			        desc: String,
+			        validParams: Map[ String, ParamInfo ],
+			        paramOrder: Seq[ String ],
+			        tree: ParseNode )
+extends ParseTreeFactory[ Replacer ]( name,
+				      desc,
+				      validParams,
+				      paramOrder,
+				      tree ) with ReplacerFactory {
+  /**
+   * Creates a new replacer based on the parse tree
+   * @@param params Parameters to the underlying replacer
+   * @@param optimize Whether or not to optimize
+   * @@return A new replacer
+   * @@throws ParameterizedInstantiationException If the params were ok
+   * but the object could not otherwise be instantiated
+   */
+  def internalInstantiate( params: Seq[ NamedParam ], optimize: Boolean ) = {
+    val root = rootParam( params, optimize )
+    val asReplacer = root.toReplacer
+    if ( asReplacer.isDefined &&
+	 asReplacer.get.isInstanceOf[ Replacer ] ) {
+      new ParseTreeReplacer( name, 
+			     params, 
+			     asReplacer.get.asInstanceOf[ Replacer ] )
+    } else {
+      throw new ParameterizedInstantiationException( 
+	"Parse tree did not return replacer. Returned: " + root.typeName )
+    }
+  }
+}
+
+/**
+ * Assists in the creation of matcher factories.
+ * @@author Kyle Dewey
+ */
+object MatcherFactory {
+  /**
+   * Creates a ReflectionMatcherFactory.
+   * @@param name The name of the factory
+   * @@param desc A description of the factory
+   * @@param validParams Parameters for objects created by the factory
+   * @@param paramOrder The order of the parameters
+   * @@param className The JVM class name that backs the instance
+   * @@return A new matcher factory that can create these instances
+   */
+  def apply( name: String,
+	     desc: String,
+	     validParams: Map[ String, ParamInfo ],
+	     paramOrder: Seq[ String ],
+	     className: String ) =
+	       new ReflectionMatcherFactory( name,
+					     desc,
+					     validParams,
+					     paramOrder,
+					     className )
+  
+  /**
+   * Creates a new ParseTreeMatcherFactory.
+   * @@param name The name of the factory
+   * @@param desc A description of the factory
+   * @@param validParams Parameters for objects created by the factory
+   * @@param paramOrder The order of the parameters
+   * @@param tree The root of the parse tree for the factory
+   * @@return A new matcher factory that can create these instances
+   */
+  def apply( name: String,
+	     desc: String,
+	     validParams: Map[ String, ParamInfo ],
+	     paramOrder: Seq[ String ],
+	     tree: ParseNode ) =
+	       new ParseTreeMatcherFactory( name,
+					    desc,
+					    validParams,
+					    paramOrder,
+					    tree )
+}
+
+/**
+ * Assists in the creation of replacer factories.
+ * @@author Kyle Dewey
+ */
+object ReplacerFactory {
+  /**
+   * Creates a ReflectionReplacerFactory.
+   * @@param name The name of the factory
+   * @@param desc A description of the factory
+   * @@param validParams Parameters for objects created by the factory
+   * @@param paramOrder The order of the params
+   * @@param className The JVM class name that backs the instance
+   * @@return A new replacer factory that can create these instances
+   */
+  def apply( name: String,
+	     desc: String,
+	     validParams: Map[ String, ParamInfo ],
+	     paramOrder: Seq[ String ],
+	     className: String ) =
+	       new ReflectionReplacerFactory( name,
+					      desc,
+					      validParams,
+					      paramOrder,
+					      className )
+  
+  /**
+   * Creates a new ParseTreeReplacerFactory.
+   * @@param name The name of the factory
+   * @@param desc A description of the factory
+   * @@param validParams Parameters for objects created by the factory
+   * @@param paramOrder The order of the parameters
+   * @@param tree The root of the parse tree for the factory
+   * @@return A new replacer factory that can create these instances
+   */
+  def apply( name: String,
+	     desc: String,
+	     validParams: Map[ String, ParamInfo ],
+	     paramOrder: Seq[ String ],
+	     tree: ParseNode ) =
+	       new ParseTreeReplacerFactory( name,
+					     desc,
+					     validParams,
+					     paramOrder,
+					     tree )
+}
+
+  
+@
+
+
+1.19
+log
+@Added support for optimizations.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.18 2011/06/08 04:23:43 kyledewey Exp $
+d9 3
+d410 2
+a411 10
+  def getNumTimesSeen( params: Seq[ NamedParam ] ): Map[ String, Int ] = {
+    var retval: Map[ String, Int ] = Map() // how many times found
+    params.foreach( param =>
+      if ( !retval.contains( param.name ) ) {
+	retval += param.name -> 1
+      } else {
+	retval += param.name -> ( retval( param.name ) + 1 )
+      } )
+    retval
+  }
+d546 1
+a546 1
+  private var children: Seq[ ParseNode ] = Seq()
+d553 1
+a553 1
+    children = children ++ Seq( node )
+d560 1
+a560 1
+    children
+@
+
+
+1.18
+log
+@Massive refactor to that all parameter types are uniform
+from the perspective of matchers and replacers.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.17 2011/06/07 08:15:44 kyledewey Exp kyledewey $
+d9 4
+d375 2
+a376 2
+    var required = getRequiredNames
+    params.foreach( required -= _.name )
+a419 1
+   *
+d422 2
+a423 5
+  def getRequiredNames(): Set[ String ] = {
+    val nameMap = validParams.filter( pair =>
+      pair._2.isRequired )
+    Set() ++ nameMap.keys
+  }
+d427 3
+a429 2
+   * Note that this is equivalent to <code>instantiate( Seq() )</code>
+   * @@return A new object initialized with the given params
+d441 2
+a442 2
+  def instantiate(): T =
+    instantiate( Seq() )
+a445 1
+   *
+d447 1
+d460 1
+a460 1
+  def instantiate( params: Seq[ NamedParam ] ): T = {
+d463 3
+a465 3
+      internalInstantiate( newParams ).convertTo( instanceType )
+                                      .get
+                                      .asInstanceOf[ T ]
+d496 1
+d501 3
+a503 2
+  protected def internalInstantiate( params: Seq[ NamedParam ] ): T
+} // ParameterizedObjectFactory[ T ]
+d534 2
+d540 2
+a541 2
+  override def internalInstantiate( params: Seq[ NamedParam ] ) = 
+      constructor.newInstance( name, params ).asInstanceOf[ T ]
+d578 11
+d641 1
+d702 1
+d707 5
+a711 2
+  def rootParam( params: Seq[ NamedParam ] ) = {
+    val root = tree.getValue( params )
+d795 1
+d800 2
+a801 2
+  def internalInstantiate( params: Seq[ NamedParam ] ) = {
+    val root = rootParam( params )
+d858 1
+d863 2
+a864 2
+  def internalInstantiate( params: Seq[ NamedParam ] ) = {
+    val root = rootParam( params )
+@
+
+
+1.17
+log
+@Added typed parse tree proxies.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.16 2011/05/31 17:17:48 kyledewey Exp kyledewey $
+d9 3
+d87 2
+a88 2
+  def opAsArrayN( name: String, 
+		  params: Seq[ NamedParam ] ): Option[ Array[ Param ] ] = {
+a95 14
+   * Gets an array of optional params, with a given type.
+   * @@param name The name of the param
+   * @@param params The listing of params
+   * @@return All params with the given name, or None if it wasn't passed
+   */
+  def opAsArray[ T ]( name: String, 
+		      params: Seq[ NamedParam ] ): Option[ Array[ T ] ] = {
+    val result = opAsArrayN( name, params )
+    if ( result.isDefined ) {
+      Some( result.get.map( _.asInstanceOf[ T ] ).toArray )
+    } else None
+  }
+
+  /**
+d104 2
+a105 15
+  def asArrayN( name: String, params: Seq[ NamedParam ] ): Array[ Param ] =
+    opAsArrayN( name, params ).get
+
+  /**
+   * Given a listing of params and the name of a param,
+   * gets only those params that match the name.  Assumes that
+   * The items are of the given type.
+   * @@param name The name to look for
+   * @@param params The listing of params
+   * @@return All params with that name, or an empty sequence
+   *         if there were none.  Note that actual params are
+   *         returned, NOT named params.
+   */
+  def asArray[ T ]( name: String, params: Seq[ NamedParam ] ): Array[ T ] =
+    opAsArray[ T ]( name, params ).get
+d113 2
+a114 2
+  def opParamN( name: String, params: Seq[ NamedParam ] ): Option[ Param ] = {
+    val asArray = opAsArrayN( name, params )
+a120 13
+   * Gets the optional param with the given name.
+   * @@param name The name of the desired param
+   * @@param params The listing of params
+   * @@return The param, or None if it wasn't passed
+   */
+  def opParam[ T ]( name: String, params: Seq[ NamedParam ] ): Option[ T ] = {
+    val param = opParamN( name, params )
+    if ( param.isDefined ) {
+      Some( param.get.asInstanceOf[ T ] )
+    } else None
+  }
+
+  /**
+d127 2
+a128 2
+  def paramN( name: String, params: Seq[ NamedParam ] ): Param =
+    opParamN( name, params ).get
+d131 4
+a134 7
+   * Gets the param with the given name.  Note that if multiple params
+   * have the same name, it will return the first one found.
+   * Will convert it to the given type.  Note that the param name
+   * is stripped off.
+   * @@param name The name of the desired param
+   * @@param params The listing of params
+   * @@return the first param found
+d136 2
+a137 2
+  def param[ T ]( name: String, params: Seq[ NamedParam ] ): T = 
+    opParam[ T ]( name, params ).get
+d595 10
+a604 1
+
+d606 13
+d624 1
+a624 43
+  override def toSentString() = instance.toSentString
+  override def toSentInt() = instance.toSentInt
+  override def toSentReal() = instance.toSentReal
+  override def toSentChar() = instance.toSentChar
+
+  /**
+   * Note that we need to retain the proxy information.
+   * This may sound worthless, but an arbitrary matcher might do
+   * something with this.
+   * @@return A converted matcher including this proxy information, or
+   * None if conversion is impossible.
+   */
+  override def toMatcher() = {
+    val instanceMatcher = instance.toMatcher
+    if ( instanceMatcher.isDefined ) {
+      Some( new ParseTreeMatcher( className,
+				  params,
+				  instanceMatcher.get ) )
+    } else {
+      None
+    }
+  }
+
+  /*
+   * Note that we need to retain the proxy information.
+   * This may sound like a nonsensical operation, but an arbitrary replacer
+   * might actually do something with this.
+   * @@return A converted replacer including this proxy information, or
+   * None if conversion is impossible.
+   */
+  override def toReplacer() = {
+    val instanceReplacer = instance.toReplacer
+    if ( instanceReplacer.isDefined ) {
+      Some( new ParseTreeReplacer( className,
+				   params,
+				   instanceReplacer.get ) )
+    } else {
+      None
+    }
+  }
+  override def toData() = instance.toData
+  override def convertTo( toType: ParamType ) = instance.convertTo( toType )
+  override def printableValue() = printableValue
+a646 87
+ * Holds routines for making parse tree replacers.
+ * @@author Kyle Dewey
+ */
+object ParseTreeReplacer {
+  /**
+   * Creates a parse tree replacer.
+   * @@param className The name of the class
+   * @@param params The parameters for the replacer
+   * @@param replacer The replacer
+   * @@return A ParseTreeReplacer specific to the type
+   */
+  def apply( className: String, 
+	     params: Seq[ NamedParam ],
+	     replacer: Replacer ): ParseTreeReplacer = {
+    replacer match {
+      case r: SentIntReplacer => apply( className, params, r )
+      case r: SentCharReplacer => apply( className, params, r )
+      case r: SentRealReplacer => apply( className, params, r )
+      case r: SentStringReplacer => apply( className, params, r )
+      case _ => new ParseTreeReplacer( className,
+				       params,
+				       replacer )
+    }
+  }
+
+  /**
+   * Creates a replacer based on a SentInt
+   * @@param className The name of the class
+   * @@param params The parameters for the replacer
+   * @@param replacer The replacer
+   * @@return A SentIntParseTreeReplacer
+   */
+  def apply( className: String, 
+	     params: Seq[ NamedParam ],
+	     replacer: SentIntReplacer ): SentIntParseTreeReplacer = {
+    new SentIntParseTreeReplacer( className,
+				  params,
+				  replacer )
+  }
+  
+  /**
+   * Creates a SentChar replacer.
+   * @@param className The name of the class
+   * @@param params The parameters for the replacer
+   * @@param replacer The replacer
+   * @@return A SentCharParseTreeReplacer
+   */
+  def apply( className: String, 
+	     params: Seq[ NamedParam ],
+	     replacer: SentCharReplacer ): SentCharParseTreeReplacer = {
+    new SentCharParseTreeReplacer( className,
+				   params,
+				   replacer )
+  }
+
+  /**
+   * Creates a SentReal replacer.
+   * @@param className The name of the class
+   * @@param params The parameters for the replacer
+   * @@param replacer The replacer
+   * @@return A SentRealParseTreeReplacer
+   */
+  def apply( className: String, 
+	     params: Seq[ NamedParam ],
+	     replacer: SentRealReplacer ): SentRealParseTreeReplacer = {
+    new SentRealParseTreeReplacer( className,
+				   params,
+				   replacer )
+  }
+
+  /**
+   * Creates a SentString replacer.
+   * @@param className The name of the class
+   * @@param params The parameters for the replacer
+   * @@param replacer The replacer
+   * @@return A SentString ParseTreeReplacer
+   */
+  def apply( className: String, 
+	     params: Seq[ NamedParam ],
+	     replacer: SentStringReplacer ): SentStringParseTreeReplacer = {
+    new SentStringParseTreeReplacer( className,
+				     params,
+				     replacer )
+  }
+}
+
+/**
+a664 70
+ * A replacer returned from a parse tree that has a specific type.
+ * @@param className The name of the class
+ * @@param params The parameters that were passed to the tree
+ * @@param replacer The replacer
+ * @@author Kyle Dewey
+ */
+abstract class TypedParseTreeReplacer[ T ]( className: String,
+					    params: Seq[ NamedParam ],
+					    val replacer: TypedReplacer[ T ] )
+extends ParseTreeReplacer( className, params, replacer ) with TypedReplacer[ T ] {
+  /**
+   * Delegates to the replacer.
+   * @@return <code>replacer.replace</code>
+   */
+  override def replace() = replacer.replace
+}
+
+/**
+ * A replacer returned from a parse tree that is specifically
+ * a SentInt type.
+ * @@param className The name of the class
+ * @@param params The parameters that were passed to the tree
+ * @@param replacer The replacer
+ * @@author Kyle Dewey
+ */
+class SentIntParseTreeReplacer( className: String,
+			        params: Seq[ NamedParam ],
+			        replacer: SentIntReplacer ) 
+extends TypedParseTreeReplacer[ Long ]( className, params, replacer ) with SentInt {}
+
+/**
+ * A replacer returned from a parse tree that is specifically
+ * a SentChar type.
+ * @@param className The name of the class
+ * @@param params The parameters that were passed to the tree
+ * @@param replacer The replacer
+ * @@author Kyle Dewey
+ */
+class SentCharParseTreeReplacer( className: String,
+			         params: Seq[ NamedParam ],
+			         replacer: SentCharReplacer ) 
+extends TypedParseTreeReplacer[ Char ]( className, params, replacer ) with SentChar {}
+
+/**
+ * A replacer returned from a parse tree that is specifically
+ * a SentReal type.
+ * @@param className The name of the class
+ * @@param params The parameters that were passed to the tree
+ * @@param replacer The replacer
+ * @@author Kyle Dewey
+ */
+class SentRealParseTreeReplacer( className: String,
+			         params: Seq[ NamedParam ],
+			         replacer: SentRealReplacer ) 
+extends TypedParseTreeReplacer[ Double ]( className, params, replacer ) with SentReal {}
+
+/**
+ * A replacer returned from a parse tree that is specifically
+ * a SentString type.
+ * @@param className The name of the class
+ * @@param params The parameters that were passed to the tree
+ * @@param replacer The replacer
+ * @@author Kyle Dewey
+ */
+class SentStringParseTreeReplacer( className: String,
+			           params: Seq[ NamedParam ],
+			           replacer: SentStringReplacer ) 
+extends TypedParseTreeReplacer[ String ]( className, params, replacer ) with SentString {}
+
+/**
+d781 5
+a785 2
+    if ( asMatcher.isDefined ) {
+      new ParseTreeMatcher( name, params, asMatcher.get )
+d843 5
+a847 2
+    if ( asReplacer.isDefined ) {
+      ParseTreeReplacer( name, params, asReplacer.get )
+@
+
+
+1.16
+log
+@Added the mapParamInfos method.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.15 2011/05/25 20:04:57 kyledewey Exp $
+d9 3
+d617 2
+d624 3
+a626 3
+class ProxyInstance[ T <: Instance ]( val className: String,
+				      val params: Seq[ NamedParam ],
+				      val instance: T ) 
+d646 36
+a681 2
+  override def toMatcher() = instance.toMatcher
+  override def toReplacer() = instance.toReplacer
+d695 1
+a695 1
+class ProxyMatcher( className: String,
+d698 1
+a698 1
+extends ProxyInstance[ Matcher ]( className, params, matcher ) with Matcher {
+d707 87
+d800 4
+a803 4
+class ProxyReplacer( className: String, 
+		     params: Seq[ NamedParam ],
+		     replacer: Replacer )
+extends ProxyInstance[ Replacer ]( className, params, replacer ) with Replacer {
+d812 70
+d999 1
+a999 1
+      new ProxyMatcher( name, params, asMatcher.get )
+d1058 1
+a1058 1
+      new ProxyReplacer( name, params, asReplacer.get )
+@
+
+
+1.15
+log
+@Now uses Matcher and Replacer Proxies for parse tree instances.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.14 2011/03/27 14:04:37 kyledewey Exp $
+d9 3
+d263 10
+@
+
+
+1.14
+log
+@Minor code cleanup.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.13 2011/02/27 20:29:21 kyledewey Exp kyledewey $
+d9 3
+d227 1
+a227 1
+abstract class InstanceFactory[ T <: Param ]
+d523 1
+a523 1
+  protected def internalInstantiate( params: Seq[ NamedParam ] ): Param
+d548 3
+a550 2
+  private val constructor = Class.forName( JVMClassName )
+                                 .getConstructor( classOf[ Seq[ Param ] ] )
+d560 1
+a560 1
+      constructor.newInstance( params ).asInstanceOf[ Param ]
+d600 73
+d691 2
+a692 2
+   * Creates a new object based on the parse tree.
+   * @@param params Parameters to the underlying object
+d697 1
+a697 1
+  override def internalInstantiate( params: Seq[ NamedParam ] ) = {
+d778 19
+a796 1
+				     tree ) with MatcherFactory {}
+d837 19
+a855 1
+				      tree ) with ReplacerFactory {}
+@
+
+
+1.13
+log
+@Factory now conforms to the SentinelDescription and
+Describable traits.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.12 2011/02/27 06:39:55 kyledewey Exp $
+d9 4
+d375 1
+a375 12
+	val printValue = param.param.printableValue
+	val inner =
+	  if ( printValue.isDefined ) {
+	    " with value " + printValue.get
+	  } else {
+	    ""
+	  }
+	val message = 
+	  "Found type " + param.param.typeName + inner + ".  " +
+	  "Expected type " + ParamType.toString( expectedType )
+	
+	throw new ParameterTypeException( message, param )
+@
+
+
+1.12
+log
+@Added the param parameter to ParameterTypeException.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.11 2011/02/27 05:18:54 kyledewey Exp kyledewey $
+d9 3
+d192 9
+d224 2
+a225 1
+  val paramOrder: Seq[ String ] ) extends Ordered[ InstanceFactory[ T ] ] {
+d231 63
+@
+
+
+1.11
+log
+@Refactored to include parameter order.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.10 2011/02/12 01:48:48 kyledewey Exp $
+d9 3
+d295 12
+a306 4
+	throw new ParameterTypeException( "Found Type: " +
+				          param.param.typeName +
+				          "\nExpected type: " +
+				          ParamType.toString( expectedType ) )
+@
+
+
+1.10
+log
+@Changed implementation of getSortedParamNames() to utilize
+ParamInfo.sortParams().
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.9 2010/07/11 05:44:00 kyledewey Exp $
+d9 4
+d201 1
+d208 2
+a209 1
+  val validParams: Map[ String, ParamInfo ] ) extends Ordered[ InstanceFactory[ T ] ] {
+d449 1
+d459 1
+d463 2
+a464 1
+			      neededParams ) {
+d467 1
+d520 1
+d527 1
+d531 2
+a532 1
+			      neededParams ) {
+d582 1
+d592 1
+d597 1
+d605 1
+d615 1
+d620 1
+d628 1
+d636 1
+d641 1
+d649 1
+d656 1
+d661 1
+d674 1
+d681 1
+d686 1
+d694 1
+d701 1
+d706 1
+d720 1
+d727 1
+d732 1
+d740 1
+d747 1
+d752 1
+@
+
+
+1.9
+log
+@The *param* methods no longer return NamedParam, but Param.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.8 2010/06/26 04:02:24 kyledewey Exp $
+d9 3
+d406 9
+@
+
+
+1.8
+log
+@Added helpers for optional params;
+added implicit conversion of Int to Data.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.7 2010/06/23 03:10:20 kyledewey Exp $
+d9 4
+d59 1
+a59 1
+		  params: Seq[ NamedParam ] ): Option[ Array[ NamedParam ] ] = {
+d62 1
+a62 1
+      Some( result.toArray )
+d76 1
+a76 1
+      Some( result.get.map( _.param.asInstanceOf[ T ] ).toArray )
+d89 1
+a89 1
+  def asArrayN( name: String, params: Seq[ NamedParam ] ): Array[ NamedParam ] =
+d111 1
+a111 1
+  def opParamN( name: String, params: Seq[ NamedParam ] ): Option[ NamedParam ] = {
+d138 1
+a138 1
+  def paramN( name: String, params: Seq[ NamedParam ] ): NamedParam =
+d356 19
+a374 1
+      
+@
+
+
+1.7
+log
+@Added comments explaining that all kinds
+of reflection factories can throw ClassNotFound
+and NoSuchMethod exceptions in their constructors.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.6 2010/06/20 17:25:38 kyledewey Exp $
+d9 5
+d49 28
+d86 1
+a86 1
+    params.filter( _.name == name ).toArray
+d99 1
+a99 1
+    asArrayN( name, params ).map( _.param.asInstanceOf[ T ] ).toArray
+d102 4
+a105 8
+   * Given a listing of params, will convert it into a map, where
+   * the keys are the names of the params and the values are the
+   * NamedParams.  Note that if there are multiple
+   * params with the same name, then only the last one in the sequence
+   * will be returned in the output map.
+   * Note that the name of the param is stripped off.
+   * @@param params The params
+   * @@return a map of params in the above format
+d107 7
+a113 4
+  def asMapN( params: Seq[ NamedParam ] ): Map[ String, NamedParam ] = 
+    Map() ++ params.map( param =>
+      param.name -> param )
+  
+d115 4
+a118 8
+   * Given a listing of params, will convert it into a map, where
+   * the keys are the names of the params and the values are the
+   * original Param objects.  Note that if there are multiple
+   * params with the same name, then only the last one in the sequence
+   * will be returned in the output map.
+   * Note that the name of the param is stripped off.
+   * @@param params The params
+   * @@return a map of params in the above format
+d120 7
+a126 3
+  def asMap( params: Seq[ NamedParam ] ): Map[ String, Param ] = 
+    asMapN( params ).transform( ( key, value ) => value.param )
+  
+d134 2
+a135 2
+  def paramN( name: String, params: Seq[ NamedParam ] ): NamedParam = 
+    params.filter( _.name == name ).first
+d147 1
+a147 1
+    paramN( name, params ).param.asInstanceOf[ T ]
+@
+
+
+1.6
+log
+@Major refactor to clean up factory hierarchy and remove
+duplication of some code.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.5 2010/06/18 19:35:31 kyledewey Exp kyledewey $
+d9 4
+d505 3
+a507 1
+ * @@author Kyle Dewey
+d524 3
+@
+
+
+1.5
+log
+@Made factories take a name and description.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.4 2010/06/18 03:01:07 kyledewey Exp $
+d9 3
+d31 1
+a31 1
+ * Contains helper methods relevant to ParameterizedObjectFactory
+d34 1
+a34 1
+object ParameterizedObjectFactory {
+d121 18
+d142 6
+a147 2
+ * Defines a factory that can create objects that can
+ * take parameters.
+d157 1
+a157 1
+abstract class ParameterizedObjectFactory[ T ]
+d160 1
+a160 1
+  val validParams: Map[ String, ParamInfo ] ) extends Ordered[ ParameterizedObjectFactory[ T ] ] {
+d162 1
+a162 1
+  import ParameterizedObjectFactory._
+d171 1
+a171 1
+  override def compare( other: ParameterizedObjectFactory[ T ] ) =
+d173 1
+a173 1
+  
+d336 3
+a338 1
+      internalInstantiate( newParams )
+d345 7
+d364 1
+a364 1
+  protected def internalInstantiate( params: Seq[ NamedParam ] ): T
+d368 1
+a368 1
+ * Like ParameterizedObjectFactory, but what is produced is determined
+d370 1
+a370 2
+ * @@param name The name of the factory.  Note that the name will have
+ *        "Reflector: " prepended to it
+d379 7
+a385 7
+class ReflectionFactory[ T ]( name: String,
+			      desc: String,
+			      neededParams: Map[ String, ParamInfo ],
+			      val JVMClassName: String  )
+extends ParameterizedObjectFactory[ T ]( "Reflector: " + name,
+					 desc, 
+					 neededParams ) {
+a387 1
+  
+d395 2
+a396 13
+  override def internalInstantiate( params: Seq[ NamedParam ] ): T = {
+    try {
+      // note that under no circumstances will this throw a 
+      // ClassCastException.  Due to type erasure, T always
+      // ends up evaluating to Any, and everything is a subclass
+      // of Any.  The cast is still needed to keep the compiler happy.
+      constructor.newInstance( params ).asInstanceOf[ T ]
+    } catch {
+      case e: ParameterizedInstantiationException => throw e
+      case e: Exception => 
+	throw new ParameterizedInstantiationException( e )
+    }
+  }
+d400 3
+a402 2
+ * Manages a bunch of objects to be used like singletons.
+ * @@param items The initial key, value pairs
+d405 3
+a407 1
+class Manager[ K, V ]( private var items: Map[ K, V ] ) {
+d409 2
+a410 1
+   * Creates a new, empty manager.
+d412 2
+a413 2
+  def this() =
+    this( Map() )
+d416 2
+a417 5
+   * Gets the value associated with the given key.
+   * @@param key The key associated with the value
+   * @@return The value associated with the given key
+   * @@throws NoSuchElementException if no value is associated
+   *         with the given key
+d419 2
+a420 2
+  def apply( key: K ) =
+    items( key )
+d423 8
+a430 4
+   * Registers a given item.  If an item with this key
+   * already exists, then it will be overridden.
+   * @@param key The key for the item
+   * @@param item The item itself
+d432 2
+a433 2
+  def register( key: K, item: V ) =
+    items += key -> item
+d435 32
+a466 8
+  /**
+   * Gets the given item.  If the item doesn't exist, then
+   * it returns None.
+   * @@param key The key of the item
+   * @@return The item associated with this key
+   */
+  def get( key: K ) =
+    items.get( key )
+d468 5
+d474 2
+a475 3
+   * Determines if the given item has been registered.
+   * @@param key The key of the item
+   * @@return true if it has, else false
+d477 3
+a479 2
+  def isRegistered( key: K ) =
+    items.contains( key )
+d481 5
+d487 2
+a488 5
+   * Registers a given item, but only if it is not already contained
+   * in the database.
+   * @@param key The key for the item
+   * @@param value The value for the item
+   * @@return true if the item was added, else false (it already exists)
+d490 3
+a492 5
+  def registerIfNew( key: K, value: V ): Boolean = {
+    val retval = !isRegistered( key )
+    if ( retval ) register( key, value )
+    retval
+  }
+d494 17
+a510 7
+  /**
+   * Gets the key of every item that has been registered.
+   * @@return A sequence of keys
+   */
+  def getKeys(): Seq[ K ] =
+    items.keys.toList.toSeq
+} // Manager
+d513 6
+a518 3
+ * Exception thrown when no factory/class with the given
+ * name exists.
+ * @@param message A message to display
+d520 8
+a527 2
+case class NoSuchFactoryException( message: String ) 
+     extends Exception( message ) {}
+d530 6
+a535 2
+ * Like Manager, but it is specialized for factories.
+ * @@param factories The initial key, factory pairs
+d538 8
+a545 8
+class FactoryManager[ T, V <: ParameterizedObjectFactory[ T ] ]
+( factories: Map[ String, V ] ) 
+extends Manager[ String, V ]( factories ) {
+  /**
+   * Creates a new empty factory manager.
+   */
+  def this() =
+    this( Map() )
+d547 16
+a562 15
+  /**
+   * Gets the factory associated with the given name
+   * @@param name The name of the factory
+   * @@return The factory with the given name
+   * @@throws NoSuchFactoryException If there was no factory with the
+   *         given name
+   */
+  override def apply( name: String ) = {
+    try {
+      super.apply( name )
+    } catch {
+      case e: NoSuchElementException => 
+	throw new NoSuchFactoryException( e.getMessage )
+    }
+  }
+d564 5
+d570 1
+a570 3
+   * Creates an instance of a class.
+   * Convenience method that is equivalent to:
+   * <code>factory( name ).instantiate( params )</code>
+d572 13
+a584 16
+   * @@param params Params for the factory to create the object with
+   * @@throws NoSuchFactoryException If the given factory doesn't exist
+   * @@throws ParameterNameException If one of the parameters
+   *         has a name that we don't recognize
+   * @@throws ParameterTypeException If the expected types and
+   *         actual types of the param differ
+   * @@throws ParameterRequirementException If a neccessary param
+   *         is missing
+   * @@throws ParameterArrayException If our expectation of an array
+   *         or not is different from the given param
+   * @@throws ParameterizedInstantationException If the params checked
+   *         out ok but the object could not be initialized.
+   */
+  def instantiate( name: String,
+		   params: Seq[ NamedParam ] ): T = 
+    apply( name ).instantiate( params )
+d587 1
+a587 3
+   * Creates an instance of a class, but with no parameters.
+   * Convenience method that is equivalent to:
+   * <code>instantiate( name, Seq() )</code>
+d589 14
+a602 14
+   * @@throws NoSuchFactoryException If the given factory doesn't exist
+   * @@throws ParameterNameException If one of the parameters
+   *         has a name that we don't recognize
+   * @@throws ParameterTypeException If the expected types and
+   *         actual types of the param differ
+   * @@throws ParameterRequirementException If a neccessary param
+   *         is missing
+   * @@throws ParameterArrayException If our expectation of an array
+   *         or not is different from the given param
+   * @@throws ParameterizedInstantiationException If the params were ok
+   *         but the object could not otherwise be instantiated
+   */
+  def instantiate( name: String ): T =
+    instantiate( name, Seq() )
+d604 5
+d610 16
+a625 7
+   * Gets all factories.  They will be returned in
+   * abc order by name.
+   * @@return all factories, in abc order by name
+   */
+  def getFactories(): Seq[ V ] =
+    getKeys.map( get( _ ).get ).toList.sort( _ < _ )
+
+d627 16
+a642 18
+   * Gets the factory with the given key.
+   * @@param key The key for the factory
+   * @@return the factory associated with the key
+   */
+  def getFactory( key: String ): Option[ V ] = 
+    get( key )
+
+  /**
+   * Registers the given factory.
+   * If a factory with this name already exists,
+   * it will be overridden
+   * @@param key Key for the factory
+   * @@param desc A description for the factory
+   * @@param factory The factory itself
+   */
+  def registerFactory( factory: V ) =
+    register( factory.name, factory )
+} // FactoryManager
+d644 1
+@
+
+
+1.4
+log
+@Added implicit type conversions.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.3 2010/06/16 00:58:54 kyledewey Exp kyledewey $
+d9 3
+a26 2
+import scala.runtime.RichString
+
+d124 2
+d132 5
+a136 3
+abstract class ParameterizedObjectFactory[ T ]( 
+  val validParams: Map[ String, ParamInfo ] ) {
+
+d141 9
+d166 3
+a168 4
+    val newParams = validateAndConvertTypes( params )
+    validateRequirements( newParams )
+    validateArrays( newParams )
+    newParams
+d211 14
+a224 14
+    import ParamConverter._
+    val expected = validParams( param.name ).paramType
+    val p = param.param
+    val retval =
+      expected match {
+	case ConstantType => toConstant( p )
+	case IntConstantType => toInteger( p )
+	case RealConstantType => toReal( p )
+	case CharConstantType => toChar( p )
+	case VariableType if ( p.isInstanceOf[ Variable ] ) => Some( p )
+	case MatcherType if ( p.isInstanceOf[ Matcher ] ) => Some( p )
+	case ReplacerType if ( p.isInstanceOf[ Replacer ] ) => Some( p )
+	case DataType if ( p.isInstanceOf[ Data ] ) => Some( p )
+	case _ => None
+a225 12
+    
+    // see if we have something to return
+    if ( retval.isDefined ) {
+      // if the return value didn't change, just
+      // return the original value
+      if ( p eq retval.get ) param
+      else new NamedParam( param.name, retval.get )
+    } else {
+      throw new ParameterTypeException( "Found Type: " +
+				        p.typeName +
+				        "\nExpected type: " +
+				        ParamType.toString( expected ) )
+d227 2
+d336 3
+a338 1
+ * @@param className The name of the class for the underlying object
+d340 1
+d346 9
+a354 17
+class ReflectionFactory[ T ]( val className: String, 
+			      neededParams: Map[ String, ParamInfo ] )
+extends ParameterizedObjectFactory[ T ]( neededParams ) {
+  /**
+   * Creates a new factory with no class name.
+   * Note that this WILL cause internalInstantiate to fail if this
+   * isn't being overridden.
+   * @@param neededParams The params that are needed by the underlying object
+   */
+  def this( neededParams: Map[ String, ParamInfo ] ) =
+    this( null, neededParams )
+
+  // reflection is only needed for default classes, so this is
+  // declared as lazy.  This will be ignored by anything that
+  // overrides this as a result
+  private lazy val constructor = Class.forName( className )
+                                      .getConstructor( classOf[ Seq[ Param ] ] )
+d391 10
+d448 3
+a450 4
+ * Value that holds both a factory and its description.
+ * @@param desc A description of the factory
+ * @@param factory The factory itself
+ * @@author Kyle Dewey
+d452 2
+a453 2
+class FactoryValue[ V <: ParameterizedObjectFactory[ _ ] ]
+( val desc: String, val factory: V ) {}
+d456 2
+a457 4
+ * Value that holds everything neccessary to describe a factory.
+ * @@param key The key for the factory
+ * @@param desc a description of the factory
+ * @@param params Params for the factory
+d460 3
+a462 3
+class FactoryDescriber[ K ]( val key: K,
+		             val desc: String,
+		             val params: Seq[ ParamInfo ] ) {
+d464 1
+a464 5
+   * Creates a FactoryDescriber with a given factory at its base.
+   * Note that the params for the factory will be in abc order.
+   * @@param key The key for the factory
+   * @@param desc A description of the factory
+   * @@param factory The factory itself
+d466 2
+a467 4
+  def this( key: K, desc: String, factory: ParameterizedObjectFactory[ _ ] ) =
+    this( key,
+	  desc,
+	  factory.validParams.values.toList.sort( _ < _ ).toSeq )
+d470 13
+a482 9
+   * Converts the describer to a string for easy viewing.
+   * @@return A string describing this factory describer
+   */
+  override def toString() = {
+    "Factory:\n" +
+    "\tKey: " + key +
+    "\tDescription: " + desc +
+    "Params:\n" + params.map( _.toString ) +
+    "\n\n"
+a483 2
+  
+}
+a484 8
+/**
+ * Like Manager, but it is specialized for factories.
+ * @@param factories The initial key, factory pairs
+ * @@author Kyle Dewey
+ */
+class FactoryManager[ T, V <: ParameterizedObjectFactory[ T ] ]
+( factories: Map[ RichString, FactoryValue[ V ] ] ) 
+extends Manager[ RichString, FactoryValue[ V ] ]( factories ) {
+d486 16
+a501 1
+   * Creates a new empty factory manager.
+d503 3
+a505 2
+  def this() =
+    this( Map() )
+d508 27
+a534 12
+   * Gets the description of all factories.  Note that they
+   * will be returned in abc order by name.
+   * @@return a description of all factories
+   */
+  def getDescriptions(): Seq[ FactoryDescriber[ RichString ] ] =
+    getKeys.toList.sort( _ < _ ).map( key => {
+      val current = this.get( key ).get
+      new FactoryDescriber[ RichString ]( key,
+					  current.desc,
+					  current.factory )
+    } ).toSeq
+  
+d540 2
+a541 10
+  def getFactory( key: RichString ): Option[ V ] = {
+    var value = get( key )
+    var retval: Option[ V ] = None
+
+    if ( value.isDefined ) {
+      retval = Some( value.get.factory )
+    }
+
+    retval
+  }
+d544 2
+a545 2
+   * Registers the given factory with the given name and
+   * description.  If a factory with this name already exists,
+d551 2
+a552 2
+  def registerFactory( key: RichString, desc: String, factory: V ) =
+    register( key, new FactoryValue( desc, factory ) )
+@
+
+
+1.3
+log
+@Fixed typo in name of ParameterizedInstantiationException.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.2 2010/06/15 23:58:19 kyledewey Exp kyledewey $
+d9 3
+d140 1
+d152 4
+a155 3
+    validateTypes( params )
+    validateRequirements( params )
+    validateArrays( params )
+d175 51
+a225 13
+   * Verifies that all expected types match actual types.
+   * @@param params Params to verify
+   * @@throws ParameterTypeException If a type didn't match
+   */
+  def validateTypes( params: Seq[ NamedParam ] ) = {
+    params.foreach( param =>
+      if ( !typeMatches( param ) ) {
+	val expected = validParams( param.name ).paramType
+	throw new ParameterTypeException( "Found type: " +
+					  param.param.typeName +
+					  "\nExpected type: " +
+					  ParamType.toString( expected ) )
+      } )
+d227 1
+a227 17
+
+  /**
+   * Determines if the type of the given param matches up
+   * with its expected type
+   * @@param param The param to check
+   * @@return true if it matches up with the expected type, else false
+   */
+  def typeMatches( param: NamedParam ): Boolean =
+    validParams( param.name ).paramType match {
+      case ConstantType if ( param.param.isInstanceOf[ Constant ] ) => true
+      case VariableType if ( param.param.isInstanceOf[ Variable ] ) => true
+      case MatcherType if ( param.param.isInstanceOf[ Matcher ] ) => true
+      case ReplacerType if ( param.param.isInstanceOf[ Replacer ] ) => true
+      case DataType if ( param.param.isInstanceOf[ Data ] ) => true
+      case _ => false
+    }
+
+d306 1
+a306 1
+    validateParams( params )
+d308 1
+a308 1
+      internalInstantiate( params )
+d319 3
+@
+
+
+1.2
+log
+@Made it so validateTypes() prints human-readable
+type names.
+@
+text
+@d5 1
+a5 1
+ *     $Id: Factory.scala,v 1.1 2010/06/15 17:53:40 kyledewey Exp kyledewey $
+d9 4
+d275 1
+a275 1
+   * @@throws ParameterizedInstantationException If the params were ok
+d283 1
+a283 1
+      case e: ParameterizedInstantationException => throw e
+d285 1
+a285 1
+	throw new ParameterizedInstantationException( e )
+d294 1
+a294 1
+   * @@throws ParameterizedInstantationException If the params were ok
+d332 1
+a332 1
+   * @@throws ParameterizedInstantationException If the params were ok
+d343 1
+a343 1
+      case e: ParameterizedInstantationException => throw e
+d345 1
+a345 1
+	throw new ParameterizedInstantationException( e )
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 1
+a5 1
+ *     $Id$
+d8 4
+a11 1
+ *      $Log$
+d170 1
+a170 1
+  def validateTypes( params: Seq[ NamedParam ] ) =
+d172 2
+a173 1
+      if ( !typeMatches( param ) )
+d175 5
+a179 3
+					  param.getClass.getName + "\n" +
+					  "Expected type: " +
+					  validParams( param.name ).paramType ) )
+@

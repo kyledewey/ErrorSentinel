@@ -276,7 +276,7 @@ class LCM( val className: String,
     val num1Value = num1.sentIntValue
     val num2Value = num2.sentIntValue
     try {
-      Math.abs( num1Value * 
+      scala.math.abs( num1Value * 
 	        num2Value ) / gcd( num1Value,
 				   num2Value )
     } catch {
@@ -306,7 +306,7 @@ class Floor( val className: String,
   override def replace() =
     // note that floor returns a double, and we want to
     // return an integer, so we need to convert it
-    Math.floor( num.sentRealValue ).asInstanceOf[ Long ]
+    scala.math.floor( num.sentRealValue ).asInstanceOf[ Long ]
 }
 
 /**
@@ -327,7 +327,7 @@ class Ceiling( val className: String,
    * @return The ceiling of the number
    */
   override def replace() =
-    Math.ceil( num.sentRealValue ).asInstanceOf[ Long ]
+    scala.math.ceil( num.sentRealValue ).asInstanceOf[ Long ]
 }
 
 /**
@@ -368,7 +368,7 @@ class Round( val className: String,
    * @return The rounded number
    */
   override def replace() =
-    Math.round( num.sentRealValue )
+    scala.math.round( num.sentRealValue )
 }
 
 /**
@@ -459,7 +459,7 @@ class Exp( val className: String,
    * @return e^num
    */
   override def replace() =
-    Math.exp( exp.sentRealValue )
+    scala.math.exp( exp.sentRealValue )
 }
 
 /**
@@ -480,7 +480,7 @@ class Pow( val className: String,
    * @return The base number raised to the exponent
    */
   override def replace() =
-    Math.pow( num.sentRealValue,
+    scala.math.pow( num.sentRealValue,
 	      exp.sentRealValue )
 }
 
@@ -499,9 +499,9 @@ class Log( val className: String,
   private val base = opParam( "base", params )
   private val getBase: () => Double =
     if ( base.isDefined ) {
-      () => Math.log( num.sentRealValue ) / Math.log( base.get.sentRealValue )
+      () => scala.math.log( num.sentRealValue ) / scala.math.log( base.get.sentRealValue )
     } else {
-      () => Math.log( num.sentRealValue )
+      () => scala.math.log( num.sentRealValue )
     }
 
   /**
@@ -528,7 +528,7 @@ class Sqrt( val className: String,
    * @return The square root of the number
    */
   override def replace() =
-    Math.sqrt( num.sentRealValue )
+    scala.math.sqrt( num.sentRealValue )
 }
 
 /**
@@ -547,7 +547,7 @@ class Sin( val className: String,
    * @return the sine
    */
   override def replace() =
-    Math.sin( num.sentRealValue )
+    scala.math.sin( num.sentRealValue )
 }
 
 /**
@@ -566,7 +566,7 @@ class Cos( val className: String,
    * @return The cosine
    */
   override def replace() =
-    Math.cos( num.sentRealValue )
+    scala.math.cos( num.sentRealValue )
 }
 
 /**
@@ -585,7 +585,7 @@ class Tan( val className: String,
    * @return the tangent
    */
   override def replace() =
-    Math.tan( num.sentRealValue )
+    scala.math.tan( num.sentRealValue )
 }
 
 /**
@@ -604,7 +604,7 @@ class ArcSin( val className: String,
    * @return the arc sine
    */
   override def replace() =
-    Math.asin( num.sentRealValue )
+    scala.math.asin( num.sentRealValue )
 }
 
 /**
@@ -623,7 +623,7 @@ class ArcCos( val className: String,
    * @return The arc cosine
    */
   override def replace() =
-    Math.acos( num.sentRealValue )
+    scala.math.acos( num.sentRealValue )
 }
 
 /**
@@ -642,5 +642,5 @@ class ArcTan( val className: String,
    * @return the arc tangent
    */
   override def replace() =
-    Math.atan( num.sentRealValue )
+    scala.math.atan( num.sentRealValue )
 }

@@ -105,7 +105,7 @@ case class NoSuchFactoryException( message: String )
  * @param factories The initial key, factory pairs
  * @author Kyle Dewey
  */
-class FactoryManager[ T, V <: InstanceFactory[ T ] ]
+class FactoryManager[ T <: Instance, V <: InstanceFactory[ T ] ]
 ( factories: Map[ String, V ] ) 
 extends Manager[ String, V ]( factories ) {
   /**
@@ -160,7 +160,7 @@ extends Manager[ String, V ]( factories ) {
    * @return all factories, in abc order by name
    */
   def getFactories(): Seq[ V ] =
-    getKeys.map( get( _ ).get ).toList.sort( _ < _ )
+    getKeys.map( get( _ ).get ).toList.sortWith( _ < _ )
 
   /**
    * Gets the factory with the given key.

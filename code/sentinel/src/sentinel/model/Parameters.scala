@@ -384,7 +384,7 @@ object ParamInfo {
   def sortParams( params: Seq[ ParamInfo ] ): Seq[ ParamInfo ] = {
     val ( required,
 	  optional ) = params.partition( _.isRequired )
-    required.toList.sort( _ < _ ) ++ optional.toList.sort( _ < _ )
+    required.toList.sortWith( _ < _ ) ++ optional.toList.sortWith( _ < _ )
   }
 }
 

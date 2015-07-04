@@ -199,8 +199,8 @@ class Database( val className: String,
   import sentinel.model.InstanceFactory._
   private val handle = param( "handle", params )
   private val query = param( "query", params )
-  private val queryParams = 
-    opAsArray( "params", params ).getOrElse( Seq[ Param ]() )
+  private val queryParams: scala.Array[Param] = 
+    opAsArray( "params", params ).getOrElse( scala.Array.empty[ Param ] )
   
   /**
    * Gets the first column of the first row of a query.

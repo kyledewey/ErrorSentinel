@@ -126,7 +126,7 @@ object InstanceFactory {
   def opParam( name: String, params: Seq[ NamedParam ] ): Option[ Param ] = {
     val asArray = opAsArray( name, params )
     if ( asArray.isDefined ) {
-      Some( asArray.get.first )
+      Some( asArray.get.head )
     } else None
   }
 
@@ -156,7 +156,7 @@ object InstanceFactory {
    * @return an appropriate string for an error message
    */
   def errStr( items: Seq[ String ] ) =
-    items.toList.sort( _ < _ ).mkString( SEPARATOR )
+    items.toList.sortWith( _ < _ ).mkString( SEPARATOR )
 
   /**
    * Gets information about a class as to whether or not it is
@@ -715,7 +715,7 @@ extends InstanceFactory[ T ]( name,
 						     "of params instead of " +
 						     "a single param" )
     }
-    root.first.param
+    root.head.param
   }
 }
 

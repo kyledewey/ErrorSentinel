@@ -35,7 +35,7 @@ object GUIHelpers {
    * @param items The items to put in the box
    * @return A combo box holding the given items
    */
-  def makeComboBox[ T <: AnyRef ]( items: Seq[ T ] ): JComboBox =
+  def makeComboBox[ T <: java.lang.Object ]( items: Array[ T ] ): JComboBox[T] =
     makeComboBox( items, None )
 
   /**
@@ -46,10 +46,10 @@ object GUIHelpers {
    * @param selected The item that should be selected.  Specify None for none.
    * @return a combo box holding the given items
    */
-  def makeComboBox[ T <: AnyRef ]( items: Seq[ T ],
-				   selected: Option[ T ] ): JComboBox = {
+  def makeComboBox[ T <: java.lang.Object ]( items: Array[ T ],
+				   selected: Option[ T ] ): JComboBox[T] = {
     val retval = 
-      new JComboBox( items.map( _.asInstanceOf[ Object ] ).toArray )
+      new JComboBox( items )
 
     if ( selected.isDefined ) {
       retval.setSelectedItem( selected.get ) 
@@ -84,8 +84,8 @@ object GUIHelpers {
    * @param combos The combo boxes
    * @return A parallel map of cell editors based on the combo boxes
    */
-  def makeComboCellEditors( combos: Seq[ JComboBox ] ): Seq[ TableCellEditor ] =
-    combos.map( new DefaultCellEditor( _ ) ).toArray
+  def makeComboCellEditors[T]( combos: Seq[ JComboBox[T] ] ): Seq[ TableCellEditor ] =
+    combos.map( new DefaultCellEditor( _ ) )
 
   /**
    * Makes a parallel map of cell editors from the given check boxes
@@ -93,14 +93,14 @@ object GUIHelpers {
    * @return A parallel map of cell editors based on the check boxes
    */
   def makeCheckCellEditors( checks: Seq[ JCheckBox ] ): Seq[ TableCellEditor ] =
-    checks.map( new DefaultCellEditor( _ ) ).toArray
+    checks.map( new DefaultCellEditor( _ ) )
 
   /**
    * Makes a renderer for the given combo box
    * @param combo The combo box
    * @return A renderer for this combo box
    */
-  def toComboRenderer( combo: JComboBox ) = {
+  def toComboRenderer[T]( combo: JComboBox[T] ) = {
     new TableCellRenderer() {
       /* http://www.exampledepot.com/egs/javax.swing.table/ComboBox.html */
       def getTableCellRendererComponent( table: JTable,
@@ -143,9 +143,9 @@ object GUIHelpers {
    * @param comp The component
    * @return A renderer for this component
    */
-  def toRenderer( comp: Component ) =
+  def toRenderer( comp: Component ): JComboBox[_] =
     comp match {
-      case c: JComboBox => toComboRenderer( c )
+      case c: JComboBox[_] => toComboRenderer( c )
       case _ => defaultToRenderer( comp )
     }
 
@@ -154,8 +154,8 @@ object GUIHelpers {
    * @param comps The components
    * @return A parallel map of renderers
    */
-  def renderers( comp: Seq[ Component ] ) =
-    comp.map( toRenderer( _ ) ).toArray.toSeq
+  def renderers( comp: Seq[ Component ] ): Seq[JComboBox[_]] =
+    comp.map( toRenderer( _ ) )
 
   /**
    * Wraps an object into a Some/None.

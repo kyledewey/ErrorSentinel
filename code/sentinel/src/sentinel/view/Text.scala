@@ -72,9 +72,9 @@ case class InvalidMethodException( message: String )
 object TextCommandProcessor {
   // begin constants
   // contains the acceptable parameters for a method which we take
-  val understoodParams: Set[ Class[ _ ] ] = Set( classOf[ int ],
-						 classOf[ char ],
-						 classOf[ double ],
+  val understoodParams: Set[ Class[ _ ] ] = Set( classOf[ Int ],
+						 classOf[ Char ],
+						 classOf[ Double ],
 						 classOf[ java.lang.String ] )
   val AUTOMAGIC_METHOD_NAME = "apply"
   val SHOW_COMMANDS_NAME = "show_commands"
@@ -172,9 +172,9 @@ object TextCommandProcessor {
     try {
       // for some odd reason the parser can't figure out the
       // equivalent (cleaner) pattern matching version...weird
-      if ( toClass eq classOf[ int ] ) Some( arg.toInt )
-      else if ( toClass eq classOf[ double ] ) Some( arg.toDouble )
-      else if ( ( toClass eq classOf[ char ] ) && arg.length == 1 ) Some( arg( 0 ) )
+      if ( toClass eq classOf[ Int ] ) Some( arg.toInt )
+      else if ( toClass eq classOf[ Double ] ) Some( arg.toDouble )
+      else if ( ( toClass eq classOf[ Char ] ) && arg.length == 1 ) Some( arg( 0 ) )
       else if ( toClass eq classOf[ String ] ) Some( arg )
       else None
     } catch {
@@ -191,9 +191,7 @@ object TextCommandProcessor {
    */
   def convertArgs( args: Seq[ String ], 
 		   toTypes: Seq[ Class[ _ ] ] ): Seq[ Option[ Object ] ] = {
-    val converted = List.map2( args.toList,
-			       toTypes.toList )( ( arg, toType ) =>
-				 convertArg( arg, toType ) )
+    val converted = args.zip(toTypes).map(p => convertArg(p._1, p._2))
     converted.map( arg =>
       if ( arg.isDefined ) {
 	Some( arg.get.asInstanceOf[ Object ] )
@@ -293,7 +291,7 @@ object TextCommandProcessor {
       throw new MethodDeterminationException( "Multiple methods determined " +
 					      "to be appropriate" )
     }
-    candidates.first
+    candidates.head
   }
 }
 
@@ -450,7 +448,7 @@ class HelpCommand( private var commands: Map[ CommandKey, String ] ) {
    * @param name The name of the command to get information about
    */
   def apply( name: String ): String =
-    getKeys( name ).toList.sort( _.numParams < _.numParams )
+    getKeys( name ).toList.sortWith( _.numParams < _.numParams )
                           .map( apply( _ ) )
                           .mkString( "", "\n", "" )
 }
@@ -536,7 +534,7 @@ class TextCommandProcessor( private val help: HelpCommand ) {
     // note that multiple commands can have the same names, but
     // different numbers of params
     val names = Set() ++ commands.keys.map( _.name )
-    names.toList.sort( _ < _ ).map( help( _ ) ).mkString( "", "\n", "" )
+    names.toList.sortWith( _ < _ ).map( help( _ ) ).mkString( "", "\n", "" )
   }
 
   /**
@@ -548,10 +546,11 @@ class TextCommandProcessor( private val help: HelpCommand ) {
 			 signature: Seq[ Class[ _ ] ] ) {
     if ( commands.contains( key ) ) {
       val oldValues = commands( key )
-      val sigArray = signature.toArray
+      val sigArray = signature.toArray.deep
       // only get elements that differ from the given signature
       val newValues = oldValues.filter( !_._2.getParameterTypes
-				             .deepEquals( sigArray ) )
+                                             .deep
+                                             .equals(sigArray) )
       if ( newValues.isEmpty ) {
 	commands -= key
 	help.unregisterCommand( key )
@@ -713,7 +712,7 @@ class TextCommandProcessor( private val help: HelpCommand ) {
    */
   def executeCommandLine( line: String ): String = {
     val tokens = parseLine( line ).toList
-    executeCommand( tokens.first,
+    executeCommand( tokens.head,
 		    tokens.tail )
   }
 }
@@ -735,7 +734,7 @@ object InteractiveTextInterpreter {
  * Tests the interactive text interpreter.
  * @author Kyle Dewey
  */
-object TestText extends Application {
+object TestText extends App {
   /**
    * Main function to test mainLoop()
    * This testing doesn't go well in the REPL; we close

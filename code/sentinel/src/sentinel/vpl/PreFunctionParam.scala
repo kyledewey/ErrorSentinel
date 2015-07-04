@@ -70,7 +70,7 @@ object PreFunctionParam {
    */
   def makeValidParams( inputConnections: Map[ SentinelNode, Set[ String ] ],
 		       order: Seq[ SentinelNode ] ) = {
-    val retval = applyOrder( makeParams( inputConnections ),
+    val retval = applyOrder( makeParams( inputConnections ).toSeq,
 			     order )
     renameRepeats( retval )
     retval
@@ -86,7 +86,6 @@ object PreFunctionParam {
    */
   def makeParams( inputConnections: Map[ SentinelNode, Set[ String ] ] ) = 
     inputConnections.keys
-                    .collect
                     .flatMap( node => 
 		      asParam( node, inputConnections( node ) ) )
   /**

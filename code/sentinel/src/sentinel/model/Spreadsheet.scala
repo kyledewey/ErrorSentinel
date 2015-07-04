@@ -194,7 +194,7 @@ object Spreadsheet {
    * @return The names of all registered sheets, in abc order
    */
   def getSpreadsheets() =
-    spreadsheets.keys.toList.sort( _.compareTo( _ ) < 0 )
+    spreadsheets.keys.toList.sortWith( _.compareTo( _ ) < 0 )
 
   /**
    * Validates the given spreadsheet name.
@@ -367,7 +367,7 @@ trait Spreadsheet extends DefaultTableModel {
    * @param initializer Used to initialize each row and column
    * @return A parallel table
    */
-  def mapTable[ T ]( initializer: ( Int, Int ) => T ) =
+  def mapTable[T:ClassManifest]( initializer: ( Int, Int ) => T ) =
     SentinelHelpers.makeTable( getRowCount,
 			       getColumnCount,
 			       initializer )
@@ -456,7 +456,7 @@ extends DefaultSpreadsheet( name, register ) {
 			  columnData: Vector[ _ ] ) {
     super.addColumn( columnName,
 		     columnData )
-    parallel.elements.foreach( _ += None )
+    parallel.foreach( _ += None )
   }
 
   /**

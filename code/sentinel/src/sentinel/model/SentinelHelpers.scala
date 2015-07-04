@@ -132,10 +132,12 @@ object SentinelHelpers {
    * @return A table of the given width and height initialized for
    * each cell with the given initializer
    */
-  def makeTable[T]( numRows: Int, numColumns: Int, initializer: ( Int, Int ) => T ) = {
-    0.until(numRows).map(row =>
-      0.until(numColumns).map(column =>
-        initializer(row, column)).toIndexedSeq).toIndexedSeq
+  def makeTable[T : ClassManifest]( numRows: Int, numColumns: Int, initializer: ( Int, Int ) => T ): Array[Array[T]] = {
+    val retval: Array[Array[T]] = Array.ofDim[T](numRows, numColumns)
+    0.until(numRows).foreach(row =>
+      0.until(numColumns).foreach(column =>
+        retval(row)(column) = initializer(row, column)))
+    retval
   }
 
   /**
@@ -144,7 +146,7 @@ object SentinelHelpers {
    * @param initializer The initializer to use
    * @return A matrix
    */
-  def makeMatrix[ T ]( size: Int, initializer: ( Int, Int ) => T ) =
+  def makeMatrix[T: ClassManifest]( size: Int, initializer: ( Int, Int ) => T ) =
     makeTable( size, size, initializer )
 
   /**

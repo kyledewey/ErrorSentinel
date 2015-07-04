@@ -58,7 +58,7 @@
 
 package sentinel.model.parser.xml
 
-import sentinel.model
+import sentinel.model._
 import sentinel.model.parser._
 import sentinel.model.matcher._
 import sentinel.model.replacer._
@@ -255,7 +255,7 @@ object XMLParser {
       throw new ClassParseException( "More than one parameter in structure" )
     } 
 
-    val tree = parseParameter( children.first )
+    val tree = parseParameter( children.head )
     if ( myType == "Matcher" ) {
       MatcherFactory( name,
 		      desc,
@@ -293,7 +293,7 @@ object XMLParser {
 					    "BuiltIn" ) )
       val ( paramsMap,
 	    paramsSeq ) = parseFormalParams( getNodes( theClass, 
-					               "FormalParameters" ).first )
+					               "FormalParameters" ).head )
 
       if ( builtIn ) {
 	val className = getText( theClass, "JVMClassName" )
@@ -314,7 +314,7 @@ object XMLParser {
 					 theType + "\"" )
 	}
       } else {
-	val structure = getNodes( theClass, "Structure" ).first
+	val structure = getNodes( theClass, "Structure" ).head
 	parseStructure( structure,
 		        name,
 		        desc,
@@ -385,8 +385,7 @@ class XMLParser( fileName: String ) extends ClassParser( fileName ) {
   val classes = file \ "Class"
   // maps pre-class objects to nodes that contain class information
   lazy val preClassToNode =
-    Map() ++ List.map2( XMLParser.parseForPreClasses( classes, this ).toList,
-		        classes.toList )( _ -> _ )
+    Map() ++ XMLParser.parseForPreClasses( classes, this ).zip(classes.toList)
   
   /**
    * Gets information about all classes within

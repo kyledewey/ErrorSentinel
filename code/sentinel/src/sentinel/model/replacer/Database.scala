@@ -14,6 +14,7 @@
 
 package sentinel.model.replacer
 
+import sentinel.model._
 import sentinel.model.matcher._
 
 /**

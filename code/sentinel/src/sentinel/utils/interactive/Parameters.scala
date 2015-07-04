@@ -180,7 +180,7 @@ object TypeConversions extends TypeConversionValidator {
    * @return A sorted sequence of the types
    */
   def typeHolders( types: Set[ ParamType ] ) =
-    types.map( TypeHolder( _ ) ).toList.sort( _ < _ ).toSeq
+    types.map( TypeHolder( _ ) ).toList.sortWith( _ < _ ).toSeq
 
 
   /**
@@ -192,7 +192,7 @@ object TypeConversions extends TypeConversionValidator {
    * @return A combo box holding all the types that it can be converted to
    */
   def makeTypeComboBox( theType: ParamType ) = {
-    val combo = makeComboBox( typeHolders( convertableTypes( theType ) ) )
+    val combo = makeComboBox( typeHolders( convertableTypes( theType ) ).toArray )
     combo.setSelectedItem( TypeHolder( theType ) )
     combo
   }

@@ -230,11 +230,9 @@ class MatrixGraph[ N, E ]( numNodes: Int ) extends Graph[ N, E ]( numNodes ) {
  * @author Kyle Dewey
  */
 class ListGraph[ N, E ]( numNodes: Int ) extends Graph[ N, E ]( numNodes ) {
-  import scala.collection.jcl.{ HashMap, Map => MMap }
-
   // begin instance variables
-  private val edges = new Array[ MMap[ Int, Option[ E ] ] ]( numNodes )
-  0.until( numNodes ).foreach( edges( _ ) = new HashMap() )
+  private val edges = new Array[ java.util.AbstractMap[ Int, Option[ E ] ] ]( numNodes )
+  0.until( numNodes ).foreach( edges( _ ) = new java.util.HashMap() )
   // end instance variables
 
   /**
@@ -244,7 +242,7 @@ class ListGraph[ N, E ]( numNodes: Int ) extends Graph[ N, E ]( numNodes ) {
    * @return true if it exists, else false
    */
   def isEdge( from: Int, to: Int ) =
-    edges( from ).contains( to )
+    edges( from ).containsKey( to )
 
   /**
    * Adds the given edge to the graph
@@ -276,7 +274,7 @@ class ListGraph[ N, E ]( numNodes: Int ) extends Graph[ N, E ]( numNodes ) {
    * @param to The ending node of the edge
    */
   def deleteEdge( from: Int, to: Int ) {
-    edges( from ).removeKey( to )
+    edges( from ).remove( to )
   }
 
   /**
@@ -287,7 +285,7 @@ class ListGraph[ N, E ]( numNodes: Int ) extends Graph[ N, E ]( numNodes ) {
    */
   def getEdgeData( from: Int, to: Int ) = 
     if ( isEdge( from, to ) ) {
-      edges( from )( to )
+      edges( from ).get( to )
     } else {
       None
     }
@@ -312,8 +310,10 @@ class ListGraph[ N, E ]( numNodes: Int ) extends Graph[ N, E ]( numNodes ) {
    * @param node The given node
    * @return All nodes that are adjacent to this node
    */
-  def adjacentNodes( node: Int ) = 
-    edges( node ).keys.collect
+  def adjacentNodes( node: Int ) = {
+    import scala.collection.JavaConverters._
+    edges( node ).keySet.asScala.toSeq
+  }
 }
 
 /**
@@ -397,6 +397,6 @@ extends ListGraph[ DependencyNode[ N ], E ]( numNodes ) {
     DFS()
     ( 0 to numNodes - 1 ).map( getNodeData( _ ).get )
                          .toList
-                         .sort( _.finish > _.finish )
+                         .sortWith( _.finish > _.finish )
   }
 }

@@ -252,7 +252,7 @@ object SentinelTable {
    * @return all open tables
    */
   def tables() =
-    openTables.values.collect
+    openTables.values.toSeq
 
   /**
    * Runs the given function for each table.
@@ -773,7 +773,7 @@ class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellC
    * Sets all the cell colors given a parallel table of cell colors.
    * @param colorTable The parallel table of cell colors
    */
-  def setCellColors( table: Seq[ Seq[ Color ] ] ) {
+  def setCellColors( table: Array[ Array[ Color ] ] ) {
     model.foreachRowColumn( ( row, column ) =>
       setCellColor( row, column,
 		    table( row )( column ) ) )

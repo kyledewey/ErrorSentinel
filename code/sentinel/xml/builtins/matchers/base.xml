@@ -1,0 +1,82 @@
+<Classes>
+  <Class>
+    <Name>Or</Name>
+    <Description>Matches if any of the given matchers matched. If none of the given matchers matched, then it doesn't match. Stops at the first matching matcher (as in short circuit evaluation).</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.Or</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>input</Name>
+        <Description>One or more matchers to test</Description>
+        <Type>Matcher</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>And</Name>
+    <Description>Matches if and only if all matchers within matched. Otherwise, it returns no match. Stops at the first non-matching matcher (as in short circuit evaluation).</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.And</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>input</Name>
+        <Description>One or more matchers to test</Description>
+        <Type>Matcher</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>False</Name>
+    <Description>Matcher that never matches.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.False</JVMClassName>
+    <FormalParameters> </FormalParameters>
+  </Class>
+  <Class>
+    <Name>True</Name>
+    <Description>Matcher that always matches.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.True</JVMClassName>
+    <FormalParameters> </FormalParameters>
+  </Class>
+  <Class>
+    <Name>MatchException</Name>
+    <Description>Always throws a match exception.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.ThrowMatchException</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>message</Name>
+        <Description>A message describing why a match couldn't be determined.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Not</Name>
+    <Description>Inverses the result of another matcher</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.Not</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+	<Name>matcher</Name>
+	<Description>Matcher to inverse the result of</Description>
+	<Type>Matcher</Type>
+	<IsArray>false</IsArray>
+	<IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+</Classes>

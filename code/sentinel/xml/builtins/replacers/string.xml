@@ -1,0 +1,252 @@
+<Classes>
+  <Class>
+    <Name>StringMakeLowerCase</Name>
+    <Description>Makes the given string lowercase.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.StringMakeLowerCase</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to make lower case.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>StringMax</Name>
+    <Description>Gets the string with the maximum value in a list of strings. This is the string that comes last if the strings were place in abc order.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.StringMax</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>strings</Name>
+        <Description>The strings to get the maximum from.</Description>
+        <Type>String</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>RightTrim</Name>
+    <Description>Trims whitespace from the right side of the given string. For instance, if given &quot; moo &quot;, it will return &quot; moo&quot;.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.RightTrim</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to trim whitespace from the right.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Substring</Name>
+    <Description>Gets a substring from a given string, using a start position and an end position. If either of the two position are invalid (either negative, larger than the length of the string, or the end position is greater than the start position), then it throws a ReplaceException. Note that the string positions are 0 indexed (the first character in the string is at position 0). Also note that for the end position, position n refers to n - 1. That is, and end position equal to the end of the string is valid, even though the string is 0 indexed.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.SubString</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to get the substring of.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>start</Name>
+        <Description>Optional starting position. Defaults to 0.</Description>
+        <Type>Integer</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>false</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>end</Name>
+        <Description>Optional ending position. Defaults to the end of the string.</Description>
+        <Type>Integer</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>false</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>StringMakeUpperCase</Name>
+    <Description>Makes the given string uppercase.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.StringMakeUpperCase</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to make upper case.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>RegexSubstitution</Name>
+    <Description>Uses a regular expression to perform a substitution on the given string. It will replace all instance of the given pattern found in the string with the given replacement (or at least the first instance, depending upon the given parameters.).</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Substitution</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The base string to perform replacements on.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>regex</Name>
+        <Description>A regular expression defining a pattern to find and replace in the string.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>replacement</Name>
+        <Description>What to replace instances of the pattern with.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>first</Name>
+        <Description>Whether or not to replace only the first occurance of the given pattern. If it matches, then only the first will be replaced. Otherwise, all occurrances will be replaced. By default, all occurrances will be replaced.</Description>
+        <Type>Matcher</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>false</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Length</Name>
+    <Description>Gets the length of a string.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Length</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to get the length of.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Reverse</Name>
+    <Description>Gets the reverse of the given string. For instance, if given &quot;moo&quot;, it will return &quot;oom&quot;.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Reverse</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to get the reverse of.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Capitalize</Name>
+    <Description>Capitalizes the given string. For instance, if given &quot;this is a string&quot;, then it will return &quot;This Is A String&quot;.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Capitalize</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to capitalize.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>StringMin</Name>
+    <Description>Gets the string with the minimum value in a list of strings. This is the string that comes first if the strings were placed in abc order.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.StringMin</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>strings</Name>
+        <Description>The strings to get the minimum from.</Description>
+        <Type>String</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>CharAt</Name>
+    <Description>Gets a character at a given position from the given string. Positions are 0 indexed (the first character is at position 0). If the position is invalid for the string (i.e. it is negative or is greater than the length of the string), then it throws a ReplaceException.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.CharAt</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to get the position of.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>position</Name>
+        <Description>The position where the desired character is.</Description>
+        <Type>Integer</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Trim</Name>
+    <Description>Trims whitespace from the front and back of a string. For instance, if given &quot; moo &quot;, then this will return &quot;moo&quot;.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Trim</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to trim whitespace from either end.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>LeftTrim</Name>
+    <Description>Trims whitespace from the left side of the given string. For instance, if given &quot; moo &quot;, then this will return &quot;moo &quot;.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.LeftTrim</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to trim whitespace from the left.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+</Classes>

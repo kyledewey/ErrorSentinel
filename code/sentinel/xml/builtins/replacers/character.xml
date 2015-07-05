@@ -1,0 +1,34 @@
+<Classes>
+  <Class>
+    <Name>CharMakeUpperCase</Name>
+    <Description>Makes the given character uppercase.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.CharMakeUpperCase</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>character</Name>
+        <Description>The character to make upper case.</Description>
+        <Type>Character</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>CharMakeLowerCase</Name>
+    <Description>Makes the given character lowercase.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.CharMakeLowerCase</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>character</Name>
+        <Description>The character to make lowercase.</Description>
+        <Type>Character</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+</Classes>

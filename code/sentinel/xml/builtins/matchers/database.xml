@@ -1,0 +1,34 @@
+<Classes>
+  <Class>
+    <Name>Database</Name>
+    <Description>Runs queries on a relational database. Queries with results are considered matches.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.DatabaseMatcher</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+	<Name>handle</Name>
+	<Description>The name of the database handle. Handle information is contained in an external file.</Description>
+	<Type>String</Type>
+	<IsArray>false</IsArray>
+	<IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+	<Name>query</Name>
+	<Description>The SQL query. Parameters are specified with question marks.</Description>
+	<Type>String</Type>
+	<IsArray>false</IsArray>
+	<IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+	<Name>params</Name>
+	<Description>The parameters for the query.</Description>
+	<Type>String</Type>
+	<IsArray>true</IsArray>
+	<IsRequired>false</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+</Classes>
+
+	  

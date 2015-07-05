@@ -1,0 +1,194 @@
+<Classes>
+  <Class>
+    <Name>Real&gt;</Name>
+    <Description>Determines if for each given real number, the number is greater than the real number to the right.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.RealGreater</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The real numbers to compare.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Real&lt;=</Name>
+    <Description>Determines if for each given real number, the number is less than or equal to the real number on the right.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.RealLessOrEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The real numbers to compare.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Real&lt;</Name>
+    <Description>Determines if for each given real number, the number is less than the real number to the right.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.RealLess</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The real numbers to compare.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int&gt;=</Name>
+    <Description>Determines for each integer if the given integer is greater than or equal to the integer to the right.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IntGreaterOrEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to compare.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int&gt;</Name>
+    <Description>Determines for each integer if the given integer is greater than the integer to the right.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IntGreater</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to compare.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int&lt;</Name>
+    <Description>Determines for each integer if the given integer is less than the integer to the right.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IntLess</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to compare.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int&lt;=</Name>
+    <Description>Determines for each integer if the given integer is less than or equal to the integer to the right.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IntLessOrEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to compare.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int!=</Name>
+    <Description>Determines if all the given integers are not equal to each other.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IntNotEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to test for non-equality.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Real=</Name>
+    <Description>Determines if all the given real numbers are equal to each other.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.RealEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The reals to test for equality.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Real&gt;=</Name>
+    <Description>Determines if for each given real number, the number is greater than or equal to the real number on the right.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.RealGreaterOrEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The real numbers to compare.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Real!=</Name>
+    <Description>Determines if all the given real numbers are different from each other.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.RealNotEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The real numbers to test for non-equality.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int=</Name>
+    <Description>Determines if all the given integers are equal to each other.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IntEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to test for equality.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+</Classes>

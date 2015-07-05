@@ -1,0 +1,502 @@
+<Classes>
+  <Class>
+    <Name>Real*</Name>
+    <Description>Gets the product of a bunch of reals.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.RealMultiply</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The reals to multiply.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Ceiling</Name>
+    <Description>Gets the ceiling of the given real number. This is the smallest integer that is greater than or equal to the number.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Ceiling</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number to get the ceiling of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Pow</Name>
+    <Description>Raises a given number by another number.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Pow</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The base number to raise by an exponent.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>exponent</Name>
+        <Description>The exponent for the base number.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>ASin</Name>
+    <Description>Gets the arc sine of the given number.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.ArcSin</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number to get the arc sine of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Tan</Name>
+    <Description>Gets the tangent of the given number. The number is assumed to be in radians.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Tan</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number, in radians, to get the tangent of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Mod</Name>
+    <Description>Gets the modulus of the given numbers. This is the remainder of one number divided by another. For instance, 7 mod 3 is 1, because 1 is what remains of 7 after 3 has been divided evenly into it. As a second example, 7 mod 3 mod 1 is 0, because 1 evenly divides 1.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Mod</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to get the modulus of.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int+</Name>
+    <Description>Adds a bunch of integers together.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.IntAdd</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to add together.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Exp</Name>
+    <Description>Gets Euler's number, e, raised to a given power.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Exp</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>exponent</Name>
+        <Description>An exponent to e.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Sqrt</Name>
+    <Description>Gets the square root of the given number.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Sqrt</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number to get the square root of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Round</Name>
+    <Description>Rounds the given real number to an integer. For instance, 3.5 =&gt; 4.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Round</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number to round.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>RealMin</Name>
+    <Description>Gets the smallest real number in a list of real numbers.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.RealMin</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The real numbers to get the minimum of.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Floor</Name>
+    <Description>Gets the floor of the given real number. This is the greatest integer that is less than or equal to the number.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Floor</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number to get the floor of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int*</Name>
+    <Description>Gets the product of a bunch of integers.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.IntMultiply</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to multiply.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>GCD</Name>
+    <Description>Gets the greatest common divisor of two integers. This is the largest integer than can divide both numbers evenly.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.GCD</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num1</Name>
+        <Description>The first number.</Description>
+        <Type>Integer</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>num2</Name>
+        <Description>The second number.</Description>
+        <Type>Integer</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Sin</Name>
+    <Description>Gets the sine of the given number. The number is assumed to be in radians.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Sin</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number, in radians, to get the sine of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Real/</Name>
+    <Description>Divides a bunch of reals. For instance, if given 2.5, 4, 7.3, this returns 2.5 / 4 / 7.3. Throws a ReplaceException if a divide by 0 is attempted.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.RealDivide</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The real numbers to divide.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>ATan</Name>
+    <Description>gets the arc tangent of the given number.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.ArcTan</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number to get the arc tangent of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Real+</Name>
+    <Description>Adds a bunch of reals together.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.RealAdd</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The reals to add together.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int/</Name>
+    <Description>Divides a bunch of integers. For instance, if given 1, 2, 3, this returns 1 / 2 / 3.  Throws a ReplaceException if an attempt is made to divide by 0.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.IntDivide</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to divide.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>IntMax</Name>
+    <Description>Gets the largest integer in the given bunch of integers.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.IntMax</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to get the max of.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Truncate</Name>
+    <Description>Truncates the given real number to an integer. For instance, 3.5 =&gt; 3.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Truncate</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number to truncate.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Cos</Name>
+    <Description>Gets the cosine of the given number. The number is assumed to be in radians.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Cos</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number, in radians, to get the cosine of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>RealMax</Name>
+    <Description>Gets the largest real number in the given bunch of real numbers.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.RealMax</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The reals to get the max of.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Log</Name>
+    <Description>Gets the logarithm of the given number. If it's provided with a base, then it will return the logarithm with the given base. If it's not provided with a base, then it will return the natural logarithm of the given number.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Log</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number to get the logarithm of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>base</Name>
+        <Description>The base for the logarithm. Without a specified base, this defaults to getting the natural logarithm.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>false</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>ACos</Name>
+    <Description>Gets the arc cosine of the given number.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.ArcCos</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num</Name>
+        <Description>The number to get the arc cosine of.</Description>
+        <Type>Real</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Real-</Name>
+    <Description>Subtracts a bunch of reals from each other. For instance, if given 1.5, 2.5, 2, then this will return 1.5 - 2.5 - 2.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.RealSubtract</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>reals</Name>
+        <Description>The reals to subtract from each other.</Description>
+        <Type>Real</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Int-</Name>
+    <Description>Subtracts a bunch of integers from each other. For instance, if given 1, 2, 3, then this will return 1 - 2 - 3.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.IntSubtract</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to subtract from each other.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>LCM</Name>
+    <Description>Gets the least common multiple of two integers. This is the smallest integer that is a multiple of both numbers.  Throws a ReplaceException if the GCD of the two numbers is 0 (which really shouldn't be possible.)</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.LCM</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>num1</Name>
+        <Description>The first integer.</Description>
+        <Type>Integer</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>num2</Name>
+        <Description>The second integer.</Description>
+        <Type>Integer</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>IntMin</Name>
+    <Description>Gets the smallest integer in a list of integers.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.IntMin</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>integers</Name>
+        <Description>The integers to get the minimum of.</Description>
+        <Type>Integer</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Random</Name>
+    <Description>Gets a random real number between 0 and 1.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Random</JVMClassName>
+    <FormalParameters> </FormalParameters>
+  </Class>
+</Classes>

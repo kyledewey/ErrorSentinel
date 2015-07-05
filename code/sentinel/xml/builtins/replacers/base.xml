@@ -1,0 +1,101 @@
+<Classes>
+  <Class>
+    <Name>Concat</Name>
+    <Description>Concatentates a number of items together to form a single item.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Concat</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>data</Name>
+        <Description>The data to concatenate.</Description>
+        <Type>String</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>start</Name>
+        <Description>Something to put at the start of the returned concatentation. Defaults to a null string (&quot;&quot;).</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>false</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>delimiter</Name>
+        <Description>Something to put between each item. Defaults to a null string (&quot;&quot;).</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>false</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>end</Name>
+        <Description>Something to put at the end of the returned concatenation. Defaults to a null string (&quot;&quot;).</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>false</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>If</Name>
+    <Description>A conditional expression. If the given matcher matches, then it will return the data in &quot;then&quot;. Otherwise, it will return the data in &quot;else&quot;.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Conditional</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>if</Name>
+        <Description>A condition to test for.</Description>
+        <Type>Matcher</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>then</Name>
+        <Description>Data to return if the matcher matches.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>else</Name>
+        <Description>Data to return if the matcher doesn't match.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>ReplaceException</Name>
+    <Description>Always throws a replace exception.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.ThrowReplaceException</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>message</Name>
+        <Description>A message describing why a replacement couldn't be determined.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Debugger</Name>
+    <Description>Debugging utility.  Passes the given parameter along as-is.  If it wasn't given a parameter, it simply returns a null string.</Description>
+    <Type>Replacer</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.replacer.Debugger</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+	<Name>input</Name>
+	<Description>Any input data.  Simply displays it and passes it along.</Description>
+	<Type>String</Type>
+	<IsArray>false</IsArray>
+	<IsRequired>false</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+</Classes>

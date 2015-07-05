@@ -1,0 +1,167 @@
+<Classes>
+  <Class>
+    <Name>String&lt;=</Name>
+    <Description>Determines if in a list of strings, each string is less than or equal to the one to the right of it. For instance, &quot;abc&quot; &lt;= &quot;def&quot; &lt;= &quot;def&quot;.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.StringLessOrEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>strings</Name>
+        <Description>The strings to compare.</Description>
+        <Type>String</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>String=</Name>
+    <Description>Determines if the given strings are all equal to each other.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.StringEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>strings</Name>
+        <Description>The strings to test for equality.</Description>
+        <Type>String</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>String&gt;=</Name>
+    <Description>Determines if in a list of strings, each string is greater than or equal to the one to the right of it. For instance, &quot;def&quot; &gt;= &quot;abc&quot; &gt;= &quot;abc&quot;.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.StringGreaterOrEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>strings</Name>
+        <Description>The strings to compare.</Description>
+        <Type>String</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Regex</Name>
+    <Description>Attempts to see if a string matches a given regular expression. If the regular expression is invalid for whatever reason, it will throw a MatchException.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.Regex</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to try to find a regex match in.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>regex</Name>
+        <Description>The regular expression to use on the string.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>NotRegex</Name>
+    <Description>Like Regex, but it inverses the match.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>false</BuiltIn>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>string</Name>
+        <Description>The string to try to find a regex match in.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+      <FormalParameter>
+        <Name>regex</Name>
+        <Description>The regular expression to use on the string.</Description>
+        <Type>String</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+    <Structure>
+      <InstanceParameter>
+        <Name></Name>
+        <Type>Matcher</Type>
+        <ClassName>Not</ClassName>
+        <ActualParameters>
+          <InstanceParameter>
+            <Name>matcher</Name>
+            <Type>Matcher</Type>
+            <ClassName>Regex</ClassName>
+            <ActualParameters>
+              <GivenParameter>
+                <Name>string</Name>
+                <MapsTo>string</MapsTo>
+              </GivenParameter>
+              <GivenParameter>
+                <Name>regex</Name>
+                <MapsTo>regex</MapsTo>
+              </GivenParameter>
+            </ActualParameters>
+          </InstanceParameter>
+        </ActualParameters>
+      </InstanceParameter>
+    </Structure>
+  </Class>
+  <Class>
+    <Name>String!=</Name>
+    <Description>Determines if the given strings are all different from each other.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.StringNotEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>strings</Name>
+        <Description>The strings to test for non-equality.</Description>
+        <Type>String</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>String&lt;</Name>
+    <Description>Determines if in a list of strings, each string is less than the one to the right of it. For instance, &quot;abc&quot; &lt; &quot;def&quot;.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.StringLess</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>strings</Name>
+        <Description>The strings to compare.</Description>
+        <Type>String</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>String&gt;</Name>
+    <Description>Determines if in a list of strings, each string is greater than the one to the right of it. For instance, &quot;def&quot; &gt; &quot;abc&quot;.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.StringGreater</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>strings</Name>
+        <Description>The strings to compare.</Description>
+        <Type>String</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+</Classes>

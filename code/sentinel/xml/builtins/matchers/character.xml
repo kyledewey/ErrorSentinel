@@ -1,0 +1,210 @@
+<Classes>
+  <Class>
+    <Name>IsCharacter</Name>
+    <Description>Determines if the given data can be converted to a character.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IsCharacter</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>character</Name>
+        <Description>The character to test</Description>
+        <Type>Character</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Char&gt;</Name>
+    <Description>Determines if in a list of characters, each character is greater than the one to the right of it. I.e. c &gt; b &gt; a.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.CharGreater</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>characters</Name>
+        <Description>The characters to compare</Description>
+        <Type>Character</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>IsLetter</Name>
+    <Description>Determines if the given character is a letter. For instance, it is something like A, B, c, d, etc.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IsLetter</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>character</Name>
+        <Description>The character to test</Description>
+        <Type>Character</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Char&gt;=</Name>
+    <Description>Determines in a list if characters whether or not each character is greater than or equal to the character to the right of it.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.CharGreaterOrEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>characters</Name>
+        <Description>The characters to compare.</Description>
+        <Type>Character</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>IsAlphaNumeric</Name>
+    <Description>Determines if the given character is alphanumeric. This means that it is either a letter (A,b,C,etc.) or a digit(0,1,2,etc.).</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IsAlphaNumeric</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>character</Name>
+        <Description>The character to test.</Description>
+        <Type>Character</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Char!=</Name>
+    <Description>Determines if the given characters are all different.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.CharNotEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>characters</Name>
+        <Description>The characters to check for non-equality.</Description>
+        <Type>Character</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Char=</Name>
+    <Description>Determines if the given characters are all equal to each other.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.CharEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>characters</Name>
+        <Description>The characters to test for equality.</Description>
+        <Type>Character</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>IsWhitespace</Name>
+    <Description>Determines if the given character is whitespace. I.e. it is a space, newline, or tab.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IsWhitespace</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>character</Name>
+        <Description>The character to test.</Description>
+        <Type>Character</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>IsLowerCase</Name>
+    <Description>Determines if the given character is lowercase or not.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IsLowerCase</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>character</Name>
+        <Description>The character to test.</Description>
+        <Type>Character</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Char&lt;=</Name>
+    <Description>Determines whether or not in a list of characters, each character is less than or equal to the one to the right of it.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.CharLessOrEqual</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>characters</Name>
+        <Description>The characters to compare.</Description>
+        <Type>Character</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>IsUpperCase</Name>
+    <Description>Determines if the given character is uppercase or not.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IsUpperCase</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>character</Name>
+        <Description>The character to test.</Description>
+        <Type>Character</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>IsDigit</Name>
+    <Description>Determines if the given character is a digit or not. I.e. it is something like 0, 1, 2, etc.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.IsDigit</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>character</Name>
+        <Description>The character to test.</Description>
+        <Type>Character</Type>
+        <IsArray>false</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+  <Class>
+    <Name>Char&lt;</Name>
+    <Description>Determines if in a list of characters, each character is less that the one to the right of it. I.e. a &lt; b &lt; c.</Description>
+    <Type>Matcher</Type>
+    <BuiltIn>true</BuiltIn>
+    <JVMClassName>sentinel.model.matcher.CharLess</JVMClassName>
+    <FormalParameters>
+      <FormalParameter>
+        <Name>characters</Name>
+        <Description>The characters to compare.</Description>
+        <Type>Character</Type>
+        <IsArray>true</IsArray>
+        <IsRequired>true</IsRequired>
+      </FormalParameter>
+    </FormalParameters>
+  </Class>
+</Classes>

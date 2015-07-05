@@ -33,8 +33,8 @@ SOURCE_DIR = $(JAVA_DEV_ROOT)/src
 
 # Tools and options
 PRINT = @echo
-SCALA = scala
-SCALAC = fsc
+SCALA = scala-2.9
+SCALAC = fsc-2.9
 DELETE = rm -f
 COPY = cp
 SCALADOC = scaladoc

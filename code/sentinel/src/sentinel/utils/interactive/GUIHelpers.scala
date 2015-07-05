@@ -100,7 +100,7 @@ object GUIHelpers {
    * @param combo The combo box
    * @return A renderer for this combo box
    */
-  def toComboRenderer[T]( combo: JComboBox[T] ) = {
+  def toComboRenderer[T]( combo: JComboBox[T] ): TableCellRenderer = {
     new TableCellRenderer() {
       /* http://www.exampledepot.com/egs/javax.swing.table/ComboBox.html */
       def getTableCellRendererComponent( table: JTable,
@@ -128,7 +128,7 @@ object GUIHelpers {
    * @param comp The component
    * @return A renderer for this component.
    */
-  def defaultToRenderer( comp: Component ) =
+  def defaultToRenderer( comp: Component ): TableCellRenderer =
     new TableCellRenderer() {
       def getTableCellRendererComponent( table: JTable,
 					 value: Object,
@@ -143,7 +143,7 @@ object GUIHelpers {
    * @param comp The component
    * @return A renderer for this component
    */
-  def toRenderer( comp: Component ): JComboBox[_] =
+  def toRenderer( comp: Component ): TableCellRenderer =
     comp match {
       case c: JComboBox[_] => toComboRenderer( c )
       case _ => defaultToRenderer( comp )
@@ -154,8 +154,8 @@ object GUIHelpers {
    * @param comps The components
    * @return A parallel map of renderers
    */
-  def renderers( comp: Seq[ Component ] ): Seq[JComboBox[_]] =
-    comp.map( toRenderer( _ ) )
+  def renderers( comp: Seq[ Component ] ): Seq[TableCellRenderer] =
+    comp.map(toRenderer)
 
   /**
    * Wraps an object into a Some/None.

@@ -550,7 +550,7 @@ object ParameterTable {
    * @param preFunction The prefunction
    * @return Combo boxes for each of the ParamInfos within
    */
-  def makeTypeComboBoxes( preFunction: PreFunction ): Seq[ JComboBox ] =
+  def makeTypeComboBoxes( preFunction: PreFunction ): Seq[ JComboBox[TypeHolder] ] =
     TypeConversions.makeTypeComboBoxes( 
       preFunction.mapParamInfos( p => p ) )
 
@@ -562,7 +562,7 @@ object ParameterTable {
   def makeTypeByRow( preFunction: PreFunction ) =
     makeByRow( preFunction,
 	       makeTypeComboBoxes( _ ),
-	       ( p: Seq[ JComboBox ] ) => GUIHelpers.makeComboCellEditors( p ) )
+	       ( p: Seq[ JComboBox[TypeHolder] ] ) => GUIHelpers.makeComboCellEditors( p ) )
   
   /**
    * Makes isArray information by row
@@ -764,7 +764,7 @@ extends JTable( new ParameterTableModel( gui ) ) with RowMover {
    */
   def moveRows( start: Int, end: Int, to: Int ) {
     if ( start != to ) {
-      def f[ T ]( seq: Seq[ T ] ) =
+      def f[ T : ClassManifest ]( seq: Seq[ T ] ) =
 	SentinelHelpers.moveSubsequence( start, 
 					 end, 
 					 to, 

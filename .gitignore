@@ -1,3 +1,6 @@
+# Mac sillyness
+.DS_Store
+
 # emacs temp files
 *~
 \#*\#

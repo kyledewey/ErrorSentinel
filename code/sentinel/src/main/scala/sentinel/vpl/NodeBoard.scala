@@ -1,37 +1,5 @@
 /*
  * NodeBoard.scala
- *
- * Version:
- *     $Id: NodeBoard.scala,v 1.8 2011/04/01 03:24:44 kyledewey Exp $
- *
- * Revisions:
- *      $Log: NodeBoard.scala,v $
- *      Revision 1.8  2011/04/01 03:24:44  kyledewey
- *      Moved getTailNodes() to Function.scala.
- *
- *      Revision 1.7  2011/02/27 04:29:17  kyledewey
- *      Refactored for use with debuggers.
- *
- *      Revision 1.6  2011/02/26 04:14:03  kyledewey
- *      Moved the width and height components to Node.
- *
- *      Revision 1.5  2011/02/11 01:24:18  kyledewey
- *      Nodes now call disconnect() before being removed from the board.
- *
- *      Revision 1.4  2011/01/30 05:24:32  kyledewey
- *      Now T must extend AnyRef.
- *
- *      Revision 1.3  2011/01/29 02:46:46  kyledewey
- *      Fixed bug that caused nodes to appear much larger
- *      than they actually were
- *
- *      Revision 1.2  2011/01/28 02:06:38  kyledewey
- *      Slight cleanup of code.
- *
- *      Revision 1.1  2011/01/27 15:52:20  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.vpl

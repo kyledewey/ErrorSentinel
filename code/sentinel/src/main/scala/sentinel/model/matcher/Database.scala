@@ -1,22 +1,5 @@
 /*
  * Database.scala
- *
- * Version:
- *     $Id: Database.scala,v 1.3 2011/06/08 04:25:53 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Database.scala,v $
- *      Revision 1.3  2011/06/08 04:25:53  kyledewey
- *      Now conforms to the new Param interface.
- *
- *      Revision 1.2  2011/06/04 07:42:44  kyledewey
- *      Refactored so that the very similar Database
- *      matcher and replacer share a common base class.
- *
- *      Revision 1.1  2011/06/01 16:42:27  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.matcher

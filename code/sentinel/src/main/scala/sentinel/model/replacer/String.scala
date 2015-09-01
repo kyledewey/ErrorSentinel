@@ -1,32 +1,5 @@
 /*
  * String.scala
- * 
- * Version:
- *     $Id: String.scala,v 1.6 2011/06/08 04:26:15 kyledewey Exp $
- *
- * Revisions:
- *      $Log: String.scala,v $
- *      Revision 1.6  2011/06/08 04:26:15  kyledewey
- *      Now conforms to the new Param interface.
- *
- *      Revision 1.5  2011/06/07 08:17:44  kyledewey
- *      Added replacer types to nonpolymorphic routines.
- *
- *      Revision 1.4  2011/05/25 20:14:58  kyledewey
- *      Made it so the class name is also taken as a parameter.
- *
- *      Revision 1.3  2010/06/28 18:43:38  kyledewey
- *      Changed comment for substring that we now end at the length
- *      of the string by default.
- *
- *      Revision 1.2  2010/06/26 16:36:29  kyledewey
- *      Made "first" for Substitution be passed as a matcher
- *      as opposed an integer.
- *
- *      Revision 1.1  2010/06/26 04:05:40  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.replacer

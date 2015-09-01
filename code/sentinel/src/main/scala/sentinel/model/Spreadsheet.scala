@@ -1,55 +1,5 @@
 /*
  * Spreadsheet.scala
- * 
- * Version:
- *     $Id: Spreadsheet.scala,v 1.11 2011/06/17 19:51:52 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Spreadsheet.scala,v $
- *      Revision 1.11  2011/06/17 19:51:52  kyledewey
- *      Now uses strings instread of rich strings for keys.
- *      Far more efficient without the need for constant wrappings.
- *
- *      Revision 1.10  2011/06/04 05:11:02  kyledewey
- *      Added the mapTable() method.
- *
- *      Revision 1.9  2011/05/31 17:17:48  kyledewey
- *      Added the validateSheetName() method.
- *      This method is used for sheet name validation
- *      regardless of whether or not the sheet is registered.
- *
- *      Revision 1.8  2011/05/29 22:11:57  kyledewey
- *      Added the insertRow( Int ), addRowIfEmpty(),
- *      and removeRow() methods.  Fixed bug in insertRow()
- *      where the parallel data was always put at the end, regardless
- *      of insert position.
- *
- *      Revision 1.7  2011/05/29 15:21:51  kyledewey
- *      Added the inRange() method to Spreadsheet.
- *
- *      Revision 1.6  2011/05/28 02:37:45  kyledewey
- *      Added the foreachElement() and foreachRowColumn()
- *      methods.
- *
- *      Revision 1.5  2011/05/27 18:48:02  kyledewey
- *      Added the updateCurrent() methods.
- *
- *      Revision 1.4  2011/05/27 01:32:13  kyledewey
- *      Added the copyContents() method.
- *
- *      Revision 1.3  2011/05/25 20:04:57  kyledewey
- *      Added the LazyParallelSpreadsheet class.
- *      Added checks to prevent NPEs on parallel if it isn't
- *      yet initialized.
- *
- *      Revision 1.2  2010/07/17 02:04:01  kyledewey
- *      Refactored spreadsheet hierarchy so that Spreadsheet and
- *      ReplacerSpreadsheet are both traits instead of classes.
- *
- *      Revision 1.1  2010/07/11 05:44:00  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model

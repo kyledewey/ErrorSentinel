@@ -1,40 +1,5 @@
 /*
  * ErrorSentinel.scala
- * 
- * Version:
- *     $Id: ErrorSentinel.scala,v 1.8 2011/06/04 07:34:52 kyledewey Exp $
- *
- * Revisions:
- *      $Log: ErrorSentinel.scala,v $
- *      Revision 1.8  2011/06/04 07:34:52  kyledewey
- *      Association graphs are reset upon loading, before
- *      all values are determined.
- *
- *      Revision 1.7  2011/06/01 16:44:30  kyledewey
- *      Frames are now placed staggered from each
- *      other, instead of overlapping.
- *      Width of the info panel increased to 400.
- *
- *      Revision 1.6  2011/05/31 17:20:58  kyledewey
- *      Now extends the ErrorShower trait.
- *
- *      Revision 1.5  2011/05/30 04:03:25  kyledewey
- *      Added support for saving spreadsheets.
- *
- *      Revision 1.4  2011/05/29 22:15:25  kyledewey
- *      Added the menuItem( String ) method.
- *      Now Uses that method throughout.
- *
- *      Revision 1.3  2011/05/28 19:58:48  kyledewey
- *      Added the ability to save project files and exit.
- *
- *      Revision 1.2  2011/05/28 02:39:09  kyledewey
- *      Added menus, and removed the use of a JPanel.
- *
- *      Revision 1.1  2011/05/27 01:37:30  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

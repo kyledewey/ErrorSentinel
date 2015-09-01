@@ -1,33 +1,5 @@
 /*
  * Writer.scala
- *
- * Version:
- *     $Id: Writer.scala,v 1.6 2011/06/08 04:29:49 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Writer.scala,v $
- *      Revision 1.6  2011/06/08 04:29:49  kyledewey
- *      Now conforms to the interface for constants.
- *
- *      Revision 1.5  2011/05/28 19:03:16  kyledewey
- *      Added code so output XML is formatted nicely.
- *
- *      Revision 1.4  2011/05/27 01:34:03  kyledewey
- *      Refactored so that the routine used to transform
- *      vanilla spreadsheets into a custom version is passed
- *      as a parameter instead of being hardcoded.
- *
- *      Revision 1.3  2011/05/25 21:54:04  kyledewey
- *      Added support for values instead of just variables.
- *
- *      Revision 1.2  2011/05/25 20:16:07  kyledewey
- *      Refactored so spreadsheet variables can be passed directly
- *      in the XML file.  Helps to decouple code from the sheet.
- *
- *      Revision 1.1  2010/07/11 05:54:17  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.project

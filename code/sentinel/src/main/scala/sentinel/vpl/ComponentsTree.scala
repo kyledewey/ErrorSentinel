@@ -1,15 +1,5 @@
 /*
  * ComponentsTree.scala
- * 
- * Version:
- *     $Id: ComponentsTree.scala,v 1.1 2011/06/20 22:37:52 kyledewey Exp $
- *
- * Revisions:
- *      $Log: ComponentsTree.scala,v $
- *      Revision 1.1  2011/06/20 22:37:52  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.vpl

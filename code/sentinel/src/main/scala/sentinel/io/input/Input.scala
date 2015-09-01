@@ -1,19 +1,5 @@
 /*
  * Input.scala
- *
- * Version:
- *     $Id: Input.scala,v 1.2 2010/07/17 02:06:24 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Input.scala,v $
- *      Revision 1.2  2010/07/17 02:06:24  kyledewey
- *      readSpreadsheet() now uses Spreadsheet's apply() instead
- *      of calling a constructor for spreadsheet directly.
- *
- *      Revision 1.1  2010/07/11 05:39:26  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.io.input

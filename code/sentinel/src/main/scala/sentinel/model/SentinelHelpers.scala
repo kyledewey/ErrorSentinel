@@ -1,27 +1,5 @@
 /*
  * SentinelHelpers.scala
- *
- * Version:
- *     $Id: SentinelHelpers.scala,v 1.5 2011/06/20 22:40:51 kyledewey Exp $
- *
- * Revisions:
- *      $Log: SentinelHelpers.scala,v $
- *      Revision 1.5  2011/06/20 22:40:51  kyledewey
- *      Added the numTimesSeen() method.
- *
- *      Revision 1.4  2011/06/04 05:11:02  kyledewey
- *      Put the makeTable() and related methods into this file.
- *
- *      Revision 1.3  2011/05/31 00:02:59  kyledewey
- *      Added the moveSubsequence() method.
- *
- *      Revision 1.2  2011/05/28 02:37:45  kyledewey
- *      Moved mapFind to sentinel.model.SentinelHelpers.
- *
- *      Revision 1.1  2011/05/27 18:48:02  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model

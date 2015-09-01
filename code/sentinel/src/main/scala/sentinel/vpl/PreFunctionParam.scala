@@ -1,19 +1,5 @@
 /*
  * PreFunctionParam.scala
- *
- * Version:
- *     $Id: PreFunctionParam.scala,v 1.2 2011/06/20 22:19:56 kyledewey Exp $
- *
- * Revisions:
- *      $Log: PreFunctionParam.scala,v $
- *      Revision 1.2  2011/06/20 22:19:56  kyledewey
- *      Weakened validation, and added comment regarding
- *      why validation cannot be performed in the particular case.
- *
- *      Revision 1.1  2011/06/19 20:07:40  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.vpl

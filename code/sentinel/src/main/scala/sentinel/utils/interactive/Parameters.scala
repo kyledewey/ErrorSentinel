@@ -1,24 +1,5 @@
 /*
  * Parameters.scala
- *
- * Version:
- *     $Id: Parameters.scala,v 1.3 2011/06/20 22:39:43 kyledewey Exp kyledewey $
- *
- * Revisions:
- *      $Log: Parameters.scala,v $
- *      Revision 1.3  2011/06/20 22:39:43  kyledewey
- *      Refactored how type conversions are performed so that
- *      it is extensible to other kinds of conversions.
- *
- *      Revision 1.2  2011/06/08 04:31:37  kyledewey
- *      Removed the now defunct Data type.
- *      validateChangeParameterType() now uses convertableTypes
- *      to make its judgement.
- *
- *      Revision 1.1  2011/05/31 00:08:17  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

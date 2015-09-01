@@ -1,56 +1,5 @@
 /*
  * ReplacerSpreadsheet.scala
- *
- * Version:
- *     $Id: ReplacerSpreadsheet.scala,v 1.12 2011/06/02 06:55:38 kyledewey Exp $
- *
- * Revisions:
- *      $Log: ReplacerSpreadsheet.scala,v $
- *      Revision 1.12  2011/06/02 06:55:38  kyledewey
- *      Added the getInstances() method.
- *
- *      Revision 1.11  2011/06/01 03:58:30  kyledewey
- *      Removed the boolean parameter from executeGoodData().
- *      With the current InstanceResult design, there isn't
- *      an appropriate value to pass when all is false
- *      and none of the matchers succeeded.
- *
- *      Revision 1.10  2011/05/31 20:22:20  kyledewey
- *      Added boolean parameter to executeGoodData().
- *
- *      Revision 1.9  2011/05/29 22:11:57  kyledewey
- *      Removed the remove* methods.
- *      Added the clear* methods.
- *
- *      Revision 1.8  2011/05/28 02:37:45  kyledewey
- *      Moved mapFind to sentinel.model.SentinelHelpers.
- *
- *      Revision 1.7  2011/05/27 18:48:02  kyledewey
- *      Now uses Spreadsheet's updateCurrent() method.
- *
- *      Revision 1.6  2011/05/27 01:32:13  kyledewey
- *      Now uses Spreadsheet's copyContents() method.
- *
- *      Revision 1.5  2011/05/26 18:49:27  kyledewey
- *      Refactored to allow extension with custom instantiators.
- *
- *      Revision 1.4  2011/05/25 20:04:57  kyledewey
- *      Major refactor.  The model used by ReplacerSpreadsheets
- *      is now based on that from ErrorChecker.pl.  That is,
- *      each cell has 0-N good data matchers, and 0-N matcher/replacer
- *      pairs.
- *
- *      Revision 1.3  2011/02/12 01:48:48  kyledewey
- *      Changed implementation of DefaultReplacerSpreadsheet.
- *
- *      Revision 1.2  2010/07/17 02:04:01  kyledewey
- *      Refactored spreadsheet hierarchy so that Spreadsheet and
- *      ReplacerSpreadsheet are both traits instead of classes.
- *
- *      Revision 1.1  2010/07/11 05:44:00  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model

@@ -1,45 +1,5 @@
 /*
  * Project.scala
- *
- * Version:
- *     $Id: Project.scala,v 1.10 2011/06/01 04:02:34 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Project.scala,v $
- *      Revision 1.10  2011/06/01 04:02:34  kyledewey
- *      Spreadsheet registration is now parameterized.
- *
- *      Revision 1.9  2011/05/30 04:01:23  kyledewey
- *      Moved Sheet to ProjectHelpers.scala.
- *
- *      Revision 1.8  2011/05/29 22:14:40  kyledewey
- *      Added support for adding and removing rows.
- *
- *      Revision 1.7  2011/05/29 15:18:34  kyledewey
- *      Can now do piecewise loading.
- *
- *      Revision 1.6  2011/05/28 19:57:18  kyledewey
- *      Added the ProjectFileChooser object.
- *
- *      Revision 1.5  2011/05/28 14:19:31  kyledewey
- *      Added the foreachSpreadsheet() method.
- *
- *      Revision 1.4  2011/05/27 18:49:24  kyledewey
- *      Moved the multiMap() method to sentinel.model.SentinelHelpers.
- *
- *      Revision 1.3  2011/05/27 01:34:03  kyledewey
- *      Refactored so that the routine used to transform
- *      vanilla spreadsheets into a custom version is passed
- *      as a parameter instead of being hardcoded.
- *
- *      Revision 1.2  2011/05/25 20:16:07  kyledewey
- *      Refactored so spreadsheet variables can be passed directly
- *      in the XML file.  Helps to decouple code from the sheet.
- *
- *      Revision 1.1  2010/07/11 05:54:17  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.project

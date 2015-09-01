@@ -1,29 +1,5 @@
 /*
  * Text.scala
- *
- * Version:
- *     $Id: Text.scala,v 1.4 2010/06/28 18:45:19 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Text.scala,v $
- *      Revision 1.4  2010/06/28 18:45:19  kyledewey
- *      Changed specialCharacter to return a Char;
- *      parseLine can now have a backslashed character within
- *      a quoted string.
- *
- *      Revision 1.3  2010/06/26 04:08:36  kyledewey
- *      Added routines so that the output doesn't contain
- *      excessive newlines in case of null strings.
- *
- *      Revision 1.2  2010/06/23 03:08:14  kyledewey
- *      Added the ability to unregister commands;
- *      Made it so the processing loop can handle other
- *      IO streams that those in System.
- *
- *      Revision 1.1  2010/06/22 22:50:50  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.view

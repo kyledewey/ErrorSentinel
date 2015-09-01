@@ -1,22 +1,5 @@
 /*
  * Writer.scala
- *
- * Version:
- *     $Id: Writer.scala,v 1.3 2010/06/20 17:31:52 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Writer.scala,v $
- *      Revision 1.3  2010/06/20 17:31:52  kyledewey
- *      Now uses InstanceFactory[ _ ] instead of
- *      Either[ MatcherFactory, ReplacerFactory ]
- *
- *      Revision 1.2  2010/06/18 19:37:26  kyledewey
- *      Made factories take a name and description.
- *
- *      Revision 1.1  2010/06/18 03:00:42  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.writer

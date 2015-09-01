@@ -1,15 +1,5 @@
 /*
  * DescriptionPanel.scala
- * 
- * Version:
- *     $Id: DescriptionPanel.scala,v 1.1 2011/06/20 22:19:56 kyledewey Exp $
- *
- * Revisions:
- *      $Log: DescriptionPanel.scala,v $
- *      Revision 1.1  2011/06/20 22:19:56  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.vpl

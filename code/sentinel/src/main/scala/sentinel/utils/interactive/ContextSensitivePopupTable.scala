@@ -1,15 +1,5 @@
 /*
  * ContextSensitivePopupTable.scala
- *
- * Version:
- *     $Id: ContextSensitivePopupTable.scala,v 1.1 2011/05/31 18:44:46 kyledewey Exp $
- *
- * Revisions:
- *      $Log: ContextSensitivePopupTable.scala,v $
- *      Revision 1.1  2011/05/31 18:44:46  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

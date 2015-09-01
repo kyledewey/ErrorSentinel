@@ -1,52 +1,5 @@
 /*
  * Matcher.scala
- *
- * Version:
- *     $Id: Matcher.scala,v 1.12 2011/06/18 03:30:08 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Matcher.scala,v $
- *      Revision 1.12  2011/06/18 03:30:08  kyledewey
- *      Moved True and False to sentinel.model.Parameters.
- *
- *      Revision 1.11  2011/06/08 04:25:53  kyledewey
- *      Now conforms to the new Param interface.
- *
- *      Revision 1.10  2011/06/02 19:00:13  kyledewey
- *      Added the Not matcher.
- *
- *      Revision 1.9  2011/06/02 00:20:00  kyledewey
- *      The base case for forallPairs that
- *      takes a single value now dereferences that value
- *      as a no-op before returning true.  This forces
- *      a ValueException to be generated on invalid data.
- *
- *      Revision 1.8  2011/05/25 20:14:06  kyledewey
- *      Made it so the class name is also taken as a parameter.
- *
- *      Revision 1.7  2010/06/26 16:35:43  kyledewey
- *      Added no argument constructors for true and false,
- *      intended as convenience for built-ins.
- *
- *      Revision 1.6  2010/06/26 04:04:04  kyledewey
- *      Added helper functions common to many matchers.
- *
- *      Revision 1.5  2010/06/20 17:29:04  kyledewey
- *      Moved factory code to sentinel.model.Factory.scala
- *
- *      Revision 1.4  2010/06/18 19:36:41  kyledewey
- *      Made factories take a name and description.
- *
- *      Revision 1.3  2010/06/18 03:07:47  kyledewey
- *      Made it so the factory calls internalInstantiate()
- *
- *      Revision 1.2  2010/06/16 01:00:12  kyledewey
- *      Fixed typo in name of ParameterizedInstantiationException.
- *
- *      Revision 1.1  2010/06/15 17:55:00  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.matcher

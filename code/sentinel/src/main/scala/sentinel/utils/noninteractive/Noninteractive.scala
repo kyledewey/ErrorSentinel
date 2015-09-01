@@ -1,37 +1,5 @@
 /*
  * Noninteractive.scala
- *
- * Version:
- *     $Id: Noninteractive.scala,v 1.7 2011/06/01 04:04:16 kyledewey Exp $
- *
- * Revistions:
- *       $Log: Noninteractive.scala,v $
- *       Revision 1.7  2011/06/01 04:04:16  kyledewey
- *       Set to register spreadsheets.
- *
- *       Revision 1.6  2011/05/29 15:20:27  kyledewey
- *       Added the project being created to the spreadsheetFactory.
- *
- *       Revision 1.5  2011/05/28 19:57:58  kyledewey
- *       Now uses foreachRowColumn and foreachSpreadsheet.
- *
- *       Revision 1.4  2011/05/27 01:36:04  kyledewey
- *       Now uses a parameter for converting vanilla
- *       Spreadsheets to ReplacerSpreadsheets.
- *
- *       Revision 1.3  2011/05/25 20:19:44  kyledewey
- *       Major refactor.
- *       Uses the new model for error correction based on ErrorChecker.pl.
- *       Error corrections now performed at the cell level instead
- *       of at the row level.
- *
- *       Revision 1.2  2010/07/17 02:07:50  kyledewey
- *       Now compliant with the new spreadsheet class hierarchy.
- *
- *       Revision 1.1  2010/07/11 05:57:48  kyledewey
- *       Initial revision
- *
- *
  */
 
 package sentinel.utils.noninteractive

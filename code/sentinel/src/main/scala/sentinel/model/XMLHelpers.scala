@@ -1,15 +1,5 @@
 /*
  * XMLHelpers.scala
- * 
- * Version:
- *     $Id: XMLHelpers.scala,v 1.1 2011/06/01 03:58:30 kyledewey Exp $
- *
- * Revisions:
- *      $Log: XMLHelpers.scala,v $
- *      Revision 1.1  2011/06/01 03:58:30  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model

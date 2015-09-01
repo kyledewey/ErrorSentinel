@@ -1,29 +1,5 @@
 /*
  * ProjectActions.scala
- *
- * Version:
- *     $Id: ProjectActions.scala,v 1.5 2011/06/01 04:02:34 kyledewey Exp $
- *
- * Revisions:
- *      $Log: ProjectActions.scala,v $
- *      Revision 1.5  2011/06/01 04:02:34  kyledewey
- *      Spreadsheet registration is now parameterized.
- *
- *      Revision 1.4  2011/05/30 04:01:23  kyledewey
- *      Now conforms to the new FileActionMap interface.
- *
- *      Revision 1.3  2011/05/29 15:18:34  kyledewey
- *      Added the project being created to the spreadsheetFactory.
- *
- *      Revision 1.2  2011/05/27 01:34:03  kyledewey
- *      Refactored so that the routine used to transform
- *      vanilla spreadsheets into a custom version is passed
- *      as a parameter instead of being hardcoded.
- *
- *      Revision 1.1  2010/07/11 05:54:17  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.project

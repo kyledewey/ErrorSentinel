@@ -1,32 +1,5 @@
 /*
  * VisualNode.scala
- *
- * Version:
- *     $Id: VisualNode.scala,v 1.6 2011/06/08 04:33:12 kyledewey Exp $
- *
- * Revisions:
- *      $Log: VisualNode.scala,v $
- *      Revision 1.6  2011/06/08 04:33:12  kyledewey
- *      Now conforms to the new interface for simple variables.
- *
- *      Revision 1.5  2011/04/01 03:24:44  kyledewey
- *      Added the sortNodes() method.
- *
- *      Revision 1.4  2011/02/27 22:33:07  kyledewey
- *      Moved disconnect() routine in the singleton object
- *      to a method in Node.
- *
- *      Revision 1.3  2011/02/27 04:29:17  kyledewey
- *      Refactored for use with debuggers.
- *
- *      Revision 1.2  2011/02/26 04:14:03  kyledewey
- *      No longer a JComponent.  Added code for handling
- *      debugging tools.
- *
- *      Revision 1.1  2011/02/25 20:56:03  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.vpl

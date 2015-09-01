@@ -1,33 +1,5 @@
 /*
  * Arithmetic.scala
- * 
- * Version:
- *     $Id: Arithmetic.scala,v 1.7 2011/06/17 20:49:05 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Arithmetic.scala,v $
- *      Revision 1.7  2011/06/17 20:49:05  kyledewey
- *      Set that the Random replacer is not pure.
- *
- *      Revision 1.6  2011/06/08 04:26:15  kyledewey
- *      Now conforms to the new Param interface.
- *
- *      Revision 1.5  2011/06/07 08:17:44  kyledewey
- *      Added replacer types to nonpolymorphic routines.
- *
- *      Revision 1.4  2011/05/25 20:14:58  kyledewey
- *      Made it so the class name is also taken as a parameter.
- *
- *      Revision 1.3  2010/06/28 18:48:59  kyledewey
- *      Fixed typo.
- *
- *      Revision 1.2  2010/06/28 18:43:38  kyledewey
- *      Changed "base" to "num" for Pow.
- *
- *      Revision 1.1  2010/06/26 04:05:40  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.replacer

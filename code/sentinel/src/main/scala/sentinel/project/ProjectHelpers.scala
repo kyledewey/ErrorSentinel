@@ -1,36 +1,5 @@
 /*
  * ProjectHelpers.scala
- *
- * Version:
- *     $Id: ProjectHelpers.scala,v 1.7 2011/06/04 07:41:45 kyledewey Exp $
- *
- * Revisions:
- *      $Log: ProjectHelpers.scala,v $
- *      Revision 1.7  2011/06/04 07:41:45  kyledewey
- *      Added the Database replacer to the base language.
- *
- *      Revision 1.6  2011/06/03 04:12:32  kyledewey
- *      Fixed latent bug that prevented dependencies from
- *      getting resolved between files properly.
- *
- *      Revision 1.5  2011/06/01 16:42:55  kyledewey
- *      Now loads in the database component.
- *
- *      Revision 1.4  2011/06/01 04:02:34  kyledewey
- *      Spreadsheet registration is now parameterized.
- *
- *      Revision 1.3  2011/05/30 04:01:23  kyledewey
- *      The FileActionMap interface now includes tools for
- *      dealing with file filters.
- *
- *      Revision 1.2  2011/05/25 20:16:07  kyledewey
- *      Now absolute pathnames are used for the base language instead
- *      of relative pathnames.
- *
- *      Revision 1.1  2010/07/11 05:54:17  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.project

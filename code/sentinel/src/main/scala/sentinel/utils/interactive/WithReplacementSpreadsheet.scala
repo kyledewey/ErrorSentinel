@@ -1,40 +1,5 @@
 /*
  * WithReplacementSpreadsheet.scala
- *
- * Version:
- *     $Id: WithReplacementSpreadsheet.scala,v 1.7 2011/06/04 07:38:16 kyledewey Exp $
- *
- * Revisions:
- *      $Log: WithReplacementSpreadsheet.scala,v $
- *      Revision 1.7  2011/06/04 07:38:16  kyledewey
- *      Major refactor for use with AssociationGraph.
- *      Now updates the graph properly under the correct conditions.
- *      tryValueAt is now called semi-recursively for values that
- *      use changed values.
- *
- *      Revision 1.6  2011/06/04 05:19:12  kyledewey
- *      Now implements AssociationGraph.
- *
- *      Revision 1.5  2011/05/29 22:15:25  kyledewey
- *      Fixed bugs that would cause more than one evaluation
- *      to be performed when performing an autocorrection.
- *      Added support for removing rows.
- *
- *      Revision 1.4  2011/05/29 15:21:20  kyledewey
- *      Added the project being created to the spreadsheetFactory.
- *
- *      Revision 1.3  2011/05/28 02:41:38  kyledewey
- *      tryValueAtAllCells() now uses foreachRowColumn().
- *
- *      Revision 1.2  2011/05/27 18:52:09  kyledewey
- *      Added the forceRender() method.
- *      Changed the name of tableChanging to
- *      the more accurrate shouldRespond.
- *
- *      Revision 1.1  2011/05/27 01:37:30  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

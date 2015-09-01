@@ -1,21 +1,5 @@
 /*
  * GUIHelpers.scala
- *
- * Version:
- *     $Id: GUIHelpers.scala,v 1.1 2011/05/31 00:08:17 kyledewey Exp $
- *
- * Revisions:
- *      $Log: GUIHelpers.scala,v $
- *      Revision 1.1  2011/05/31 00:08:17  kyledewey
- *      Initial revision
- *
- *      Revision 1.2  2011/04/11 22:49:04  kyledewey
- *      Moved getParentJFrame's bulk to GUIHelpers.
- *
- *      Revision 1.1  2011/04/10 04:06:46  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

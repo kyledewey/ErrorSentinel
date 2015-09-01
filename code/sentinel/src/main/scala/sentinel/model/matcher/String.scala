@@ -1,29 +1,5 @@
 /*
  * String.scala
- * 
- * Version:
- *     $Id: String.scala,v 1.5 2011/06/08 04:25:53 kyledewey Exp $
- *
- * Revisions:
- *      $Log: String.scala,v $
- *      Revision 1.5  2011/06/08 04:25:53  kyledewey
- *      Now conforms to the new Param interface.
- *
- *      Revision 1.4  2011/06/02 06:56:13  kyledewey
- *      Added code so that the regex is only recompiled
- *      when the regex string actually changes, as opposed
- *      to each time the function is called.
- *
- *      Revision 1.3  2011/05/25 20:14:06  kyledewey
- *      Made it so the class name is also taken as a parameter.
- *
- *      Revision 1.2  2010/06/28 18:43:02  kyledewey
- *      Fixed typo.
- *
- *      Revision 1.1  2010/06/26 04:04:04  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.matcher

@@ -1,25 +1,5 @@
 /*
  * Character.scala
- * 
- * Version:
- *     $Id: Character.scala,v 1.4 2011/06/08 04:25:53 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Character.scala,v $
- *      Revision 1.4  2011/06/08 04:25:53  kyledewey
- *      Now conforms to the new Param interface.
- *
- *      Revision 1.3  2011/05/25 20:14:06  kyledewey
- *      Made it so the class name is also taken as a parameter.
- *
- *      Revision 1.2  2010/07/11 05:47:27  kyledewey
- *      Fixed bug in IsCharacter which made it always succeed
- *      if the input was a variable.
- *
- *      Revision 1.1  2010/06/26 04:04:04  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.matcher

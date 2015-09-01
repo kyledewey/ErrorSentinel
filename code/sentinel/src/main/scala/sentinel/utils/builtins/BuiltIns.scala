@@ -1,38 +1,5 @@
 /*
  * BuiltIns.scala
- * 
- * Version:
- *     $Id: BuiltIns.scala,v 1.8 2011/06/01 04:04:01 kyledewey Exp $
- *
- * Revisions:
- *      $Log: BuiltIns.scala,v $
- *      Revision 1.8  2011/06/01 04:04:01  kyledewey
- *      Now parses in the base language.
- *
- *      Revision 1.7  2011/02/27 05:20:04  kyledewey
- *      Refactored to include parameter order.
- *
- *      Revision 1.6  2010/07/11 05:56:36  kyledewey
- *      Modified to be compliant with the new interface
- *      specified by XMLParser; minor code cleanup.
- *
- *      Revision 1.5  2010/06/28 18:46:23  kyledewey
- *      The classes shown by displayClasses are now in abc order.
- *
- *      Revision 1.4  2010/06/26 17:57:40  kyledewey
- *      In addParam, exception strings are now displayed instead of
- *      silent failure.
- *
- *      Revision 1.3  2010/06/26 16:52:50  kyledewey
- *      Upon saving, it sets that there are no changes that need to be saved.
- *
- *      Revision 1.2  2010/06/26 04:08:14  kyledewey
- *      Added a bit more description to some of the commands.
- *
- *      Revision 1.1  2010/06/23 03:09:25  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.builtins

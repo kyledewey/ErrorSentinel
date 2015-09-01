@@ -1,24 +1,5 @@
 /*
  * Graph.scala
- *
- * Version:
- *     $Id: Graph.scala,v 1.3 2011/06/04 05:15:38 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Graph.scala,v $
- *      Revision 1.3  2011/06/04 05:15:38  kyledewey
- *      Made graph an abstract class with an adjacency
- *      matrix and adjacency list representation.
- *      Changed DependencyGraph to use the list representation.
- *
- *      Revision 1.2  2010/07/11 05:49:13  kyledewey
- *      Fixed bug in DFSVisit that could cause infinite
- *      recursion under certain circumstances.
- *
- *      Revision 1.1  2010/07/10 21:46:28  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.parser

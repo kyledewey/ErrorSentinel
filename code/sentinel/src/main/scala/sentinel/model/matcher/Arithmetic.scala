@@ -1,21 +1,5 @@
 /*
  * Arithmetic.scala
- *
- * Version:
- *     $Id: Arithmetic.scala,v 1.3 2011/06/08 04:25:53 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Arithmetic.scala,v $
- *      Revision 1.3  2011/06/08 04:25:53  kyledewey
- *      Now conforms to the new Param interface.
- *
- *      Revision 1.2  2011/05/25 20:14:06  kyledewey
- *      Made it so the class name is also taken as a parameter.
- *
- *      Revision 1.1  2010/06/26 04:04:04  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.matcher

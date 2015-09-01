@@ -1,18 +1,5 @@
 /*
  * CSV.scala
- *
- * Version:
- *     $Id: CSV.scala,v 1.2 2011/06/17 19:51:14 kyledewey Exp kyledewey $
- *
- * Revisions:
- *      $Log: CSV.scala,v $
- *      Revision 1.2  2011/06/17 19:51:14  kyledewey
- *      Made the toToken() routine far more efficient.
- *
- *      Revision 1.1  2010/07/11 05:41:08  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.io.output.csv

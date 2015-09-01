@@ -1,33 +1,5 @@
 /*
  * SentinelTree.scala
- * 
- * Version:
- *     $Id: SentinelTree.scala,v 1.6 2011/06/01 04:05:11 kyledewey Exp $
- *
- * Revisions:
- *      $Log: SentinelTree.scala,v $
- *      Revision 1.6  2011/06/01 04:05:11  kyledewey
- *      Conforms to the new interface for reading in languages.
- *
- *      Revision 1.5  2011/04/10 04:06:46  kyledewey
- *      TreeKey now has distinct workings for projects, languages,
- *      and components.
- *
- *      Revision 1.4  2011/04/01 03:24:44  kyledewey
- *      Added support for writing out functions without needing
- *      to clobber the file written to.
- *
- *      Revision 1.3  2011/02/27 20:42:54  kyledewey
- *      Refactored so that everything pertaining to descriptions
- *      is in InstanceFactory.
- *
- *      Revision 1.2  2011/02/27 04:29:17  kyledewey
- *      Refactored for use with debuggers.
- *
- *      Revision 1.1  2011/01/30 05:24:32  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.vpl

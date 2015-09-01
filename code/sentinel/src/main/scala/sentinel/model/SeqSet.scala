@@ -1,23 +1,5 @@
 /*
  * SeqSet.scala
- *
- * Version:
- *     $Id: SeqSet.scala,v 1.3 2011/06/17 19:51:52 kyledewey Exp $
- * 
- * Revisions:
- *      $Log: SeqSet.scala,v $
- *      Revision 1.3  2011/06/17 19:51:52  kyledewey
- *      Now uses mutable sets and lists for the underlying
- *      implementation.  Massive performance improvements
- *
- *      Revision 1.2  2011/05/29 22:11:57  kyledewey
- *      Removed the removeItem() method.
- *      Added the clear() method.
- *
- *      Revision 1.1  2011/05/25 20:04:57  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model

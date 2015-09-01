@@ -1,12 +1,5 @@
 /*
  * InstanceResult.scala
- * 
- * Version:
- *     $Id: InstanceResult.scala,v 1.2 2011/06/08 04:23:43 kyledewey Exp $
- *
- * Revisions:
- *      $Log&
- *
  */
 
 package sentinel.model

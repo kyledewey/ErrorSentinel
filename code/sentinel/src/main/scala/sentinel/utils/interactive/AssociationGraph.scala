@@ -1,22 +1,5 @@
 /*
  * AssociationGraph.scala
- * 
- * Version:
- *     $Id: AssociationGraph.scala,v 1.2 2011/06/04 07:34:52 kyledewey Exp $
- *
- * Revisions:
- *      $Log: AssociationGraph.scala,v $
- *      Revision 1.2  2011/06/04 07:34:52  kyledewey
- *      Minor cleanup.
- *      Removed the ability to make a table model change listener.
- *      It it unfortunately intrinsically tied to
- *      WithReplacementSpreadsheet at the moment, and making
- *      the graph out of order results in fatal exceptions.
- *
- *      Revision 1.1  2011/06/04 05:19:12  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

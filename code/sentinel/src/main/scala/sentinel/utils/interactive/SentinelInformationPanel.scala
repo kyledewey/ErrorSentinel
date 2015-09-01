@@ -1,15 +1,5 @@
 /*
  * SentinelInformationPanel.scala
- * 
- * Version:
- *     $Id: SentinelInformationPanel.scala,v 1.1 2011/05/28 02:39:09 kyledewey Exp $
- *
- * Revisions:
- *      $Log: SentinelInformationPanel.scala,v $
- *      Revision 1.1  2011/05/28 02:39:09  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

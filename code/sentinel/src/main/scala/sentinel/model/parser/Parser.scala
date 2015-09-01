@@ -1,52 +1,5 @@
 /*
  * Parser.scala
- *
- * Version:
- *     $Id: Parser.scala,v 1.11 2011/06/03 04:13:25 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Parser.scala,v $
- *      Revision 1.11  2011/06/03 04:13:25  kyledewey
- *      Refactored so that dependencies between files are
- *      now resolved properly.
- *
- *      Revision 1.10  2011/06/01 03:59:30  kyledewey
- *      Refactored so that dependencies can now be resolved
- *      between files.
- *
- *      Revision 1.9  2011/04/10 04:05:04  kyledewey
- *      Now uses FactoryManager's regiserFactory method.
- *
- *      Revision 1.8  2011/03/14 11:59:55  kyledewey
- *      Allowed for duplicate classes to overwrite new ones.
- *
- *      Revision 1.7  2010/07/11 05:49:13  kyledewey
- *      Changed implementation of ParseAndRegisterClasses().
- *
- *      Revision 1.6  2010/07/10 21:46:28  kyledewey
- *      Now uses a dependency graph as a guide for parsing, instead
- *      of merely parsing classes in in the order in which they
- *      appear in the file.
- *
- *      Revision 1.5  2010/06/25 03:18:31  kyledewey
- *      Refactored so that variables have types.
- *
- *      Revision 1.4  2010/06/20 17:30:05  kyledewey
- *      Made everything use the more generic
- *      InstanceFactory[ _ ] type instead of the less
- *      flexible and bulkier
- *      Either[ MatcherFactory, ReplacerFactory ].
- *
- *      Revision 1.3  2010/06/18 19:37:06  kyledewey
- *      Made factories take a name and description.
- *
- *      Revision 1.2  2010/06/18 03:09:30  kyledewey
- *      Moved some code to its rightful place in ParamType.
- *
- *      Revision 1.1  2010/06/15 17:56:41  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.parser

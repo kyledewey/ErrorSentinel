@@ -1,18 +1,5 @@
 /*
  * AssociationParameterTable.scala
- * 
- * Version:
- *     $Id: AssociationParameterTable.scala,v 1.2 2011/05/31 18:44:46 kyledewey Exp $
- *
- * Revisions:
- *      $Log: AssociationParameterTable.scala,v $
- *      Revision 1.2  2011/05/31 18:44:46  kyledewey
- *      Now compiles correctly.
- *
- *      Revision 1.1  2011/05/31 17:20:58  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

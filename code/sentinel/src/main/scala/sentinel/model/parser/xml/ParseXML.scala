@@ -1,59 +1,5 @@
 /*
  * ParseXML.scala
- *
- * Version:
- *     $Id: ParseXML.scala,v 1.13 2011/06/08 04:26:36 kyledewey Exp $
- *
- * Revisions:
- *      $Log: ParseXML.scala,v $
- *      Revision 1.13  2011/06/08 04:26:36  kyledewey
- *      Conforms to the new interface for spreadsheet variables.
- *
- *      Revision 1.12  2011/06/03 04:14:07  kyledewey
- *      PreClass objects are now singletons with a single
- *      point of access.  Needed in order to fix problem
- *      where dependencies could not be resolved between files.
- *
- *      Revision 1.11  2011/06/01 16:43:38  kyledewey
- *      Now uses toString instead of getMessage for forwarding
- *      exceptions.
- *
- *      Revision 1.10  2011/06/01 04:00:23  kyledewey
- *      Moved bulk of getNodes to XMLHelpers.
- *      Conforms to the new parser interface that can
- *      handle dependencies across files.
- *
- *      Revision 1.9  2011/04/10 04:05:45  kyledewey
- *      Made vals public in XMLParser.
- *
- *      Revision 1.8  2011/02/27 05:19:29  kyledewey
- *      Refactored to include parameter order.
- *
- *      Revision 1.7  2010/07/11 05:51:30  kyledewey
- *      Fixed bug that caused only within-file dependencies
- *      to be seen by classesInformation().
- *
- *      Revision 1.6  2010/07/10 21:48:19  kyledewey
- *      Conforms to the new Parser interface, complete with routines
- *      for getting information to generate a dependency graph.
- *
- *      Revision 1.5  2010/06/25 03:18:59  kyledewey
- *      Refactored so that variables have types.
- *
- *      Revision 1.4  2010/06/20 17:33:32  kyledewey
- *      Now uses InstanceFactory[ _ ] instead of
- *      Either[ MatcherFactory, ReplacerFactory ].
- *
- *      Revision 1.3  2010/06/18 19:37:17  kyledewey
- *      Made factories take a name and description.
- *
- *      Revision 1.2  2010/06/18 03:10:24  kyledewey
- *      Added comment on usage of parseClasses()
- *
- *      Revision 1.1  2010/06/15 17:57:22  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.parser.xml

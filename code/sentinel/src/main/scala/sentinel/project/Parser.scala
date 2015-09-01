@@ -1,40 +1,5 @@
 /*
  * Parser.scala
- *
- * Version:
- *     $Id: Parser.scala,v 1.8 2011/06/18 03:31:09 kyledewey Exp kyledewey $
- *
- * Revisions:
- *      $Log: Parser.scala,v $
- *      Revision 1.8  2011/06/18 03:31:09  kyledewey
- *      Set to not use optimizations.
- *      More testing needs to be done before this can be set otherwise.
- *
- *      Revision 1.7  2011/06/08 04:29:49  kyledewey
- *      Now uses toString instead of getMessage for exceptions.
- *
- *      Revision 1.6  2011/06/01 04:02:34  kyledewey
- *      Spreadsheet registration is now parameterized.
- *
- *      Revision 1.5  2011/05/29 15:18:34  kyledewey
- *      Can now do piecewise loading.
- *
- *      Revision 1.4  2011/05/27 01:34:03  kyledewey
- *      Refactored so that the routine used to transform
- *      vanilla spreadsheets into a custom version is passed
- *      as a parameter instead of being hardcoded.
- *
- *      Revision 1.3  2011/05/25 21:54:04  kyledewey
- *      Added support for values instead of just variables.
- *
- *      Revision 1.2  2011/05/25 20:16:07  kyledewey
- *      Refactored so spreadsheet variables can be passed directly
- *      in the XML file.  Helps to decouple code from the sheet.
- *
- *      Revision 1.1  2010/07/11 05:54:17  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.project

@@ -1,24 +1,5 @@
 /*
  * Character.scala
- *
- * Version:
- *     $Id: Character.scala,v 1.4 2011/06/08 04:26:15 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Character.scala,v $
- *      Revision 1.4  2011/06/08 04:26:15  kyledewey
- *      Now conforms to the new Param interface.
- *
- *      Revision 1.3  2011/06/07 08:17:44  kyledewey
- *      Added replacer types to nonpolymorphic routines.
- *
- *      Revision 1.2  2011/05/25 20:14:58  kyledewey
- *      Made it so the class name is also taken as a parameter.
- *
- *      Revision 1.1  2010/06/26 04:05:40  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.replacer

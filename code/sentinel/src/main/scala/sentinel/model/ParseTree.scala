@@ -1,34 +1,5 @@
 /*
  * ParseTree.scala
- *
- * Version:
- *     $Id: ParseTree.scala,v 1.7 2011/06/18 03:28:47 kyledewey Exp $
- *
- * Revisions:
- *      $Log: ParseTree.scala,v $
- *      Revision 1.7  2011/06/18 03:28:47  kyledewey
- *      Added support for optimizations.
- *
- *      Revision 1.6  2011/03/27 14:04:37  kyledewey
- *      getChildren().map changed to getChildren().flatMap
- *
- *      Revision 1.5  2010/06/20 22:54:19  kyledewey
- *      Made factory an accessable value in InternalNode.
- *
- *      Revision 1.4  2010/06/20 17:25:38  kyledewey
- *      Moved ParseNode and ParseTreeFactory to Factory.scala.
- *
- *      Revision 1.3  2010/06/18 19:37:06  kyledewey
- *      Made factories take a name and description.
- *
- *      Revision 1.2  2010/06/16 01:00:30  kyledewey
- *      Made it so getValue() in ParseNode returns a
- *      Seq in order to account for arrays.
- *
- *      Revision 1.1  2010/06/15 17:56:41  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model

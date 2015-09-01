@@ -1,41 +1,5 @@
 /*
  * WriteXML.scala
- *
- * Version:
- *     $Id: WriteXML.scala,v 1.9 2011/06/08 04:27:25 kyledewey Exp $
- *
- * Revisions:
- *      $Log: WriteXML.scala,v $
- *      Revision 1.9  2011/06/08 04:27:25  kyledewey
- *      Conforms to the new interface for spreadsheet variables.
- *
- *      Revision 1.8  2011/04/10 04:06:28  kyledewey
- *      Append now works correctly.
- *
- *      Revision 1.7  2011/02/12 02:50:47  kyledewey
- *      Now uses SpreadsheetVariable instead of just Variable.
- *
- *      Revision 1.6  2010/07/11 05:52:47  kyledewey
- *      Formal parameters are no longer sorted upon being written
- *      out; this is mostly for show.
- *
- *      Revision 1.5  2010/06/25 03:20:25  kyledewey
- *      Refactored so that variables have types.
- *
- *      Revision 1.4  2010/06/20 22:54:50  kyledewey
- *      Now capable of writing out user-defined classes.
- *
- *      Revision 1.3  2010/06/20 17:32:39  kyledewey
- *      Now uses InstanceFactory[ _ ] instead of
- *      Either[ MatcherFactory, ReplacerFactory ].
- *
- *      Revision 1.2  2010/06/18 19:37:35  kyledewey
- *      Made factories take a name and description.
- *
- *      Revision 1.1  2010/06/18 03:00:12  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.writer.xml

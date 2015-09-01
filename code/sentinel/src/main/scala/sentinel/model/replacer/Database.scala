@@ -1,15 +1,5 @@
 /*
  * Database.scala
- * 
- * Version:
- *     $Id: Database.scala,v 1.1 2011/06/04 07:43:26 kyledewey Exp $
- * 
- * Revisions:
- *      $Log: Database.scala,v $
- *      Revision 1.1  2011/06/04 07:43:26  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.replacer

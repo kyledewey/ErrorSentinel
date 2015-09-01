@@ -1,24 +1,5 @@
 /*
  * FactoryManager.scala
- *
- * Version:
- *     $Id: FactoryManager.scala,v 1.4 2011/06/18 03:28:47 kyledewey Exp $
- *
- * Revisions:
- *      $Log: FactoryManager.scala,v $
- *      Revision 1.4  2011/06/18 03:28:47  kyledewey
- *      Added support for optimizations.
- *
- *      Revision 1.3  2011/05/25 20:04:57  kyledewey
- *      Added the getFactoryManager() and getFactory() methods.
- *
- *      Revision 1.2  2011/04/10 04:04:23  kyledewey
- *      Added the FactoryManager object.
- *
- *      Revision 1.1  2010/06/20 17:25:38  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model

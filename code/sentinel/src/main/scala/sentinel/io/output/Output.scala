@@ -1,18 +1,5 @@
 /*
  * Output.scala
- * 
- * Version:
- *     $Id: Output.scala,v 1.2 2011/05/25 20:04:19 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Output.scala,v $
- *      Revision 1.2  2011/05/25 20:04:19  kyledewey
- *      If null is passed, it is replaced with a null string.
- *
- *      Revision 1.1  2010/07/11 05:40:41  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.io.output

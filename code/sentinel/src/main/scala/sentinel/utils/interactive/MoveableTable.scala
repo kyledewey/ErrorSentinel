@@ -1,19 +1,5 @@
 /*
  * MoveableTable.scala
- *
- * Version:
- *     $Id: MoveableTable.scala,v 1.2 2011/05/31 18:44:46 kyledewey Exp $
- *
- * Revisions:
- *      $Log: MoveableTable.scala,v $
- *      Revision 1.2  2011/05/31 18:44:46  kyledewey
- *      Now applies only to JTables.
- *      Listener is automatically registered.
- *
- *      Revision 1.1  2011/05/31 00:08:17  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

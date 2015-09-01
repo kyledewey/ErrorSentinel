@@ -1,18 +1,5 @@
 /*
  * RuleConverter.scala
- *
- * Version:
- *     $Id: RuleConverter.scala,v 1.2 2011/06/08 04:30:47 kyledewey Exp $
- *
- * Revisions:
- *      $Log: RuleConverter.scala,v $
- *      Revision 1.2  2011/06/08 04:30:47  kyledewey
- *      Now uses the new SpreadsheetVariable interface.
- *
- *      Revision 1.1  2011/06/03 04:10:56  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.legacy

@@ -1,48 +1,5 @@
 /*
  * Function.scala
- *
- * Version:
- *     $Id: Function.scala,v 1.12 2011/06/21 10:08:25 kyledewey Exp $
- * 
- * Revisions:
- *      $Log: Function.scala,v $
- *      Revision 1.12  2011/06/21 10:08:25  kyledewey
- *      Parameter renaming now works properly.
- *
- *      Revision 1.11  2011/06/21 09:39:00  kyledewey
- *      If a parameter isn't marked as used, it is no longer
- *      included.
- *
- *      Revision 1.10  2011/06/20 22:19:56  kyledewey
- *      Debugging nodes whose values are used as constants
- *      are now written out as constants.
- *
- *      Revision 1.9  2011/06/19 20:05:51  kyledewey
- *      Refactored PreFunctionParams.
- *      PreFunctionParam code moved to PreFunctionParam.scala.
- *
- *      Revision 1.8  2011/05/31 00:04:31  kyledewey
- *      Moved moveSubsequence() to SentinelHelpers.
- *      Moved validateChangeParameterType() to sentinel.utils.interactive.
- *
- *      Revision 1.7  2011/05/27 18:50:48  kyledewey
- *      Moved the multiMap() method to sentinel.model.SentinelHelpers.
- *
- *      Revision 1.6  2011/04/04 00:21:30  kyledewey
- *      moveSubsequence() now works correctly.
- *
- *      Revision 1.5  2011/04/03 21:17:02  kyledewey
- *      Refactored how parameters are moved.
- *
- *      Revision 1.4  2011/04/03 18:59:14  kyledewey
- *      Fixed bug where parameter renaming wasn't
- *      performed in order.
- *
- *      Revision 1.3  2011/04/03 04:18:02  kyledewey
- *      Refactored so parameter order is easier to manipulate.
- *
- * 
- *  
  */
 
 package sentinel.vpl

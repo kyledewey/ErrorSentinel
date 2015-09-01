@@ -1,15 +1,5 @@
 /*
  * Description.scala
- *
- * Version:
- *     $Id: Description.scala,v 1.1 2011/02/27 20:29:21 kyledewey Exp $
- *
- * Revisions:
- *      $Log: Description.scala,v $
- *      Revision 1.1  2011/02/27 20:29:21  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model

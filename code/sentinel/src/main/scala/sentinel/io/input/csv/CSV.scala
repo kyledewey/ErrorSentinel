@@ -1,21 +1,5 @@
 /*
  * CSV.scala
- * 
- * Version:
- *     $Id: CSV.scala,v 1.3 2011/06/17 19:50:47 kyledewey Exp kyledewey $
- *
- * Revisions:
- *      $Log: CSV.scala,v $
- *      Revision 1.3  2011/06/17 19:50:47  kyledewey
- *      Made the token parsing routines far more efficient.
- *
- *      Revision 1.2  2011/05/30 04:00:20  kyledewey
- *      Added file filters for tab delimited files and CSV files.
- *
- *      Revision 1.1  2010/07/11 05:39:51  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.io.input.csv

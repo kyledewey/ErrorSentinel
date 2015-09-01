@@ -1,15 +1,5 @@
 /*
  * LanguageManager.scala
- *
- * Version:
- *     $Id: LanguageManager.scala,v 1.1 2011/04/10 04:06:46 kyledewey Exp $
- *
- * Revisions:
- *      $Log: LanguageManager.scala,v $
- *      Revision 1.1  2011/04/10 04:06:46  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.vpl

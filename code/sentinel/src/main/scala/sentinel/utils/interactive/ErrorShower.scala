@@ -1,15 +1,5 @@
 /*
  * ErrorShower.scala
- *
- * Version:
- *     $Id: ErrorShower.scala,v 1.1 2011/05/31 17:20:58 kyledewey Exp $
- *
- * Revisions:
- *      $Log: ErrorShower.scala,v $
- *      Revision 1.1  2011/05/31 17:20:58  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.utils.interactive

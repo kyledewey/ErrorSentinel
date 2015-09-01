@@ -1,27 +1,5 @@
 /*
  * SentinelVPL.scala
- *
- * Version:
- *     $Id: SentinelVPL.scala,v 1.5 2011/06/20 22:19:56 kyledewey Exp $
- *
- * Revisions:
- *      $Log: SentinelVPL.scala,v $
- *      Revision 1.5  2011/06/20 22:19:56  kyledewey
- *      Changed layouts to BoxLayouts.  GUI no longer "jumps".
- *      Added an exit menu routine.
- *
- *      Revision 1.4  2011/06/01 04:05:11  kyledewey
- *      Now parses in the base language before parsing in
- *      anything else.
- *
- *      Revision 1.3  2011/04/10 04:06:46  kyledewey
- *      Implemented the loading in of projects and
- *      the creation of new language files.
- *
- *      Revision 1.2  2011/04/08 02:31:41  kyledewey
- *      Added support for loading project files.
- *
- * 
  */
 
 package sentinel.vpl

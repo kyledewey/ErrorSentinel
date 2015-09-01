@@ -1,18 +1,5 @@
 /*
  * AreaSelect.scala
- *
- * Version:
- *     $Id: AreaSelect.scala,v 1.2 2011/04/02 03:15:51 kyledewey Exp $
- *
- * Revisions:
- *      $Log: AreaSelect.scala,v $
- *      Revision 1.2  2011/04/02 03:15:51  kyledewey
- *      Added an equals and toString method to Rectangle.
- *
- *      Revision 1.1  2011/03/13 19:50:30  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.vpl

@@ -1,51 +1,5 @@
 /*
  * Replacer.scala
- *
- * Version:
- *     $Id: Replacer.scala,v 1.12 2011/06/21 17:01:04 kyledewey Exp kyledewey $
- *
- * Revisions:
- *      $Log: Replacer.scala,v $
- *      Revision 1.12  2011/06/21 17:01:04  kyledewey
- *      Overrode Debugger's sentStringValue() so that the value
- *      of matchers can now be seen without wrapping.
- *
- *      Revision 1.11  2011/06/08 04:26:15  kyledewey
- *      Now conforms to the new Param interface.
- *
- *      Revision 1.10  2011/06/07 08:17:44  kyledewey
- *      Added replacer types to nonpolymorphic routines.
- *
- *      Revision 1.9  2011/05/25 20:14:58  kyledewey
- *      Made it so the class name is also taken as a parameter.
- *
- *      Revision 1.8  2010/06/28 18:43:38  kyledewey
- *      Made it so concat can take an optional start, delimiter, and end
- *      string.
- *
- *      Revision 1.7  2010/06/26 04:05:40  kyledewey
- *      Added helper functions that are common to multiple replacers.
- *
- *      Revision 1.6  2010/06/20 23:29:25  kyledewey
- *      Slightly modified replacers to reflect the new
- *      return type of Data for replace().
- *
- *      Revision 1.5  2010/06/20 17:29:42  kyledewey
- *      Moved factory code to sentinel.model.Factory.scala.
- *
- *      Revision 1.4  2010/06/18 19:36:58  kyledewey
- *      Made factories take a name and description.
- *
- *      Revision 1.3  2010/06/18 03:09:10  kyledewey
- *      Made it so factory calls internalInstantiate().
- *
- *      Revision 1.2  2010/06/16 01:00:24  kyledewey
- *      Fixed typo in name of ParameterizedInstantiationException.
- *
- *      Revision 1.1  2010/06/15 17:56:01  kyledewey
- *      Initial revision
- *
- *
  */
 
 package sentinel.model.replacer

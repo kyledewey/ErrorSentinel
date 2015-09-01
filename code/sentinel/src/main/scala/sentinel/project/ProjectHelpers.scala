@@ -305,16 +305,16 @@ object LanguageReader
 extends FileActionMap[ String => ClassParser ]( Seq( new XMLValue[ String => ClassParser ]( ( fileName: String ) => new XMLParser( fileName ) ) ) ) {
   // pair of language file/language file type
   val BASE_LANGUAGE = 
-    Seq( new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/matchers/base.xml", "XML" ),
-	 new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/matchers/arithmetic.xml", "XML" ),
-	 new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/matchers/character.xml", "XML" ),
-	 new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/matchers/string.xml", "XML" ),
-	 new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/matchers/database.xml", "XML" ),
-	 new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/replacers/base.xml", "XML" ),
-	 new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/replacers/arithmetic.xml", "XML" ),
-	 new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/replacers/character.xml", "XML" ),
-	 new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/replacers/string.xml", "XML" ),
-	 new Language( "/Users/kyledewey/Documents/thesis/ErrorSentinel/code/sentinel/xml/builtins/replacers/database.xml", "XML" ) )
+    Seq( new Language( "xml/builtins/matchers/base.xml", "XML" ),
+	 new Language( "xml/builtins/matchers/arithmetic.xml", "XML" ),
+	 new Language( "xml/builtins/matchers/character.xml", "XML" ),
+	 new Language( "xml/builtins/matchers/string.xml", "XML" ),
+	 new Language( "xml/builtins/matchers/database.xml", "XML" ),
+	 new Language( "xml/builtins/replacers/base.xml", "XML" ),
+	 new Language( "xml/builtins/replacers/arithmetic.xml", "XML" ),
+	 new Language( "xml/builtins/replacers/character.xml", "XML" ),
+	 new Language( "xml/builtins/replacers/string.xml", "XML" ),
+	 new Language( "xml/builtins/replacers/database.xml", "XML" ) )
 
   /**
    * Reads in language files.

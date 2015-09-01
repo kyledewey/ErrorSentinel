@@ -194,8 +194,8 @@ object ParseXML extends ProjectParser {
 
     try {
       typeName = getText( node, "Type" )
-      Pair( getText( node, "Name" ),
-	    ParamType.stringToParam( typeName ) )
+      (getText( node, "Name" ),
+       ParamType.stringToParam( typeName ))
     } catch {
       case e: NoSuchElementException => 
 	throw new ProjectParseException( "Unknown variable type: " + typeName )
@@ -301,8 +301,8 @@ object ParseXML extends ProjectParser {
    * invalid
    */
   def parseGoodDataNode( goodData: Node ) =
-    Pair( parseInstanceBelow( goodData, "Matcher" ).asInstanceOf[ Matcher ],
-	  parseCellRangeBelow( goodData ) )
+    (parseInstanceBelow( goodData, "Matcher" ).asInstanceOf[ Matcher ],
+     parseCellRangeBelow( goodData ))
   
   /**
    * Parses in a "GoodDatas" node.
@@ -326,9 +326,9 @@ object ParseXML extends ProjectParser {
     val matcher = parseInstanceBelow( errorCorrection, "Matcher" )
     val replacer = parseInstanceBelow( errorCorrection, "Replacer" )
     val range = parseCellRangeBelow( errorCorrection )
-    Pair( Pair( matcher.asInstanceOf[ Matcher ], 
-	        replacer.asInstanceOf[ Replacer ] ), 
-	  range )
+    ((matcher.asInstanceOf[ Matcher ], 
+      replacer.asInstanceOf[ Replacer ]),
+     range)
   }
   
   /**

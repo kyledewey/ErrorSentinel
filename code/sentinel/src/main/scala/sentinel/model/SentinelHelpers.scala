@@ -50,8 +50,7 @@ object SentinelHelpers {
       val baseList =
 	if ( retval.contains( currentKey ) ) retval( currentKey )
 	else List[ V ]()
-      retval += Pair( currentKey, 
-		      currentValue :: baseList )
+      retval += (currentKey -> (currentValue :: baseList))
     } )
     retval.transform( ( key, list ) =>
       list.reverse.toSeq )
@@ -64,10 +63,10 @@ object SentinelHelpers {
    * @return A map where each key is represented, and the values are
    * all values seen for the given key.  Order is retained.
    */
-  def multiMap[ K, V ]( pairs: Seq[ Pair[ K, V ] ] ): Map[ K, Seq[ V ] ] = 
+  def multiMap[ K, V ]( pairs: Seq[ (K, V) ] ): Map[ K, Seq[ V ] ] = 
     multiMap( pairs, 
-	      ( pair: Pair[ K, V ] ) => pair._1, 
-	      ( pair: Pair[ K, V ] ) => pair._2 )
+	      ( pair: (K, V) ) => pair._1, 
+	      ( pair: (K, V) ) => pair._2 )
 
   /**
    * Like a find, but it maps the given element beforehand.  It will return
@@ -171,10 +170,10 @@ object SentinelHelpers {
    * have been seen
    */
   def numTimesSeen[ T ]( items: Seq[ T ] ) = {
-    var retval = Map() ++ items.map( Pair( _, 0 ) )
+    var retval = Map() ++ items.map(t => (t, 0))
     items.foreach( item => {
       val oldNum = retval( item )
-      retval += Pair( item, oldNum + 1 )
+      retval += (item -> (oldNum + 1))
     })
     retval
   }

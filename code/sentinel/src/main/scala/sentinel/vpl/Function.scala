@@ -201,7 +201,7 @@ object Function {
    */
   def inputConnections( nodes: Set[ SentinelNode ] ): 
   Map[ SentinelNode, Set[ String ] ] = {
-    Map() ++ nodes.map( node => Pair( node, inputConnections( node, nodes ) ) )
+    Map() ++ nodes.map( node => (node, inputConnections( node, nodes )) )
   }
     
   /**
@@ -459,7 +459,7 @@ class PreFunction
     val newName = param.currentName
     if ( oldName ne newName ) {
       validParamsByName -= oldName
-      validParamsByName += Pair( newName, param )
+      validParamsByName += (newName -> param)
     }
   }
 
@@ -772,7 +772,7 @@ class PreFunction
    */
   def neededParamsMapping() =
     Map() ++ neededParams.map( param => 
-      Pair( param.name, param ) )
+      (param.name, param) )
   
   /**
    * Gets the order in which parameters should be returned.

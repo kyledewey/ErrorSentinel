@@ -90,7 +90,7 @@ class NodeBoard[ T <: AnyRef, U ]( val width: Int,
 			           val height: Int ) {
   private val board: Array[ Array[ Option[ Node[ T, U ] ] ] ] = 
     Array.ofDim( width, height )
-  private var corners: Map[ Node[ T, U ], Pair[ Int, Int ] ] = Map()
+  private var corners: Map[ Node[ T, U ], (Int, Int) ] = Map()
   foreach( ( x: Int, y: Int ) => board( x )( y ) = None )
 
   /**
@@ -114,9 +114,10 @@ class NodeBoard[ T <: AnyRef, U ]( val width: Int,
   def foreach( startX: Int, 
 	       startY: Int, 
 	       done: ( Int, Int ) => Boolean, 
-	       increment: ( Int, Int ) => Pair[ Int, Int ], 
+	       increment: ( Int, Int ) => (Int, Int), 
 	       function: ( Int, Int ) => Unit ) {
 
+    @scala.annotation.tailrec
     def foreach( currentX: Int, currentY: Int ) {
       if ( !done( currentX, currentY ) ) {
 	val ( nextX,
@@ -154,7 +155,7 @@ class NodeBoard[ T <: AnyRef, U ]( val width: Int,
 		 nextX = 0
 		 nextY += 1
 	       }
-	       Pair( nextX, nextY )
+	       (nextX, nextY)
 	     },
 	     function )
   }
@@ -180,7 +181,7 @@ class NodeBoard[ T <: AnyRef, U ]( val width: Int,
 		 nextX = topLeftX
 		 nextY += 1
 	       }
-	       Pair( nextX, nextY )
+	       (nextX, nextY)
 	     },
 	     function )
   }
@@ -239,8 +240,8 @@ class NodeBoard[ T <: AnyRef, U ]( val width: Int,
     verifyNode( node )
 
     val topLeft = corners( node )
-    Pair( topLeft._1 + node.width,
-	  topLeft._2 + node.height )
+    (topLeft._1 + node.width,
+     topLeft._2 + node.height)
   }
 
   /**
@@ -396,7 +397,7 @@ class NodeBoard[ T <: AnyRef, U ]( val width: Int,
   def placeNode( node: Node[ T, U ], x: Int, y: Int ) {
     validPlacement( node, x, y )
     fillBoard( x, y, node )
-    corners += Pair( node, Pair( x, y ) )
+    corners += (node -> (x -> y))
   }
 
   /**

@@ -128,7 +128,7 @@ object ReplacerSpreadsheet {
    * @param pair The pair to add
    */
   def addErrorCorrectionPair( range: CellRange,
-			      pair: Pair[ Matcher, Replacer ] ) {
+			      pair: (Matcher, Replacer) ) {
     foreach( range,
 	     ( sheet, row, column ) =>
 	       sheet.addErrorCorrectionPair( row, column, pair ) )
@@ -231,7 +231,7 @@ trait ReplacerSpreadsheet extends ConditionalSpreadsheet {
    */
   def addErrorCorrectionPair( row: Int, 
 			      column: Int, 
-			      pair: Pair[ Matcher, Replacer ] ): Unit
+			      pair: (Matcher, Replacer) ): Unit
 
   /**
    * Gets all "Error Correction" matcher, replacer pairs associated with
@@ -243,7 +243,7 @@ trait ReplacerSpreadsheet extends ConditionalSpreadsheet {
    * @throws IndexOutOfBoundsException If the given position doesn't exist
    */
   def getErrorCorrectionPairs( row: Int, 
-			       column: Int ): Seq[ Pair[ Matcher, Replacer ] ]
+			       column: Int ): Seq[ (Matcher, Replacer) ]
 
   /**
    * Gets all instances directly connected to the given cell.
@@ -298,7 +298,7 @@ trait ReplacerSpreadsheet extends ConditionalSpreadsheet {
    */
   def executeErrorCorrectionPairs( row: Int, column: Int ) =
     SentinelHelpers.mapFind( getErrorCorrectionPairs( row, column ),
-			     ( p: Pair[ Matcher, Replacer ] ) =>
+			     ( p: (Matcher, Replacer) ) =>
 			       executeErrorCorrectionPair( p ),
 			     ( result: Option[ InstanceFailure[ Replacer ] ] ) =>
 			       result.isDefined )
@@ -352,7 +352,7 @@ import scala.collection.mutable.ArrayBuffer
  * @author Kyle Dewey
  */
 class NonDataCellContents( val goodDataMatchers: SeqSet[ Matcher ],
-			   val errorCorrectionPairs: SeqSet[ Pair[ Matcher, Replacer ] ] ){
+			   val errorCorrectionPairs: SeqSet[ (Matcher, Replacer) ] ){
   /**
    * Creates a new contents that doesn't actually hold anything
    */
@@ -373,7 +373,7 @@ class NonDataCellContents( val goodDataMatchers: SeqSet[ Matcher ],
    * Adds an error correction pair to this
    * @param pair The pair to add
    */
-  def addErrorCorrection( pair: Pair[ Matcher, Replacer ] ) {
+  def addErrorCorrection( pair: (Matcher, Replacer) ) {
     errorCorrectionPairs.addItem( pair )
   }
 
@@ -466,7 +466,7 @@ extends LazyParallelSpreadsheet[ T ]( name, register, instantiator ) with Replac
    */
   def addErrorCorrectionPair( row: Int, 
 			      column: Int, 
-			      pair: Pair[ Matcher, Replacer ] ) {
+			      pair: (Matcher, Replacer) ) {
     getInstantiatedDataAt( row, column ).addErrorCorrection( pair )
   }
 

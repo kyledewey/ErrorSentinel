@@ -253,7 +253,7 @@ extends BuiltInModel {
     val paramsAsSeq =
       params.map( _.name ).toArray
     val paramsAsMap = 
-      Map() ++ params.map( param => Pair( param.name, param ) )
+      Map() ++ params.map( param => (param.name, param) )
     if ( classes.contains( name ) ) {
       throw new ClassNameException( "Class with the name \"" + name +
 				    "\" already exists" )

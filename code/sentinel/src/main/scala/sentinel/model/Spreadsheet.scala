@@ -143,7 +143,7 @@ object Spreadsheet {
    * @param sheet The spreadsheet itself
    */
   def registerSpreadsheet( sheet: Spreadsheet ) {
-    spreadsheets += Pair( sheet.name, sheet )
+    spreadsheets += (sheet.name -> sheet)
   }
 
   /**

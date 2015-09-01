@@ -54,7 +54,7 @@ object AssociationGraph {
    */
   def pointersToPairs( pointers: Seq[ CellPointer ] ) =
     Set() ++ pointers.map( pointer => 
-      Pair( pointer.row, pointer.column ) )
+      (pointer.row, pointer.column) )
 }
 
 /**
@@ -186,7 +186,7 @@ trait AssociationGraph extends ReplacerSpreadsheet {
    * @return Associated cell pointers
    */
   protected def determineAllAssociatedCells( row: Int, column: Int ) = 
-    determineRelatedCells( row, column ) + Pair( row, column )
+    determineRelatedCells( row, column ) + (row -> column)
 
   /**
    * Makes an association graph.
@@ -200,7 +200,7 @@ trait AssociationGraph extends ReplacerSpreadsheet {
 
     // sets that the cell stipulated by the given row and column is
     // dependent on the cell stipulated by the given pointer
-    def dependentOn( row: Int, column: Int, pointer: Pair[ Int, Int ] ) {
+    def dependentOn( row: Int, column: Int, pointer: (Int, Int) ) {
       val vertex1 = vertexId( row, column )
       val vertex2 = vertexId( pointer._1, pointer._2 )
       retval.addEdge( vertex1, vertex2 )
@@ -230,9 +230,10 @@ trait AssociationGraph extends ReplacerSpreadsheet {
    * @return A pair holding the row and column corresponding to the
    * given id
    */
-  protected def rowColumn( id: Int ) =
-    Pair( id / getColumnCount,
-	  id % getColumnCount )
+  protected def rowColumn( id: Int ) = {
+    val numCols = getColumnCount
+    (id / numCols, id % numCols)
+  }
 
   /**
    * Maps the given vertex ids to row/column pairs.

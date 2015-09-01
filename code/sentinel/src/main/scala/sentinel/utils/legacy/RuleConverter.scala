@@ -113,7 +113,7 @@ object ParserCommon {
    * @param pairs The name/contents pairs
    * @return An XML values node holding all the given values information
    */
-  def toValues( pairs: Seq[ Pair[ String, String ] ] ) = 
+  def toValues( pairs: Seq[ (String, String) ] ) = 
     namedParamsToValuesNode( pairs.map( pair => 
       valueToNamedParam( pair._1, pair._2 ) ) )
 
@@ -137,7 +137,7 @@ object ParserCommon {
    * @return The inner part of an instance node (either matcher or replacer)
    */
   def instanceInside( className: String, 
-		      values: Seq[ Pair[ String, String ] ],
+		      values: Seq[ (String, String) ],
 		      variables: Seq[ Tuple3[ String, String, Int ] ] ) = 
     Seq( classNameToNode( className ),
 	 toValues( values ),
@@ -151,7 +151,7 @@ object ParserCommon {
    * @return An XML matcher node
    */
   def toMatcher( className: String,
-		 values: Seq[ Pair[ String, String ] ],
+		 values: Seq[ (String, String) ],
 		 variables: Seq[ Tuple3[ String, String, Int ] ] ) = {
     <Matcher>
       { instanceInside( className, values, variables ) }
@@ -166,7 +166,7 @@ object ParserCommon {
    * @return An XML replacer node
    */
   def toReplacer( className: String,
-		  values: Seq[ Pair[ String, String ] ],
+		  values: Seq[ (String, String) ],
 		  variables: Seq[ Tuple3[ String, String, Int ] ] ) = {
     <Replacer>
       { instanceInside( className, values, variables ) }
@@ -285,7 +285,7 @@ object MatcherParser extends Parser {
 		      sheet: String,
 		      column: Int ) = {
     toMatcher( moduleName,
-	       Seq( Pair( valueName, stripQuotes( split( 2 ) ) ) ),
+	       Seq( (valueName, stripQuotes( split( 2 ) )) ),
 	       Seq( Tuple3( varName, sheet, column ) ) )
   }
 
@@ -407,7 +407,7 @@ object ReplacerParser extends Parser {
 
   def exactToXML( split: Seq[ String ] ): Node =
     toReplacer( "Concat",
-	        Seq( Pair( "data", stripQuotes( split( 2 ) ) ) ),
+	        Seq( ("data", stripQuotes( split( 2 ) )) ),
 	        Seq() )
 }
 

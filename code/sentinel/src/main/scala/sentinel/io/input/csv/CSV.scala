@@ -75,7 +75,7 @@ class ParseCSV( val delim: Char, val quote: Char ) extends SpreadsheetReader {
    * @throws SpreadsheetReadException If an unterminated quoted string was
    * found
    */
-  def parseQuotedToken( line: String, start: Int ): Pair[ String, Int ] = {
+  def parseQuotedToken( line: String, start: Int ): (String, Int) = {
     var end = start
     val length = line.length
     while( end < length &&
@@ -85,7 +85,7 @@ class ParseCSV( val delim: Char, val quote: Char ) extends SpreadsheetReader {
     if ( end >= length ) {
       throw new SpreadsheetReadException( "Unterminated quoted string" )
     } else {
-      Pair( line.substring( start, end ), end + 1 )
+      (line.substring( start, end ), end + 1)
     }
   }
 
@@ -96,14 +96,14 @@ class ParseCSV( val delim: Char, val quote: Char ) extends SpreadsheetReader {
    * @return The token and the new starting position.  The new start will
    * either be end of line or a delimiter.
    */
-  def parseUnquotedToken( line: String, start: Int ): Pair[ String, Int ] = {
+  def parseUnquotedToken( line: String, start: Int ): (String, Int) = {
     var end = start
     val length = line.length
     while( end < length &&
 	   line.charAt( end ) != delim ) {
       end += 1
     }
-    Pair( line.substring( start, end ), end )
+    (line.substring( start, end ), end)
   }
 
   /**

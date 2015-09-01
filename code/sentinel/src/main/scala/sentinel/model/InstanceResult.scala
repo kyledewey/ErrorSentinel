@@ -51,7 +51,7 @@ object InstanceResult {
    * @return The InstanceResult of the replacer, or None if the matcher
    * didn't match (either returned false or threw an exception)
    */
-  def executeErrorCorrectionPair( pair: Pair[ Matcher, Replacer ] ) =
+  def executeErrorCorrectionPair( pair: (Matcher, Replacer) ) =
     if ( executeMatcher( pair._1 ).success ) 
       Some( executeReplacer( pair._2 ) )
     else None
@@ -78,6 +78,14 @@ object InstanceResult {
 	case s: InstanceSuccess => success( s )
 	case r: InstanceFailureReplacement => failureReplacement( r )
 	case e: InstanceFailureException[ _ ] => failureException( e )
+        case m: MatcherFailure => {
+          // TODO: this shouldn't be possible based on what calls
+          // dispatchOnInstanceResult, as this should always end up coming
+          // from a replacer.  However, the types should be cleaned up to make
+          // this ugliness go away
+          assert(false)
+          sys.exit(1)
+        }
       }
     } else {
       totalFailure()
@@ -123,7 +131,7 @@ class InstanceSuccess extends InstanceResult {
  * @param failedInstance The instance that it failed on
  * @author Kyle Dewey 
  */
-abstract class InstanceFailure[ T <: Instance ]( val failedInstance: T ) 
+sealed abstract class InstanceFailure[ T <: Instance ]( val failedInstance: T ) 
 extends InstanceResult {
   /**
    * Returns true

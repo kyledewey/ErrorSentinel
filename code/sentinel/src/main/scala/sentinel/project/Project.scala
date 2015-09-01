@@ -86,9 +86,9 @@ object Associations {
    * @param predicate The predicate to filter with
    * @return items that match
    */
-  def filterCellRanges[ T ]( items: Seq[ Pair[ T, CellRange ] ], predicate: CellRange => Boolean ): Seq[ Pair[ T, CellRange ] ] =
+  def filterCellRanges[ T ]( items: Seq[ (T, CellRange) ], predicate: CellRange => Boolean ): Seq[ (T, CellRange) ] =
     filterCellRanges( items, 
-		      ( item: Pair[ T , CellRange ] ) => item._2, 
+		      ( item: (T , CellRange) ) => item._2, 
 		      predicate )
 
   /**
@@ -99,7 +99,7 @@ object Associations {
    * @param column The column of the cell
    * @return The items that are relevant to the given cell.
    */
-  def relevantToCell[ T ]( items: Seq[ Pair[ T, CellRange ] ], 
+  def relevantToCell[ T ]( items: Seq[ (T, CellRange) ], 
 			   sheet: Spreadsheet,  
 			   row: Int,
 			   column: Int ) = {
@@ -113,7 +113,7 @@ object Associations {
    * @param row The row to compare against
    * @return All items which have a defined row that is >= the given row
    */
-  def relevantToRowInsert[ T ]( items: Seq[ Pair[ T, CellRange ] ], row: Int ) =
+  def relevantToRowInsert[ T ]( items: Seq[ (T, CellRange) ], row: Int ) =
     filterCellRanges( items, range =>
       range.row.isDefined && range.row.get > row )
 
@@ -123,7 +123,7 @@ object Associations {
    * @param column The column to compare against
    * @return All items which have a defined column that is > the given column
    */
-  def relevantToColumnInsert[ T ]( items: Seq[ Pair[ T, CellRange ] ], column: Int ) =
+  def relevantToColumnInsert[ T ]( items: Seq[ (T, CellRange) ], column: Int ) =
     filterCellRanges( items, range =>
       range.column.isDefined && range.column.get > column )
 }
@@ -140,8 +140,8 @@ object Associations {
  * holds the cell range that it applies to
  * @author Kyle Dewey
  */
-class Associations( private var _goodDataMatchers: Seq[ Pair[ Matcher, CellRange ] ],
-		    private var _errorCorrectionPairs: Seq[ Pair[ Pair[ Matcher, Replacer ], CellRange ] ] ) {
+class Associations( private var _goodDataMatchers: Seq[ (Matcher, CellRange) ],
+		    private var _errorCorrectionPairs: Seq[ ((Matcher, Replacer), CellRange) ] ) {
   import Associations._
 
   /**
@@ -235,10 +235,10 @@ class Associations( private var _goodDataMatchers: Seq[ Pair[ Matcher, CellRange
 	        row: Int,
 	        column: Int ) {
     relevantToCell( goodDataMatchers, sheet, row, column ).foreach(
-      ( goodData: Pair[ Matcher, CellRange ] ) =>
+      ( goodData: (Matcher, CellRange) ) =>
 	sheet.addGoodDataMatcher( row, column, goodData._1 ) )
     relevantToCell( errorCorrectionPairs, sheet, row, column ).foreach(
-      ( errorCorrection: Pair[ Pair[ Matcher, Replacer ], CellRange ] ) =>
+      ( errorCorrection: ((Matcher, Replacer), CellRange) ) =>
 	sheet.addErrorCorrectionPair( row, column, errorCorrection._1 ) )
   }
 
@@ -424,7 +424,7 @@ class Project[ T <: Spreadsheet ]( var sheets: Map[ String, Sheet ],
    */
   def loadSpreadsheets(): Map[ String, T ] =
     Map() ++ sheets.values.map( sheet =>
-      Pair( sheet.name, loadSpreadsheet( sheet ) ) )
+      (sheet.name, loadSpreadsheet( sheet )) )
 }
 
 import javax.swing._

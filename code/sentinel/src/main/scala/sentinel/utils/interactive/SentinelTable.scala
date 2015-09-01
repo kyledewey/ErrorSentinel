@@ -235,7 +235,7 @@ object SentinelTable {
       }
     }
   
-    Pair( text, color )
+    (text, color)
   }
 
   /**
@@ -244,7 +244,7 @@ object SentinelTable {
    * @param table The table to register
    */
   def registerTable( table: SentinelTable ) {
-    openTables += Pair( table.name, table )
+    openTables += (table.name -> table)
   }
 
   /**
@@ -358,7 +358,7 @@ class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellC
   import SentinelTable._
 
   // begin instance variables
-  private var cellColors: Map[ Pair[ Int, Int ], Color ] = Map()
+  private var cellColors: Map[ (Int, Int), Color ] = Map()
   val tableCellRenderer = makeTableCellRenderer
   val selectionListener = makeListSelectionListener
   val editorListener = makeCellEditorListener
@@ -599,7 +599,7 @@ class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellC
 						  hasFocus: Boolean,
 						  row: Int,
 						  column: Int ) = {
-	val asPair = Pair( row, column )
+	val asPair = (row, column)
 	val baseComponent =
 	  super.getTableCellRendererComponent( table, 
 					       value,
@@ -625,7 +625,7 @@ class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellC
    * @param pairs The row, column pairs
    * @return Cell pointers holding the same information
    */
-  def pairsToPointers( pairs: Seq[ Pair[ Int, Int ] ] ) =
+  def pairsToPointers( pairs: Seq[ (Int, Int) ] ) =
     Set() ++ pairs.map( pair =>
       new CellPointer( name, pair._1, pair._2 ) )
 
@@ -719,8 +719,8 @@ class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellC
    * to change them to
    */
   def determineCellColors( row: Int, column: Int ) = 
-    Pair( model.parameterCells( row, column ),
-	  cellColor( row, column ) )
+    (model.parameterCells( row, column ),
+     cellColor( row, column ))
 
   /**
    * Resets all the cell colors to be the same as the background color.
@@ -765,7 +765,7 @@ class SentinelTable( val model: WithReplacementSpreadsheet[ WithReplacementCellC
    * @param color The color of the cell
    */
   def setCellColor( row: Int, column: Int, color: Color ) {
-    cellColors += Pair( Pair( row, column ), color )
+    cellColors += ((row -> column) -> color)
     forceRender( row, column )
   }
 

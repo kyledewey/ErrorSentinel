@@ -87,7 +87,7 @@ object VisualNode {
    * @param color The color to draw the rectangle
    * @param graphics The graphics object to draw on
    */
-  def fillRect( points: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+  def fillRect( points: ((Int, Int), (Int, Int)),
 	        color: Color,
 	        graphics: Graphics ) {
     val oldColor = graphics.getColor
@@ -163,9 +163,9 @@ object VisualNode {
    * @param bottomRight The bottom right corner of the rectangle
    * @return true if the point is within the rectange, else false
    */
-  def pointWithin( point: Pair[ Int, Int ], 
-		   topLeft: Pair[ Int, Int ], 
-		   bottomRight: Pair[ Int, Int ] ) = {
+  def pointWithin( point: (Int, Int), 
+		   topLeft: (Int, Int),
+		   bottomRight: (Int, Int) ) = {
     point._1 >= topLeft._1 &&
     point._1 <= bottomRight._1 &&
     point._2 >= topLeft._2 &&
@@ -178,7 +178,7 @@ object VisualNode {
    * @param point2 The second point
    * @return The distance between the two
    */
-  def distance( point1: Pair[ Int, Int ], point2: Pair[ Int, Int ] ): Double =
+  def distance( point1: (Int, Int), point2: (Int, Int) ): Double =
     distance( point1._1,
 	      point1._2,
 	      point2._1,
@@ -201,7 +201,7 @@ object VisualNode {
    * @param box The box
    * @return The width of the box
    */
-  def width( box: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) =
+  def width( box: ((Int, Int), (Int, Int)) ) =
     box._2._1 - box._1._1
 
   /**
@@ -209,7 +209,7 @@ object VisualNode {
    * @param box The box
    * @return The height of the box
    */
-  def height( box: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) =
+  def height( box: ((Int, Int), (Int, Int)) ) =
     box._2._2 - box._1._2
 
   /**
@@ -218,14 +218,14 @@ object VisualNode {
    * @param box The box to get the mid points of
    * @return The middle point for each of the edges
    */
-  def edgeMidPoints( box: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) = {
+  def edgeMidPoints( box: ((Int, Int), (Int, Int)) ) = {
     val middleX = ( width( box ) / 2 ) + box._1._1
     val middleY = ( height( box ) / 2 ) + box._1._2
     
-    Seq( Pair( middleX, box._1._2 ),
-	 Pair( middleX, box._2._2 ),
-	 Pair( box._1._1, middleY ),
-	 Pair( box._2._1, middleY ) )
+    Seq( (middleX, box._1._2),
+	 (middleX, box._2._2),
+	 (box._1._1, middleY),
+	 (box._2._1, middleY) )
   }
   
   /**
@@ -235,14 +235,14 @@ object VisualNode {
    * @param box2 The second box
    * @return The points that should be used as edge points for a line
    */
-  def lineEndPoints( box1: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
-		     box2: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) = {
-    var firstPoint: Pair[ Int, Int ] = null
-    var secondPoint: Pair[ Int, Int ] = null
+  def lineEndPoints( box1: ((Int, Int), (Int, Int)),
+		     box2: ((Int, Int), (Int, Int)) ) = {
+    var firstPoint: (Int, Int) = null
+    var secondPoint: (Int, Int) = null
     var retvalDistance = 0.0
 
-    edgeMidPoints( box1 ).foreach( ( box1Edge: Pair[ Int, Int ] ) => {
-      edgeMidPoints( box2 ).foreach( ( box2Edge: Pair[ Int, Int ] ) => {
+    edgeMidPoints( box1 ).foreach( ( box1Edge: (Int, Int) ) => {
+      edgeMidPoints( box2 ).foreach( ( box2Edge: (Int, Int) ) => {
 	val currentDistance = distance( box1Edge, box2Edge )
 
 	if ( firstPoint == null ||
@@ -254,8 +254,7 @@ object VisualNode {
       })
     })
 
-    Pair( firstPoint,
-	  secondPoint )
+    (firstPoint, secondPoint)
   }
     
   /**
@@ -266,8 +265,8 @@ object VisualNode {
    * @param color The color to draw the line
    * @param graphics The graphics object to draw with
    */
-  def drawLineBoxes( box1: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
-	             box2: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+  def drawLineBoxes( box1: ((Int, Int), (Int, Int)),
+	             box2: ((Int, Int), (Int, Int)),
 	             color: Color,
 	             graphics: Graphics ) {
     val ( firstPoint,
@@ -284,8 +283,8 @@ object VisualNode {
    * @param box2 The second box
    * @param graphics The graphics object to draw with
    */
-  def drawLineBoxes( box1: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
-	             box2: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ],
+  def drawLineBoxes( box1: ((Int, Int), (Int, Int)),
+	             box2: ((Int, Int), (Int, Int)),
 	             graphics: Graphics ) {
     drawLineBoxes( box1,
 		   box2,
@@ -300,8 +299,8 @@ object VisualNode {
    * @param color The color of the line
    * @param graphics The graphics object to draw with
    */
-  def drawLinePoints( point1: Pair[ Int, Int ],
-	              point2: Pair[ Int, Int ],
+  def drawLinePoints( point1: (Int, Int),
+	              point2: (Int, Int),
 	              color: Color,
 	              graphics: Graphics ) {
     val oldColor = graphics.getColor
@@ -320,8 +319,8 @@ object VisualNode {
    * @param point2 The second point
    * @param graphics The graphics object to draw with
    */
-  def drawLinePoints( point1: Pair[ Int, Int ],
-	              point2: Pair[ Int, Int ],
+  def drawLinePoints( point1: (Int, Int),
+	              point2: (Int, Int),
 	              graphics: Graphics ) {
     drawLinePoints( point1,
 		    point2,
@@ -427,8 +426,8 @@ class VisualNode[ T <: AnyRef, U ]( val node: Node[ T, U ],
    */
   def bottomRightCorner() = {
     val topLeft = topLeftCorner
-    Pair( topLeft._1 + width,
-	  topLeft._2 + height )
+    (topLeft._1 + width,
+     topLeft._2 + height)
   }
   
   /**
@@ -450,9 +449,9 @@ class VisualNode[ T <: AnyRef, U ]( val node: Node[ T, U ],
    */
   def outputBoxPosition() = {
     val bottomRight = bottomRightCorner
-    Pair( Pair( bottomRight._1 - VisualNode.INPUT_WIDTH,
-	        bottomRight._2 - VisualNode.INPUT_HEIGHT ),
-	  bottomRight )
+    ((bottomRight._1 - VisualNode.INPUT_WIDTH,
+      bottomRight._2 - VisualNode.INPUT_HEIGHT),
+     bottomRight)
   }
 
   /**
@@ -462,14 +461,14 @@ class VisualNode[ T <: AnyRef, U ]( val node: Node[ T, U ],
    */
   def inputBoxPositions() = {
     val topLeft = topLeftCorner
-    var retval: Seq[ Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ] = Seq()
+    var retval: Seq[ ((Int, Int), (Int, Int)) ] = Seq()
     var currentX = stagger
 
     while( currentX < width ) {
-      retval ++= Seq( Pair( Pair( topLeft._1 + currentX,
-				  topLeft._2 ),
-			    Pair( topLeft._1 + currentX + VisualNode.INPUT_WIDTH,
-				  topLeft._2 + VisualNode.INPUT_HEIGHT ) ) )
+      retval ++= Seq( ((topLeft._1 + currentX,
+			topLeft._2 ),
+		       (topLeft._1 + currentX + VisualNode.INPUT_WIDTH,
+			topLeft._2 + VisualNode.INPUT_HEIGHT)) )
       currentX += stagger + VisualNode.INPUT_WIDTH
     }
 
@@ -481,8 +480,8 @@ class VisualNode[ T <: AnyRef, U ]( val node: Node[ T, U ],
    * @param graphics The graphics object to paint with
    */
   def paintNodeBase( graphics: Graphics ) {
-    VisualNode.fillRect( Pair( topLeftCorner,
-		               bottomRightCorner ),
+    VisualNode.fillRect( (topLeftCorner,
+		          bottomRightCorner),
 			 node.color,
 			 graphics )
   }
@@ -494,7 +493,7 @@ class VisualNode[ T <: AnyRef, U ]( val node: Node[ T, U ],
   def paintInputLines( graphics: Graphics ) {
     var currentInput = 0
     inputBoxPositions.foreach( 
-      ( box: Pair[ Pair[ Int, Int ], Pair[ Int, Int ] ] ) => {
+      ( box: ((Int, Int), (Int, Int)) ) => {
 	VisualNode.fillRect( box,
 			     node.inputColor( currentInput ),
 			     graphics )
@@ -558,7 +557,7 @@ class VisualNode[ T <: AnyRef, U ]( val node: Node[ T, U ],
   def outputLineSelected( x: Int, y: Int ) = {
     val ( topLeft,
 	  bottomRight ) = outputBoxPosition
-    VisualNode.pointWithin( Pair( x, y ),
+    VisualNode.pointWithin( (x, y),
 			    topLeft,
 			    bottomRight )
   }
@@ -573,7 +572,7 @@ class VisualNode[ T <: AnyRef, U ]( val node: Node[ T, U ],
    * if no inputs were selected
    */
   def selectedInput( x: Int, y: Int ) = {
-    val point = Pair( x, y )
+    val point = (x, y)
     val inputPositions = inputBoxPositions.toArray
     var inputNumber = 0
     var retval: Option[ String ] = None

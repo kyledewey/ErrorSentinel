@@ -107,11 +107,11 @@ object XMLParser {
 
     ( params \ "FormalParameter" ).foreach( param => {
       val current = parseFormalParam( param )
-      map += Pair( current.name, current )
+      map += (current.name -> current)
       seq ++= Seq( current.name )
     })
 
-    Pair( map, seq )
+    (map, seq)
   }
 
   /**
@@ -355,10 +355,10 @@ object XMLParser {
    * of a dependency
    * @throws ClassParseException If some information was missing or malformed
    */
-  def dependencies( node: Node ): Seq[ Pair[ String, ParamType ] ] =
+  def dependencies( node: Node ): Seq[ (String, ParamType) ] =
     ( Set() ++ ( node \\ "InstanceParameter" ).map( current =>
-      new Pair( getText( current, "ClassName" ),
-                textToInstanceType( getText( current, "Type" ) ) ) ) ).toSeq
+      (getText( current, "ClassName" ),
+       textToInstanceType( getText( current, "Type" ) )) ) ).toSeq
   
   /**
    * Given a bunch of classes nodes, returns a bunch of pre-class objects to

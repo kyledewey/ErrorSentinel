@@ -44,7 +44,7 @@ object AssociationParameterTableModel {
   // given a name, it returns an ID
   val COLUMN_IDS = 
     Map() ++ 0.until( COLUMN_NAMES.size ).map( id =>
-      Pair( COLUMN_NAMES( id ), id ) )
+      (COLUMN_NAMES( id ), id) )
 
   /**
    * Determines if the given column is the value column

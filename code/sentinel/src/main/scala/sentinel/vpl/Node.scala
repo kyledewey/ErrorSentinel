@@ -163,7 +163,7 @@ object SentinelNode {
    */
   def inputNameToNumber( factory: InstanceFactory[ _ ] ) =
     Map() ++ 0.until( factory.paramOrder.length )
-              .map( num => Pair( factory.paramOrder( num ), num ) )
+              .map( num => (factory.paramOrder( num ), num) )
 }
 
 /**
@@ -233,9 +233,9 @@ case class InputException[ T <: AnyRef, U ]( message: String,
 abstract class Node[ T <: AnyRef, U ]( val component: T,
 				       var inputConnections: Map[ String, Seq[ Node[ T, U ] ] ],
 				       val inputNumber: Map[ String, Int ],
-				       var output: Option[ Pair[ String, Node[ T, U ] ] ] ) extends Describable {
+				       var output: Option[ (String, Node[ T, U ]) ] ) extends Describable {
   val inputNumberToName = Map() ++ inputNumber.map( 
-    ( pair: Pair[ String, Int ] ) => Pair( pair._2, pair._1 ) )
+    ( pair: (String, Int) ) => (pair._2, pair._1) )
 
   /**
    * Creates a new node that isn't connected to anything, with the given
@@ -245,7 +245,7 @@ abstract class Node[ T <: AnyRef, U ]( val component: T,
    */
   def this( component: T, names: Map[ String, Int ] ) =
     this( component,
-	  Map() ++ names.keys.toList.map( Pair( _, Seq[ Node[ T, U ] ]() ) ),
+	  Map() ++ names.keys.toList.map( s => (s, Seq[ Node[ T, U ] ]()) ),
 	  names,
 	  None )
 
@@ -525,8 +525,7 @@ abstract class Node[ T <: AnyRef, U ]( val component: T,
   def disconnectInput( node: Node[ T, U ], input: String ) {
     verifyConnected( node, input )
     node.output = None
-    inputConnections += Pair( input,
-			      inputConnections( input ).filter( !_.eq( node ) ) )
+    inputConnections += (input -> inputConnections( input ).filter( !_.eq( node ) ))
   }
 
   /**
@@ -580,12 +579,11 @@ abstract class Node[ T <: AnyRef, U ]( val component: T,
     validConnection( node, input )
 
     // add the new input connection
-    inputConnections += Pair( input,
-			      inputConnections( input ) ++ Seq( node ) )
+    inputConnections += (input -> (inputConnections( input ) ++ Seq( node )))
 
     // set the node's output
     node.disconnectOutput()
-    node.output = Some( Pair( input, this ) )
+    node.output = Some( (input, this) )
   }
 
   /**
@@ -641,7 +639,7 @@ abstract class Node[ T <: AnyRef, U ]( val component: T,
 class DescribableNode[ T <: Describable, U ]( component: T,
 					      inputConnections: Map[ String, Seq[ Node[ T, U ] ] ],
 					      inputNumber: Map[ String, Int ],
-					      output: Option[ Pair[ String, Node[ T, U ] ] ] ) 
+					      output: Option[ (String, Node[ T, U ]) ] ) 
 extends Node[ T, U ]( component, inputConnections, inputNumber, output ) {
   /**
    * Creates a new node that isn't connected to anything, with the given
@@ -651,7 +649,7 @@ extends Node[ T, U ]( component, inputConnections, inputNumber, output ) {
    */
   def this( component: T, names: Map[ String, Int ] ) =
     this( component,
-	  Map() ++ names.keys.toList.map( Pair( _, Seq[ Node[ T, U ] ]() ) ),
+	  Map() ++ names.keys.toList.map( s => ( s, Seq[ Node[ T, U ] ]()) ),
 	  names,
 	  None )
   

@@ -222,7 +222,7 @@ object WriteXML extends ProjectWriter {
    * @throws ProjectWriteException If an underlying parameter isn't a variable,
    * or if the instance is neither a matcher or a replacer
    */
-  def goodDataToNode( goodData: Pair[ Matcher, CellRange ] ) = {
+  def goodDataToNode( goodData: (Matcher, CellRange) ) = {
     <GoodData>
       { cellRangeToNode( goodData._2 ) }
       { instanceToNode( goodData._1 ) }
@@ -237,7 +237,7 @@ object WriteXML extends ProjectWriter {
    * @throws ProjectWriteException If an underlying parameter isn't a variable,
    * or if the instance is neither a matcher or a replacer
    */
-  def goodDatasToNode( goodDatas: Seq[ Pair[ Matcher, CellRange ] ] ) = {
+  def goodDatasToNode( goodDatas: Seq[ (Matcher, CellRange) ] ) = {
     <GoodDatas>
       { goodDatas.map( goodDataToNode( _ ) ) }
     </GoodDatas>
@@ -252,7 +252,7 @@ object WriteXML extends ProjectWriter {
    * @throws ProjectWriteException If an underlying parameter isn't a variable,
    * or if the instance is neither a matcher or a replacer
    */
-  def errorCorrectionPairToNode( errorCorrectionPair: Pair[ Pair[ Matcher, Replacer ], CellRange ] ) = {
+  def errorCorrectionPairToNode( errorCorrectionPair: ((Matcher, Replacer), CellRange) ) = {
     <ErrorCorrection>
       { instanceToNode( errorCorrectionPair._1._1 ) }
       { instanceToNode( errorCorrectionPair._1._2 ) }
@@ -269,7 +269,7 @@ object WriteXML extends ProjectWriter {
    * @throws ProjectWriteException If an underlying parameter isn't a variable,
    * or if the instance is neither a matcher or a replacer
    */
-  def errorCorrectionPairsToNode( errorCorrectionPairs: Seq[ Pair[ Pair[ Matcher, Replacer ], CellRange ] ] ) = {
+  def errorCorrectionPairsToNode( errorCorrectionPairs: Seq[ ((Matcher, Replacer), CellRange) ] ) = {
     <ErrorCorrections>
       { errorCorrectionPairs.map( errorCorrectionPairToNode( _ ) ) }
     </ErrorCorrections>

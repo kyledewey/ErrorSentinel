@@ -96,7 +96,7 @@ object PreFunctionParam {
    */
   def paramsMap( params: Seq[ PreFunctionParam ] ) =
     Map() ++ params.map( param => 
-      Pair( param.currentName, param ) )
+      (param.currentName, param) )
 
   /**
    * Maps nodes to the PreFunctionParams.
@@ -106,7 +106,7 @@ object PreFunctionParam {
    */
   def mapByNode( params: Seq[ PreFunctionParam ] ) = 
     multiMap( params.map( param => 
-      Pair( param.node, param ) ) )
+      (param.node, param) ) )
 
   /**
    * Applies order to the given list of params
@@ -140,14 +140,14 @@ object PreFunctionParam {
    */
   def renameRepeats( preFuncs: Seq[ PreFunctionParam ] ) = {
     var repeats = 
-      Map() ++ repeatedNames( preFuncs ).map( Pair( _, 1 ) )
+      Map() ++ repeatedNames( preFuncs ).map( x => (x, 1) )
 
     // gets the new name to use
     def getNewName( oldName: String ) = 
       if ( repeats.contains( oldName ) ) {
 	val num = repeats( oldName )
 	val newName = oldName + num
-	repeats += Pair( oldName, num + 1 )
+	repeats += (oldName -> (num + 1))
 	newName
       } else {
 	oldName 

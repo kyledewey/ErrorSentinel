@@ -152,7 +152,7 @@ object DatabaseHandleParser {
   def parseDBHandles( path: String ): Map[ String, DatabaseHandle ] = {
     try {
       Map() ++ parseDBHandles( XML.loadFile( path ) ).map( handle =>
-	Pair( handle.name, handle ) )
+	(handle.name, handle) )
     } catch {
       case e: MatchException => throw e
       case e: Exception => throw new MatchException( e.getMessage )

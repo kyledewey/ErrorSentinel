@@ -144,8 +144,7 @@ object VisualBoard {
    * @return The x and y coordinates in a pair
    */
   def toPair( event: MouseEvent ) =
-    Pair( event.getX,
-	  event.getY )
+    (event.getX, event.getY )
 
   /**
    * For each node in the given model, it will make a visual node representing
@@ -160,8 +159,7 @@ object VisualBoard {
 					 creator: ( Node[ T, U ] ) => VisualNode[ T, U ] ): 
   Map[ Node[ T, U ], VisualNode[ T, U ] ] =
     Map() ++ board.getNodes.map( ( node: Node[ T, U ] ) =>
-      Pair( node,
-	    creator( node ) ) )
+      (node, creator( node )) )
   
   /**
    * Creates a visual node from a regular node, using <code>DEFAULT_NODE_LABEL</code>.
@@ -354,8 +352,8 @@ class DefaultVisualBoardState[ T <: AnyRef, U ]
       val nodePos = visualNode.topLeftCorner
       board.changeState( new NodeSelectedState( board,
 					        node,
-					        Pair( event.getX - nodePos._1,
-						      event.getY - nodePos._2 ) ) )
+					        (event.getX - nodePos._1,
+						 event.getY - nodePos._2) ) )
       board.repaint()
     }
   }
@@ -492,7 +490,7 @@ class NodeSelectedState[ T <: AnyRef, U ]
   private val node: Node[ T, U ], 
   private var nodePositionX: Int,
   private var nodePositionY: Int,
-  private val originDifference: Pair[ Int, Int ] ) 
+  private val originDifference: (Int, Int) ) 
 extends DefaultVisualBoardState[ T, U ]( board ) {
   /**
    * Determines the position of the node using it's current position on
@@ -505,7 +503,7 @@ extends DefaultVisualBoardState[ T, U ]( board ) {
    */
   def this( board: VisualBoard[ T, U ],
 	    node: Node[ T, U ], 
-	    originDifference: Pair[ Int, Int ] ) = 
+	    originDifference: (Int, Int) ) = 
     this( board,
 	  node,
 	  board.model.getTopLeftCorner( node ).get._1,
@@ -574,8 +572,8 @@ extends DefaultVisualBoardState[ T, U ]( board ) {
   // begin instance variables
   private val startingLinePositionX = linePositionX
   private val startingLinePositionY = linePositionY
-  private val startingLinePosition = Pair( startingLinePositionX,
-					   startingLinePositionY )
+  private val startingLinePosition = (startingLinePositionX,
+				      startingLinePositionY)
   private var dontDraw = false
   // end instance variables
 
@@ -632,10 +630,10 @@ extends DefaultVisualBoardState[ T, U ]( board ) {
   override def paintComponent( graphics: Graphics ) {
     super.paintComponent( graphics )
     if ( !dontDraw ) {
-      VisualNode.drawLinePoints( Pair( linePositionX, 
-				       linePositionY ),
-				 Pair( startingLinePositionX,
-				       startingLinePositionY ),
+      VisualNode.drawLinePoints( (linePositionX, 
+				  linePositionY),
+				 (startingLinePositionX,
+				  startingLinePositionY),
 				 graphics )
     }
   }
@@ -1167,7 +1165,7 @@ extends JComponent with ErrorShower with MouseInputListener {
     changeState( new NodeSelectedState( this,
 				        node,
 				        x, y,
-				        Pair( x, y ) ) )
+				        (x, y) ) )
     repaint()
   }
 
@@ -1301,7 +1299,7 @@ extends JComponent with ErrorShower with MouseInputListener {
     try {
       model.placeNode( node, x, y )
       val visNode = VisualBoard.makeVisualNode( node, model )
-      visualNode += Pair( node, visNode )
+      visualNode += (node -> visNode)
       repaint()
     } catch {
       case e: NodeUnplacableException => showError( e )

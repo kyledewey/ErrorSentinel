@@ -117,7 +117,7 @@ class Manager[ T <: Manageable ] {
    */
   def addItem( item: T ) {
     buffer += item
-    map += Pair( item.name, item )
+    map += (item.name -> item)
     if ( default.isEmpty ) {
       setDefault( item )
     }

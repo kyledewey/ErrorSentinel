@@ -227,7 +227,7 @@ object ClassParser {
   def classMap( classes: Seq[ PreClass ] ) = {
     val asArray = classes.toArray
     Map() ++ 0.until( classes.length ).map( id =>
-      Pair( classes( id ), id ) )
+      (classes( id ), id) )
   }
 
   /**
@@ -347,7 +347,7 @@ object PreClassConstants {
  * @author Kyle Dewey
  */
 object PreClass {
-  private var _registered: Map[ Pair[ String, ParamType ], PreClass ] = Map()
+  private var _registered: Map[ (String, ParamType), PreClass ] = Map()
 
   /**
    * Gets the registered pre classes.
@@ -364,7 +364,7 @@ object PreClass {
    * @return The pre class registered with this pair, or None if no such
    * preclass exists.
    */
-  def apply( pair: Pair[ String, ParamType ] ): Option[ PreClass ] =
+  def apply( pair: (String, ParamType) ): Option[ PreClass ] =
     _registered.get( pair )
 
   /**
@@ -376,7 +376,7 @@ object PreClass {
    * exist.
    */
   def apply( name: String, theType: ParamType ): Option[ PreClass ] =
-    apply( Pair( name, theType ) )
+    apply( (name, theType) )
 
   /**
    * Creates and registers a pre class with the given name, type, and parser.
@@ -386,9 +386,9 @@ object PreClass {
    * @param dependencies The dependencies for this pre class
    * @return The created PreClass
    */
-  def apply( pair: Pair[ String, ParamType ], 
+  def apply( pair: (String, ParamType), 
 	     parser: ClassParser,
-	     dependencies: Seq[ Pair[ String, ParamType ] ] ): PreClass = {
+	     dependencies: Seq[ (String, ParamType) ] ): PreClass = {
     val retval = new PreClass( pair._1, 
 			       pair._2, 
 			       parser, 
@@ -408,10 +408,9 @@ object PreClass {
   def apply( name: String, 
 	     theType: ParamType, 
 	     parser: ClassParser,
-	     dependencies: Seq[ Pair[ String, ParamType ] ] ): PreClass =
-    apply( Pair( name, 
-		 theType ), 
-	   parser, 
+	     dependencies: Seq[ (String, ParamType) ] ): PreClass =
+    apply( (name, theType),
+	   parser,
 	   dependencies )
 }
 
@@ -429,7 +428,7 @@ object PreClass {
 class PreClass private ( val name: String,
 			 val theType: ParamType,
 			 val parser: ClassParser,
-			 val dependencies: Seq[ Pair[ String, ParamType ] ] ) {
+			 val dependencies: Seq[ (String, ParamType) ] ) {
   lazy val dependenciesAsPreClasses =
     getDependenciesAsPreClasses
 
@@ -473,7 +472,7 @@ class PreClass private ( val name: String,
    * @return This pre class as a name, type pair
    */
   def toPair() =
-    Pair( name, theType )
+    (name, theType)
 
   /**
    * Gets the dependencies for this pre class, as pre class objects.

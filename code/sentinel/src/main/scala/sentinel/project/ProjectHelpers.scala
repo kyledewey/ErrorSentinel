@@ -163,7 +163,7 @@ extends ActionMap[ FileActionMapValue[ T ] ]( map ) {
    */
   def this( mapValues: Seq[ FileActionMapValue[ T ] ] ) =
     this( Map() ++ mapValues.map( value => 
-      Pair( value.typeName, value ) ) )
+      (value.typeName, value) ) )
 
   /**
    * Gets all the recognized file types

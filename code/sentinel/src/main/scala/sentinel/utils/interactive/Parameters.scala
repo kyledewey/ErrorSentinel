@@ -65,7 +65,7 @@ object TypeHolder {
    */
   def apply( theType: ParamType ) = {
     if ( !types.contains( theType ) ) {
-      types += Pair( theType, new TypeHolder( theType ) )
+      types += (theType -> (new TypeHolder( theType )))
     }
     types( theType )
   }

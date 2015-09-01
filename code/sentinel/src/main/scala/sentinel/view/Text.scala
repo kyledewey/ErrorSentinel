@@ -232,7 +232,7 @@ object TextCommandProcessor {
    * @return The text the command returned if it was able to execute
    * the command, else None
    */
-  def execute( candidates: Seq[ Pair[ AnyRef, Method ] ], 
+  def execute( candidates: Seq[ (AnyRef, Method) ], 
 	       args: Seq[ String ] ): Option[ String ] = {
     var retval: Option[ String ] = None
     var x = 0
@@ -495,7 +495,7 @@ class TextCommandProcessor( private val help: HelpCommand ) {
   // a key is mapped to multiple commands that can execute
   // a command.  Each value consists of an object and a method
   // to invoke on that object
-  private var commands: Map[ CommandKey, Seq[ Pair[ AnyRef, Method ] ] ] = Map()
+  private var commands: Map[ CommandKey, Seq[ (AnyRef, Method) ] ] = Map()
   // end instance variables
 
   // register all versions of the help command

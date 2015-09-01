@@ -367,7 +367,7 @@ trait Spreadsheet extends DefaultTableModel {
    * @param initializer Used to initialize each row and column
    * @return A parallel table
    */
-  def mapTable[T:ClassManifest]( initializer: ( Int, Int ) => T ) =
+  def mapTable[T : scala.reflect.ClassTag]( initializer: ( Int, Int ) => T ) =
     SentinelHelpers.makeTable( getRowCount,
 			       getColumnCount,
 			       initializer )

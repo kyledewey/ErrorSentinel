@@ -32,6 +32,8 @@ package sentinel.model
  * @author Kyle Dewey
  */
 object SentinelHelpers {
+  import scala.reflect.ClassTag
+
   /**
    * Given a bunch of objects, it will generate a map.
    * Multiple values may be included with the same key
@@ -131,7 +133,7 @@ object SentinelHelpers {
    * @return A table of the given width and height initialized for
    * each cell with the given initializer
    */
-  def makeTable[T : ClassManifest]( numRows: Int, numColumns: Int, initializer: ( Int, Int ) => T ): Array[Array[T]] = {
+  def makeTable[T : ClassTag]( numRows: Int, numColumns: Int, initializer: ( Int, Int ) => T ): Array[Array[T]] = {
     val retval: Array[Array[T]] = Array.ofDim[T](numRows, numColumns)
     0.until(numRows).foreach(row =>
       0.until(numColumns).foreach(column =>
@@ -145,7 +147,7 @@ object SentinelHelpers {
    * @param initializer The initializer to use
    * @return A matrix
    */
-  def makeMatrix[T: ClassManifest]( size: Int, initializer: ( Int, Int ) => T ) =
+  def makeMatrix[T: ClassTag]( size: Int, initializer: ( Int, Int ) => T ) =
     makeTable( size, size, initializer )
 
   /**

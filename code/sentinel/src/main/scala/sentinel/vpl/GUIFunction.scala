@@ -763,7 +763,7 @@ extends JTable( new ParameterTableModel( gui ) ) with RowMover {
    */
   def moveRows( start: Int, end: Int, to: Int ) {
     if ( start != to ) {
-      def f[ T : ClassManifest ]( seq: Seq[ T ] ) =
+      def f[ T : scala.reflect.ClassTag ]( seq: Seq[ T ] ) =
 	SentinelHelpers.moveSubsequence( start, 
 					 end, 
 					 to, 

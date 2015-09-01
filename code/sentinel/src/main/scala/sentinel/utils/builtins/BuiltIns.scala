@@ -691,7 +691,7 @@ extends InteractiveTextInterpreter( TextBuiltInView.PROMPT ) with BuiltInView {
    * @return A string giving all the class names in the model
    */
   def displayClasses() = 
-    model.getClasses.toList.sort( _ < _ ).mkString( "\n" )
+    model.getClasses.toList.sortWith( _ < _ ).mkString( "\n" )
 
   /**
    * A custom exit command that will ask the user if he

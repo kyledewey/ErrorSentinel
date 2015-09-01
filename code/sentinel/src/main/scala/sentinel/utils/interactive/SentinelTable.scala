@@ -329,7 +329,7 @@ object SentinelTable {
    * @return The "worst" color in the set
    */
   def worstColor( set: Set[ Color ] ): Color = {
-    val intersect =  set ** VALID_CELL_COLORS
+    val intersect =  set.intersect( VALID_CELL_COLORS )
     if ( intersect.contains( ERROR_COLOR ) )
       ERROR_COLOR
     else if ( intersect.contains( CORRECTABLE_COLOR ) )

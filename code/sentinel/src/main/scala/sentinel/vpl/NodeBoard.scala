@@ -89,7 +89,7 @@ case class NoSuchNodeException( message: String ) extends Exception( message ) {
 class NodeBoard[ T <: AnyRef, U ]( val width: Int,
 			           val height: Int ) {
   private val board: Array[ Array[ Option[ Node[ T, U ] ] ] ] = 
-    new Array( width, height )
+    Array.ofDim( width, height )
   private var corners: Map[ Node[ T, U ], Pair[ Int, Int ] ] = Map()
   foreach( ( x: Int, y: Int ) => board( x )( y ) = None )
 

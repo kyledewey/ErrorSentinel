@@ -69,8 +69,8 @@ extends AbstractTableModel {
  */
 object DescriptionPanelTableModel {
   // default starting data
-  val DEFAULT_DATA: Array[ Array[ String ] ] = 
-    new Array( 1, ParameterTableModel.COLUMN_NAMES.length - 1)
+  val DEFAULT_DATA: Array[ Array[ String ] ] =
+    Array.ofDim( 1, ParameterTableModel.COLUMN_NAMES.length - 1 )
   0.until( ParameterTableModel.COLUMN_NAMES.length - 1 ).foreach( index =>
     DEFAULT_DATA( 0 )( index ) = "" )
 }

@@ -103,7 +103,7 @@ object Function {
     if ( length != 1 ) {
       throw new BadOutputException( length )
     }
-    tails.first
+    tails.head
   }
 
   /**
@@ -389,7 +389,7 @@ class PreFunction
     if ( !missing.isEmpty ) {
       throw new UnknownParameterNameException( "Missing the following params: " +
 					       missing.toList
-					              .sort( _ < _ )
+					              .sortWith( _ < _ )
 					              .mkString( ", " ) )
     }
   }
@@ -650,7 +650,7 @@ class PreFunction
     validParams.filter( param => 
       ( param.node.eq( node ) &&
         param.currentName == currentName ) )
-               .toList.first.originalName
+               .toList.head.originalName
 
   /**
    * Given a node and its original name, it will return
@@ -663,7 +663,7 @@ class PreFunction
     validParams.filter( param =>
       ( param.node.eq( node ) &&
        param.originalName == originalName ) )
-               .toList.first.currentName
+               .toList.head.currentName
 
   /**
    * Adds variable nodes to the given input node.

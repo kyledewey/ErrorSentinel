@@ -251,9 +251,9 @@ object ParseXML extends ProjectParser {
       val factory = FactoryManager.getFactory( instanceNode.label,
 					       className )
       val variables =
-	parseVariablesNode( getNodes( instanceNode, "Variables" ).first )
+	parseVariablesNode( getNodes( instanceNode, "Variables" ).head )
       val values =
-	parseValuesNode( getNodes( instanceNode, "Values" ).first )
+	parseValuesNode( getNodes( instanceNode, "Values" ).head )
       
       factory.get.instantiate( variables ++ values, false )
     } catch {
@@ -282,7 +282,7 @@ object ParseXML extends ProjectParser {
    * invalid
    */
   def parseInstanceBelow( node: Node, instanceType: String ) =
-    parseInstanceNode( getNodes( node, instanceType ).first )
+    parseInstanceNode( getNodes( node, instanceType ).head )
 
   /**
    * Parses in the first cell range node beneath the given node
@@ -291,7 +291,7 @@ object ParseXML extends ProjectParser {
    * invalid
    */
   def parseCellRangeBelow( node: Node ) =
-    parseCellRangeNode( getNodes( node, "CellRange" ).first )
+    parseCellRangeNode( getNodes( node, "CellRange" ).head )
 
   /**
    * Parses in a "GoodData" node.
@@ -351,9 +351,9 @@ object ParseXML extends ProjectParser {
    */
   def parseAssociationsNode( associations: Node ) = {
     val goodData =
-      parseGoodDatasNode( getNodes( associations, "GoodDatas" ).first )
+      parseGoodDatasNode( getNodes( associations, "GoodDatas" ).head )
     val errorCorrections =
-      parseErrorCorrectionsNode( getNodes( associations, "ErrorCorrections" ).first )
+      parseErrorCorrectionsNode( getNodes( associations, "ErrorCorrections" ).head )
     new Associations( goodData, errorCorrections )
   }
   
@@ -424,12 +424,12 @@ object ParseXML extends ProjectParser {
   def parseProjectNode[ T <: Spreadsheet ]( project: Node, 
 					    spreadsheetFactory: ( Spreadsheet, Project[ T ], Boolean ) => T,
 					    register: Boolean ) = {
-    val sheets = parseSheetsNode( getNodes( project, "Sheets" ).first )
+    val sheets = parseSheetsNode( getNodes( project, "Sheets" ).head )
     val definitions = 
-      parseDefinitionsNode( getNodes( project, "Definitions" ).first )
+      parseDefinitionsNode( getNodes( project, "Definitions" ).head )
     LanguageReader.readLanguages( definitions )
     val associations =
-      parseAssociationsNode( getNodes( project, "Associations" ).first )
+      parseAssociationsNode( getNodes( project, "Associations" ).head )
     new Project[ T ]( Map() ++ sheets.map( sheet => sheet.name -> sheet ),
 		      definitions,
 	              associations,

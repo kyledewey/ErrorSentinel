@@ -371,7 +371,7 @@ object VisualNode {
    * @return The sorted nodes
    */
   def sortNodes[ T <: AnyRef, U ]( nodes: Seq[ VisualNode[ T, U ] ] ) =
-    nodes.toList.sort( _.topLeftCorner._1 < _.topLeftCorner._1 ).toSeq
+    nodes.toList.sortWith( _.topLeftCorner._1 < _.topLeftCorner._1 ).toSeq
 }
 
 /**

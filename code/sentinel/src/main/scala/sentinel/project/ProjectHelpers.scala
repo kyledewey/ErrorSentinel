@@ -89,7 +89,7 @@ class ActionMap[ T ]( val map: Map[ String, T ] ) {
    * @return A listing of the available actions, in abc order
    */
   def actions(): Seq[ String ] = 
-    map.keys.toList.sort( _ < _ ).map( _.self )
+    map.keys.toList.sortWith( _ < _ ).map( _.self )
 }
 
 import java.io.File

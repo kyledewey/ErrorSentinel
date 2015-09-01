@@ -510,8 +510,7 @@ abstract class Node[ T <: AnyRef, U ]( val component: T,
   def disconnectInput( input: String ) {
     verifyInputName( input )
     if ( inputConnected( input ) ) {
-      inputConnections( input ).elements
-                               .foreach( disconnectInput( _, input ) )
+      inputConnections( input ).foreach( disconnectInput( _, input ) )
     }
   }
 

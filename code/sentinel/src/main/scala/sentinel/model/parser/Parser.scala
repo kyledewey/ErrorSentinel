@@ -62,8 +62,16 @@ import java.io._
  * @param message A message describing the error
  * @author Kyle Dewey
  */
-case class ClassParseException( message: String ) 
+class ClassParseException(val message: String ) 
      extends Exception( message ) {}
+
+object ClassParseException {
+  def apply(message: String): ClassParseException =
+    new ClassParseException(message)
+
+  def unapply(ex: ClassParseException): Option[String] =
+    Some(ex.message)
+}
 
 /**
  * Exception thrown when an attempt is made to register a class that

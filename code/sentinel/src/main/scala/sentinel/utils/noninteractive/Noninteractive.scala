@@ -235,7 +235,7 @@ object ErrorSentinel {
   def main( args: Array[ String ] ) {
     if ( args.length != 8 ) {
       usage()
-      exit( 1 )
+      sys.exit( 1 )
     }
     new ProjectRunner( args( 0 ),
 		       args( 1 ),

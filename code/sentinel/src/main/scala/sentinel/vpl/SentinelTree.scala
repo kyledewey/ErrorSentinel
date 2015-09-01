@@ -272,7 +272,7 @@ object SentinelTreeHelpers {
     if ( file.isDirectory ) {
       Some( file.listFiles( xmlFilter )
                 .toList
-                .sort( _.getName < _.getName )
+                .sortWith( _.getName < _.getName )
                 .partition( _.isDirectory ) )
     } else {
       None
@@ -345,7 +345,7 @@ object SentinelTreeHelpers {
 
     language.classesInformation
             .toList
-            .sort( _.name < _.name )
+            .sortWith( _.name < _.name )
             .foreach( ( preClass: PreClass ) =>
 	      retval.add( factoryToNode( preClassToFactory( preClass ) ) ) )
     retval
@@ -399,7 +399,7 @@ object SentinelTreeHelpers {
    * @return A tree node representing the node
    */
   def makeTreeNode( xmlNode: scala.xml.Node ): DefaultMutableTreeNode = 
-    languageFileToNode( ( xmlNode \ "File" ).first.text )
+    languageFileToNode( ( xmlNode \ "File" ).head.text )
 
   /**
    * Makes a tree node that is based on a project.

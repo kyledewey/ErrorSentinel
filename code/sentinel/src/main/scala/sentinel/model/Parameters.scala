@@ -1636,6 +1636,8 @@ class False( val className: String,
  * @author Kyle Dewey
  */
 object Replacer {
+  import scala.language.implicitConversions
+
   /**
    * Converts a string to data.
    * This is intended for the return value of replace(),

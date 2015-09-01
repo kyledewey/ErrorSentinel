@@ -499,14 +499,13 @@ object ParameterTable {
     val components = componentMaker( preFunction )
     val editors = editorMaker( components )
     val renderers = rendererMaker( components )
-    scala.List.map3( components.toList,
-		     editors.toList,
-		     renderers.toList )( ( component,
-					   editor,
-					   renderer ) =>
-					     Tuple3( component,
-						     editor,
-						     renderer ) ).toArray
+    (components, editors, renderers).zipped.map(
+      ( component,
+        editor,
+        renderer ) =>
+	 Tuple3( component,
+		 editor,
+		 renderer ) ).toArray
   }
 
   /**
@@ -714,7 +713,7 @@ extends JTable( new ParameterTableModel( gui ) ) with RowMover {
    * is no such editor in the table.
    */
   def isUsedEditorRow( editor: DefaultCellEditor ) = 
-    isUsedByRow.findIndexOf( _._2.eq( editor ) )
+    isUsedByRow.indexWhere( _._2.eq( editor ) )
 
   /**
    * Sets up the cell editor listeners for isRequired.

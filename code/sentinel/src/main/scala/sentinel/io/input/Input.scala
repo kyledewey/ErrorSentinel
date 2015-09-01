@@ -93,7 +93,7 @@ trait SpreadsheetReader {
     // create the columns, followed by the rows
     if ( columnNames ) {
       val asList = data.toList
-      asList.first.foreach( ( columnName: String ) => 
+      asList.head.foreach( ( columnName: String ) => 
 	retval.addColumn( Some( columnName ) ) )
       asList.tail.foreach( ( column: Seq[ String ] ) =>
 	retval.addRow( Some( column ) ) )

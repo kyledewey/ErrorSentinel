@@ -103,6 +103,36 @@ object ErrorSentinel {
    */
   def makeFileChooser( filters: Seq[ SFileFilter ] ): JFileChooser =
     makeFileChooser( ".", filters )
+
+  def loadInteractive(projectFilename: String) {
+    LanguageReader.readBaseLanguage()
+    val project = ProjectReader.readProject(
+      projectFilename,
+      "XML",
+      (name, project: Project[_], register) =>
+        WithReplacementSpreadsheet(name, project, register),
+      true)
+    val errorSentinel = new ErrorSentinel(
+      project,
+      new File(projectFilename) )
+    errorSentinel.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE )
+    errorSentinel.setSize( 400, 400 )
+    errorSentinel.setVisible( true )
+  }
+
+  /**
+   * Runs the interactive version of ErrorSentinel.
+   *
+   * @param args Command-line arguments.  Takes one parameter: the project filename,
+   *        in an XML file.
+   */
+  def main(args: Array[String]) {
+    if (args.length != 1) {
+      println("Takes one parameter: the project filename, in XML")
+    } else {
+      loadInteractive(args(0))
+    }
+  }
 }
 
 import ErrorSentinel._

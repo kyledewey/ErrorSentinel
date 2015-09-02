@@ -23,8 +23,8 @@ for curators to define custom autocorrect rules, so that changes can be suggeste
 or even automatically applied as per the user's desires.  ErrorSentinel is an
 implementation of this general idea.
 
-## Building and Running ErrorSentinel
 
+## Building and Running ErrorSentinel
 As long as you have an Internet connection and the [`sbt`](http://www.scala-sbt.org/)
 tool installed, you should need only do:
 
@@ -47,3 +47,22 @@ following information:
   which code triggers on which portions of a sheet.  Usually, for each column,
   there is a bit of code defining what is valid for the column.
 
+
+## Overall Idea Behind the Error Correction Language
+There are two key concepts behind the error correction language:
+
+1. **Matchers**
+2. **Replacers**
+
+A **matcher** is a bit of code that determines if some input data matches
+something.  For example, one possible matcher determines whether or not
+the input data is `5`.  Matchers are used both to define what data is valid,
+and if not valid, to determine whether or not any autocorrections are possible.
+
+A **replacer** is a bit of code that will perform corrections.  Generally,
+a replacer is paired up with a matcher.  If a replacer's corresponding matcher
+matches the input data, this means that the given replacer is relevant.
+The replacer can then take the erroneous input, and provide a possible replacement.
+The replacement is suggested to the user as an autocorrect.
+Examples of replacers are `5` (e.g., just return 5), or a routine that will strip
+whitepace off the ends of an input.

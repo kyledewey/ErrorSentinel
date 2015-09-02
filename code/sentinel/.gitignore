@@ -1,7 +1,0 @@
-# sbt compiled files, etc.
-target
-
-# components that are specific to what is being error checked
-databases
-sheets
-xml/*.xml

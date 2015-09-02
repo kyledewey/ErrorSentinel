@@ -96,9 +96,9 @@ class DatabaseHandle( val name: String,
 object DatabaseHandleParser {
   import scala.xml._
 
-  val DEFAULT_FILE_NAME = ".Sentinel_DBHandles.xml"
-  val DEFAULT_FILE_PATH = 
-    System.getProperty( "user.home" ) + "/" + DEFAULT_FILE_NAME
+  val DEFAULT_FILE_NAME = "Sentinel_DBHandles.xml"
+  val DEFAULT_FILE_PATH =
+    "xml" + java.io.File.separator + DEFAULT_FILE_NAME
 
   def getNodes( base: Node, tag: String ) =
     XMLHelpers.getNodes( base, tag, MatchException( _ ) )

@@ -20,6 +20,20 @@ object SentinelVPL {
   val NEW_LANG_TEXT = "New/Load Language"
   val LOAD_PROJ_TEXT = "Load Project File"
   val EXIT_TEXT = "Exit"
+
+  def main(args: Array[String]) {
+    val board = new NodeBoard[InstanceFactory[_], Param]()
+    val vpl =
+      new SentinelVPL[InstanceFactory[_], Param](
+        (v: VisualBoardGUIView[InstanceFactory[_], Param]) =>
+          new VisualBoard[InstanceFactory[_], Param](board, v),
+        (v: SentinelVPL[InstanceFactory[_], Param]) =>
+          new DescriptionPanel(),
+        (v: ComponentsTreeGUIView[InstanceFactory[_], Param]) =>
+          SentinelTree(v, "xml/builtins"))
+    vpl.pack()
+    vpl.setVisible(true)
+  }
 }
 
 /**
